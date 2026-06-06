@@ -41,7 +41,7 @@
         #f7f7fa;
       font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, system-ui, sans-serif;
     }
-    button, input, textarea { font: inherit; }
+    button, input, textarea, select { font: inherit; }
     button { color: inherit; }
     svg { display: block; }
     .hidden { display: none !important; }
@@ -674,7 +674,7 @@
     .form-grid { display: grid; gap: 15px; }
     .field { display: grid; gap: 7px; }
     .field label { font-size: 13px; font-weight: 700; }
-    .field input, .field textarea {
+    .field input, .field textarea, .field select {
       width: 100%;
       padding: 12px 13px;
       color: var(--ink);
@@ -684,7 +684,8 @@
       outline: none;
       transition: border .15s ease, box-shadow .15s ease;
     }
-    .field input:focus, .field textarea:focus { border-color: #9b98ef; box-shadow: 0 0 0 4px rgba(91, 87, 232, .1); }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: #9b98ef; box-shadow: 0 0 0 4px rgba(91, 87, 232, .1); }
+    .field select:disabled { color: var(--sub); cursor: wait; }
     .field textarea { min-height: 86px; resize: vertical; }
     .form-row { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 5px; }
@@ -1194,6 +1195,29 @@
           <label for="studentBirthDate">วันเกิดผู้เรียน</label>
           <input id="studentBirthDate" name="birthDate" type="date">
         </div>
+        <div class="field">
+          <label for="studentEducationLevel">ระดับชั้น</label>
+          <select id="studentEducationLevel" name="educationLevel" required>
+            <option value="">เลือกระดับชั้น</option>
+            <option value="เตรียมอนุบาล">เตรียมอนุบาล</option>
+            <option value="อนุบาล 1">อนุบาล 1</option>
+            <option value="อนุบาล 2">อนุบาล 2</option>
+            <option value="อนุบาล 3">อนุบาล 3</option>
+            <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
+            <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
+            <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
+            <option value="ประถมศึกษาปีที่ 4">ประถมศึกษาปีที่ 4</option>
+            <option value="ประถมศึกษาปีที่ 5">ประถมศึกษาปีที่ 5</option>
+            <option value="ประถมศึกษาปีที่ 6">ประถมศึกษาปีที่ 6</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="studentDistrict">สังกัดสำนักงานเขตพื้นที่การศึกษา</label>
+          <select id="studentDistrict" name="districtId" required disabled>
+            <option value="">กำลังโหลดรายชื่อเขต...</option>
+          </select>
+          <p class="auth-hint">เลือกเขตที่ครอบครัวยื่นคำขอหรือส่งแบบประเมินของผู้เรียนคนนี้</p>
+        </div>
         <p class="form-error hidden" id="onboardingError"></p>
         <button class="primary-button" id="onboardingSubmit" type="submit">เพิ่มนักเรียน</button>
       </form>
@@ -1280,6 +1304,7 @@
     let familyRecord = null;
     let students = [];
     let selectedStudent = null;
+    let educationDistricts = [];
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -1436,7 +1461,8 @@
       }
       grid.innerHTML = students.map((student) => {
         const fullName = [student.first_name, student.last_name].filter(Boolean).join(" ");
-        return `<button class="student-card" type="button" data-student-id="${escapeHTML(student.id)}"><span class="student-avatar">${escapeHTML(initial(student.first_name, "น"))}</span><span><h3>${escapeHTML(fullName)}</h3><p>${escapeHTML(studentAge(student.birth_date))}</p></span><span class="student-card-footer">เปิดพื้นที่ของผู้เรียน ${svgIcon("arrowRight")}</span></button>`;
+        const details = [studentAge(student.birth_date), student.current_education_level, student.district?.name].filter(Boolean).join(" · ");
+        return `<button class="student-card" type="button" data-student-id="${escapeHTML(student.id)}"><span class="student-avatar">${escapeHTML(initial(student.first_name, "น"))}</span><span><h3>${escapeHTML(fullName)}</h3><p>${escapeHTML(details)}</p></span><span class="student-card-footer">เปิดพื้นที่ของผู้เรียน ${svgIcon("arrowRight")}</span></button>`;
       }).join("");
     }
 
@@ -1445,7 +1471,7 @@
       const [profiles, families, studentRows] = await Promise.all([
         apiRequest(SUPABASE_URL + "/rest/v1/profiles?select=full_name,phone,role&id=eq." + currentUser.id + "&limit=1", { requireAuth: true }),
         apiRequest(SUPABASE_URL + "/rest/v1/families?select=id,family_name&owner_user_id=eq." + currentUser.id + "&order=created_at.asc&limit=1", { requireAuth: true }),
-        apiRequest(SUPABASE_URL + "/rest/v1/students?select=id,family_id,first_name,last_name,birth_date,current_education_level&owner_user_id=eq." + currentUser.id + "&order=created_at.asc", { requireAuth: true })
+        apiRequest(SUPABASE_URL + "/rest/v1/students?select=id,family_id,first_name,last_name,birth_date,current_education_level,district_id,district:education_districts(name)&owner_user_id=eq." + currentUser.id + "&order=created_at.asc", { requireAuth: true })
       ]);
       parentProfile = profiles[0] || null;
       familyRecord = families[0] || null;
@@ -1483,9 +1509,26 @@
       $("#applicationPage").classList.add("hidden");
       $("#pageEyebrow").textContent = "พื้นที่การเรียนรู้ของ";
       $("#pageTitle").textContent = fullName;
-      $("#selectedStudentLabel").textContent = fullName + " (" + studentAge(student.birth_date) + ")";
+      $("#selectedStudentLabel").textContent = fullName + " (" + [studentAge(student.birth_date), student.current_education_level].filter(Boolean).join(" · ") + ")";
       await Promise.all([fetchTasks(), ensureApplicationContext(false)]);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function loadEducationDistricts() {
+      const select = $("#studentDistrict");
+      select.disabled = true;
+      select.innerHTML = '<option value="">กำลังโหลดรายชื่อเขต...</option>';
+      try {
+        if (!educationDistricts.length) {
+          educationDistricts = await apiRequest(SUPABASE_URL + "/rest/v1/education_districts?select=id,code,name&active=eq.true&order=code.asc", { requireAuth: true });
+        }
+        select.innerHTML = '<option value="">เลือกสำนักงานเขตพื้นที่การศึกษา</option>' + educationDistricts.map((district) => `<option value="${escapeHTML(district.id)}">${escapeHTML(district.code + " · " + district.name)}</option>`).join("");
+        select.disabled = false;
+      } catch (error) {
+        select.innerHTML = '<option value="">โหลดรายชื่อเขตไม่สำเร็จ</option>';
+        $("#onboardingError").textContent = error.message;
+        $("#onboardingError").classList.remove("hidden");
+      }
     }
 
     function openStudentModal() {
@@ -1496,6 +1539,7 @@
       if (familyRecord) $("#familyName").value = familyRecord.family_name || "";
       $("#onboardingModal").classList.remove("hidden");
       document.body.style.overflow = "hidden";
+      loadEducationDistricts();
       setTimeout(() => $("#studentFirstName").focus(), 0);
     }
 
@@ -1605,6 +1649,7 @@
             owner_user_id: currentUser.id,
             family_id: selectedStudent.family_id,
             student_id: selectedStudent.id,
+            district_id: selectedStudent.district_id,
             application_type: "permission_request"
           })
         });
@@ -1645,7 +1690,9 @@
             family_id: family.id,
             first_name: String(data.get("firstName") || "").trim(),
             last_name: String(data.get("lastName") || "").trim() || null,
-            birth_date: String(data.get("birthDate") || "") || null
+            birth_date: String(data.get("birthDate") || "") || null,
+            current_education_level: String(data.get("educationLevel") || "").trim(),
+            district_id: String(data.get("districtId") || "")
           })
         });
         await apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications", {
@@ -1656,6 +1703,7 @@
             owner_user_id: currentUser.id,
             family_id: family.id,
             student_id: students[0].id,
+            district_id: String(data.get("districtId") || ""),
             application_type: "permission_request"
           })
         });
