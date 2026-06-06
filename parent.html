@@ -648,6 +648,20 @@
     .form-workspace h2 { margin-bottom: 5px; }
     .form-workspace p { margin: 0; color: var(--sub); font-size: 13px; line-height: 1.65; }
     .application-actions { display: flex; justify-content: flex-end; gap: 10px; }
+    .request-form-card { padding: clamp(20px, 4vw, 34px); }
+    .request-form-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:24px; }
+    .request-form-head p { margin:5px 0 0; color:var(--sub); font-size:13px; line-height:1.65; }
+    .request-form-section { display:grid; gap:14px; padding:22px 0; border-top:1px solid var(--line); }
+    .request-form-section:first-of-type { border-top:0; padding-top:0; }
+    .request-form-section h3 { margin:0; font-size:17px; }
+    .request-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .request-form-grid .wide { grid-column:1/-1; }
+    .request-form-grid .third { grid-column:span 1; }
+    .checkbox-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .checkbox-item { display:flex; align-items:flex-start; gap:9px; padding:12px; background:#f8f8fa; border-radius:12px; font-size:12px; line-height:1.5; }
+    .checkbox-item input { width:17px; height:17px; margin:1px 0 0; accent-color:var(--brand); }
+    .request-form-actions { display:flex; justify-content:flex-end; gap:10px; padding-top:20px; border-top:1px solid var(--line); }
+    .save-status { align-self:center; margin-right:auto; color:var(--sub); font-size:12px; }
 
     .modal {
       position: fixed;
@@ -784,6 +798,11 @@
       .application-top { align-items: flex-start; }
       .application-progress { min-width: auto; }
       .workspace-intro { flex-direction: column; }
+      .request-form-head { flex-direction:column; }
+      .request-form-grid,.checkbox-grid { grid-template-columns:1fr; }
+      .request-form-grid .wide { grid-column:auto; }
+      .request-form-actions { display:grid; grid-template-columns:1fr; }
+      .request-form-actions .save-status { margin:0; text-align:center; }
       .upload-row { grid-template-columns: 41px minmax(0, 1fr); }
       .select-file-button { grid-column: 1 / -1; width: 100%; }
       .form-workspace { grid-template-columns: 52px minmax(0, 1fr); }
@@ -1083,11 +1102,91 @@
         </div>
 
         <div class="workflow-panel hidden" id="requestPanel">
-          <div class="card form-workspace">
-            <div class="form-workspace-icon" data-icon="fileText"></div>
-            <div><h2>กรอกเอกสารแบบคำขอ</h2><p>กรอกข้อมูลผู้ยื่นคำขอ ผู้เรียน ผู้จัดการศึกษา ที่อยู่ และข้อมูลการติดต่อ ระบบจะนำข้อมูลไปจัดรูปแบบเอกสารราชการให้อัตโนมัติ</p></div>
-            <button class="primary-button prototype-action" type="button" data-label="แบบคำขอ">เริ่มกรอกแบบคำขอ</button>
-          </div>
+          <form class="card request-form-card" id="requestForm">
+            <div class="request-form-head">
+              <div><h2>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษา</h2><p>ข้อมูลจะถูกบันทึกเฉพาะคำขอของผู้เรียนที่เลือก และนำไปจัดหน้าเอกสารราชการอัตโนมัติ</p></div>
+              <span class="security-badge"><span data-icon="shield"></span>บันทึกใน Supabase</span>
+            </div>
+
+            <section class="request-form-section">
+              <h3>ข้อมูลหนังสือและผู้ยื่นคำขอ</h3>
+              <div class="request-form-grid">
+                <div class="field wide"><label for="requestPlace">เขียนที่</label><input id="requestPlace" name="requestPlace" required placeholder="สถานที่เขียนคำขอ"></div>
+                <div class="field"><label for="requestDate">วันที่ยื่นคำขอ</label><input id="requestDate" name="requestDate" type="date" required></div>
+                <div class="field"><label for="requesterPrefix">คำนำหน้าชื่อ</label><select id="requesterPrefix" name="requesterPrefix" required><option value="">เลือก</option><option>นาย</option><option>นาง</option><option>นางสาว</option><option>อื่น ๆ</option></select></div>
+                <div class="field wide"><label for="requesterName">ชื่อ-นามสกุลผู้ยื่นคำขอ</label><input id="requesterName" name="requesterName" required></div>
+                <div class="field"><label for="requesterCitizenId">เลขประจำตัวประชาชน</label><input id="requesterCitizenId" name="requesterCitizenId" inputmode="numeric" maxlength="13" required></div>
+                <div class="field"><label for="relationship">เกี่ยวข้องกับผู้เรียนในฐานะ</label><select id="relationship" name="relationship" required><option value="">เลือกความสัมพันธ์</option><option>บิดา</option><option>มารดา</option><option>ผู้ปกครอง</option><option>ผู้จัดการศึกษา</option><option>อื่น ๆ</option></select></div>
+              </div>
+            </section>
+
+            <section class="request-form-section">
+              <h3>ที่อยู่และการติดต่อ</h3>
+              <div class="request-form-grid">
+                <div class="field"><label for="houseNumber">บ้านเลขที่</label><input id="houseNumber" name="houseNumber" required></div>
+                <div class="field"><label for="villageNumber">หมู่ที่</label><input id="villageNumber" name="villageNumber"></div>
+                <div class="field"><label for="lane">ตรอก / ซอย</label><input id="lane" name="lane"></div>
+                <div class="field"><label for="road">ถนน</label><input id="road" name="road"></div>
+                <div class="field"><label for="subdistrict">ตำบล / แขวง</label><input id="subdistrict" name="subdistrict" required></div>
+                <div class="field"><label for="addressDistrict">อำเภอ / เขต</label><input id="addressDistrict" name="addressDistrict" required></div>
+                <div class="field"><label for="province">จังหวัด</label><input id="province" name="province" required></div>
+                <div class="field"><label for="postalCode">รหัสไปรษณีย์</label><input id="postalCode" name="postalCode" inputmode="numeric" maxlength="5" required></div>
+                <div class="field"><label for="requestPhone">โทรศัพท์</label><input id="requestPhone" name="requestPhone" type="tel" required></div>
+                <div class="field"><label for="requestEmail">E-mail</label><input id="requestEmail" name="requestEmail" type="email" required></div>
+              </div>
+            </section>
+
+            <section class="request-form-section">
+              <h3>ข้อมูลผู้เรียน</h3>
+              <div class="request-form-grid">
+                <div class="field"><label for="studentPrefix">คำนำหน้าผู้เรียน</label><select id="studentPrefix" name="studentPrefix" required><option value="">เลือก</option><option>เด็กชาย</option><option>เด็กหญิง</option><option>นาย</option><option>นางสาว</option><option>อื่น ๆ</option></select></div>
+                <div class="field"><label for="formStudentName">ชื่อ-นามสกุลผู้เรียน</label><input id="formStudentName" name="studentName" required></div>
+                <div class="field"><label for="formStudentBirthDate">วันเกิด</label><input id="formStudentBirthDate" name="studentBirthDate" type="date" required></div>
+                <div class="field"><label for="studentCitizenId">เลขประจำตัวประชาชนผู้เรียน</label><input id="studentCitizenId" name="studentCitizenId" inputmode="numeric" maxlength="13"></div>
+                <div class="field"><label for="previousEducation">กำลังศึกษา / จบการศึกษาชั้น</label><input id="previousEducation" name="previousEducation" required></div>
+                <div class="field"><label for="startingEducationLevel">ขอเริ่มจัดการศึกษาในชั้น</label><input id="startingEducationLevel" name="startingEducationLevel" required></div>
+                <div class="field wide"><label for="formDistrictName">สำนักงานเขตพื้นที่การศึกษา</label><input id="formDistrictName" name="districtName" readonly></div>
+              </div>
+            </section>
+
+            <section class="request-form-section">
+              <h3>ข้อมูลผู้จัดการศึกษา</h3>
+              <div class="request-form-grid">
+                <div class="field"><label for="managerPrefix">คำนำหน้าชื่อ</label><select id="managerPrefix" name="managerPrefix" required><option value="">เลือก</option><option>นาย</option><option>นาง</option><option>นางสาว</option><option>อื่น ๆ</option></select></div>
+                <div class="field"><label for="managerName">ชื่อ-นามสกุลผู้จัดการศึกษา</label><input id="managerName" name="managerName" required></div>
+                <div class="field"><label for="managerCitizenId">เลขประจำตัวประชาชน</label><input id="managerCitizenId" name="managerCitizenId" inputmode="numeric" maxlength="13" required></div>
+                <div class="field"><label for="managerQualification">วุฒิการศึกษา</label><input id="managerQualification" name="managerQualification" required></div>
+                <div class="field wide"><label for="managerInstitution">สถาบันการศึกษา</label><input id="managerInstitution" name="managerInstitution" required></div>
+              </div>
+            </section>
+
+            <section class="request-form-section">
+              <h3>เอกสารที่แนบพร้อมคำขอ</h3>
+              <div class="checkbox-grid">
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="house_registration">สำเนาทะเบียนบ้านของครอบครัว ผู้เรียน และผู้จัดการศึกษา</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="national_id">สำเนาบัตรประจำตัวประชาชนของครอบครัว ผู้เรียน และผู้จัดการศึกษา</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="birth_certificate">สำเนาสูติบัตรของผู้เรียน</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="student_qualification">สำเนาหลักฐานวุฒิการศึกษาสูงสุดของผู้เรียน</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="manager_qualification">สำเนาหลักฐานวุฒิการศึกษาของผู้จัดการศึกษา</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="location_map">ที่ตั้งและแผนผังสถานที่จัดการศึกษา</label>
+                <label class="checkbox-item"><input type="checkbox" name="attachments" value="education_plan">แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</label>
+                <div class="field"><label for="otherAttachment">อื่น ๆ (โปรดระบุ)</label><input id="otherAttachment" name="otherAttachment"></div>
+              </div>
+            </section>
+
+            <section class="request-form-section">
+              <div class="request-form-grid">
+                <div class="field wide"><label for="signatureName">ชื่อผู้ยื่นคำขอสำหรับแสดงใต้ลายมือชื่อ</label><input id="signatureName" name="signatureName" required></div>
+              </div>
+            </section>
+
+            <p class="form-error hidden" id="requestFormError"></p>
+            <div class="request-form-actions">
+              <span class="save-status" id="requestSaveStatus">ยังไม่ได้บันทึก</span>
+              <button class="secondary-button" id="downloadRequestPdf" type="button">ดาวน์โหลด / พิมพ์ PDF</button>
+              <button class="primary-button" id="saveRequestForm" type="submit">บันทึกแบบคำขอ</button>
+            </div>
+          </form>
         </div>
 
         <div class="workflow-panel hidden" id="planPanel">
@@ -1471,7 +1570,7 @@
       const [profiles, families, studentRows] = await Promise.all([
         apiRequest(SUPABASE_URL + "/rest/v1/profiles?select=full_name,phone,role&id=eq." + currentUser.id + "&limit=1", { requireAuth: true }),
         apiRequest(SUPABASE_URL + "/rest/v1/families?select=id,family_name&owner_user_id=eq." + currentUser.id + "&order=created_at.asc&limit=1", { requireAuth: true }),
-        apiRequest(SUPABASE_URL + "/rest/v1/students?select=id,family_id,first_name,last_name,birth_date,current_education_level,district_id,district:education_districts(name)&owner_user_id=eq." + currentUser.id + "&order=created_at.asc", { requireAuth: true })
+        apiRequest(SUPABASE_URL + "/rest/v1/students?select=id,family_id,first_name,last_name,birth_date,citizen_id,current_education_level,district_id,district:education_districts(name)&owner_user_id=eq." + currentUser.id + "&order=created_at.asc", { requireAuth: true })
       ]);
       parentProfile = profiles[0] || null;
       familyRecord = families[0] || null;
@@ -1632,7 +1731,7 @@
     async function ensureApplicationContext(createIfMissing = false) {
       if (!currentUser || !selectedStudent) return false;
       const applications = await apiRequest(
-        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,status&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,status,request_form_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
         { requireAuth: true }
       );
       if (applications?.length) {
@@ -1804,7 +1903,145 @@
       $("#uploadsPanel").classList.toggle("hidden", name !== "uploads");
       $("#requestPanel").classList.toggle("hidden", name !== "request");
       $("#planPanel").classList.toggle("hidden", name !== "plan");
+      if (name === "request") {
+        ensureApplicationContext(true)
+          .then(() => loadRequestForm())
+          .catch((error) => showToast(error.message));
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function requestFormValues() {
+      const data = new FormData($("#requestForm"));
+      const values = Object.fromEntries(data.entries());
+      values.attachments = data.getAll("attachments");
+      return values;
+    }
+
+    function fillRequestForm(values = {}) {
+      const form = $("#requestForm");
+      Object.entries(values).forEach(([name, value]) => {
+        if (name === "attachments") return;
+        const field = form.elements.namedItem(name);
+        if (field && value !== null && value !== undefined) field.value = value;
+      });
+      const attachments = new Set(Array.isArray(values.attachments) ? values.attachments : []);
+      $$('input[name="attachments"]', form).forEach((input) => {
+        input.checked = attachments.has(input.value);
+      });
+    }
+
+    function requestDefaults() {
+      const fullStudentName = [selectedStudent?.first_name, selectedStudent?.last_name].filter(Boolean).join(" ");
+      return {
+        requestDate: new Date().toISOString().slice(0, 10),
+        requesterName: parentProfile?.full_name || "",
+        requestPhone: parentProfile?.phone || "",
+        requestEmail: currentUser?.email || "",
+        studentName: fullStudentName,
+        studentBirthDate: selectedStudent?.birth_date || "",
+        studentCitizenId: selectedStudent?.citizen_id || "",
+        previousEducation: selectedStudent?.current_education_level || "",
+        startingEducationLevel: selectedStudent?.current_education_level || "",
+        districtName: selectedStudent?.district?.name || "",
+        managerName: parentProfile?.full_name || "",
+        signatureName: parentProfile?.full_name || ""
+      };
+    }
+
+    function loadRequestForm() {
+      fillRequestForm({ ...requestDefaults(), ...(applicationContext?.request_form_data || {}) });
+      $("#requestSaveStatus").textContent = applicationContext?.request_form_data && Object.keys(applicationContext.request_form_data).length ? "โหลดข้อมูลที่บันทึกไว้แล้ว" : "ยังไม่ได้บันทึก";
+      $("#requestFormError").classList.add("hidden");
+    }
+
+    async function saveRequestForm(event) {
+      event.preventDefault();
+      if (!applicationContext) await ensureApplicationContext(true);
+      const button = $("#saveRequestForm");
+      const error = $("#requestFormError");
+      button.disabled = true;
+      button.textContent = "กำลังบันทึก...";
+      error.classList.add("hidden");
+      try {
+        const values = requestFormValues();
+        const rows = await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ request_form_data: values })
+          }
+        );
+        applicationContext = rows[0] || { ...applicationContext, request_form_data: values };
+        $("#requestSaveStatus").textContent = "บันทึกล่าสุด " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        showToast("บันทึกแบบคำขอเรียบร้อยแล้ว");
+      } catch (saveError) {
+        error.textContent = saveError.message;
+        error.classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+        button.textContent = "บันทึกแบบคำขอ";
+      }
+    }
+
+    function thaiLongDate(dateValue) {
+      if (!dateValue) return "........................................";
+      return new Intl.DateTimeFormat("th-TH", { day: "numeric", month: "long", year: "numeric" }).format(new Date(dateValue + "T00:00:00"));
+    }
+
+    function printLine(value, fallback = "........................................................") {
+      return escapeHTML(value || fallback);
+    }
+
+    function attachmentMark(values, key, label) {
+      return `<div>${values.attachments?.includes(key) ? "☑" : "☐"} ${escapeHTML(label)}</div>`;
+    }
+
+    function downloadRequestPdf() {
+      if (!$("#requestForm").reportValidity()) return;
+      const values = requestFormValues();
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        showToast("เบราว์เซอร์บล็อกหน้าต่างเอกสาร กรุณาอนุญาต Pop-up");
+        return;
+      }
+      const districtName = values.districtName || selectedStudent?.district?.name || "";
+      const studentAgeText = studentAge(values.studentBirthDate).replace(" ขวบ", "");
+      const html = `<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แบบคำขอ-${escapeHTML(values.studentName)}</title><style>
+        @page{size:A4;margin:16mm 18mm}*{box-sizing:border-box}body{margin:0;color:#111;font-family:"TH Sarabun New","Sarabun",Tahoma,sans-serif;font-size:16px;line-height:1.55}h1{margin:0 0 8px;text-align:center;font-size:20px}.place{text-align:right;margin-bottom:12px}.paragraph{margin:7px 0;text-indent:42px}.line{border-bottom:1px dotted #333;padding:0 4px}.attachments{margin:8px 0 10px 54px}.signature{margin:28px 25px 0 auto;width:310px;text-align:center}.note{margin-top:15px;font-size:12px;color:#555}@media print{.printbar{display:none}}.printbar{position:sticky;top:0;margin:-8px -8px 15px;padding:10px;text-align:center;background:#f0efff}.printbar button{padding:9px 18px;border:0;border-radius:8px;color:#fff;background:#5652df;font:inherit;font-weight:700;cursor:pointer}
+      </style></head><body><div class="printbar"><button onclick="window.print()">บันทึกเป็น PDF / พิมพ์เอกสาร</button></div>
+      <h1>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1>
+      <div class="place">เขียนที่ <span class="line">${printLine(values.requestPlace)}</span><br>วันที่ ${thaiLongDate(values.requestDate)}</div>
+      <div>เรียน ผู้อำนวยการ${printLine(districtName)}</div>
+      <p class="paragraph">ด้วย ${printLine(values.requesterPrefix)} ${printLine(values.requesterName)} เลขประจำตัวประชาชน <span class="line">${printLine(values.requesterCitizenId)}</span></p>
+      <div>ที่อยู่ตามทะเบียนบ้าน บ้านเลขที่ <span class="line">${printLine(values.houseNumber)}</span> หมู่ที่ <span class="line">${printLine(values.villageNumber,"-")}</span> ตรอก/ซอย <span class="line">${printLine(values.lane,"-")}</span> ถนน <span class="line">${printLine(values.road,"-")}</span></div>
+      <div>ตำบล/แขวง <span class="line">${printLine(values.subdistrict)}</span> อำเภอ/เขต <span class="line">${printLine(values.addressDistrict)}</span> จังหวัด <span class="line">${printLine(values.province)}</span> รหัสไปรษณีย์ <span class="line">${printLine(values.postalCode)}</span></div>
+      <div>โทรศัพท์ <span class="line">${printLine(values.requestPhone)}</span> E-mail <span class="line">${printLine(values.requestEmail)}</span></div>
+      <p class="paragraph">อาศัยสิทธิตามข้อ ๒ (๗) ของกฎกระทรวงว่าด้วยสิทธิในการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว พ.ศ. ๒๕๔๗ ซึ่งออกตามความในมาตรา ๑๒ แห่งพระราชบัญญัติการศึกษาแห่งชาติ พ.ศ. ๒๕๔๒ ที่บัญญัติให้ครอบครัวมีสิทธิในการจัดการศึกษาขั้นพื้นฐาน</p>
+      <p class="paragraph">จึงมีความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวร่วมกับสำนักงานเขตพื้นที่การศึกษาให้แก่ผู้เรียนชื่อ ${printLine(values.studentPrefix)} ${printLine(values.studentName)} ซึ่งเกี่ยวข้องเป็น ${printLine(values.relationship)} เกิดเมื่อวันที่ ${thaiLongDate(values.studentBirthDate)} อายุ ${printLine(studentAgeText)} ปี เลขประจำตัวประชาชน ${printLine(values.studentCitizenId)}</p>
+      <div>กำลังศึกษาอยู่ชั้น/จบการศึกษาชั้น <span class="line">${printLine(values.previousEducation)}</span> โดยขอเริ่มจัดการศึกษาในชั้น <span class="line">${printLine(values.startingEducationLevel)}</span></div>
+      <p class="paragraph">โดยมี ${printLine(values.managerPrefix)} ${printLine(values.managerName)} เลขประจำตัวประชาชน ${printLine(values.managerCitizenId)} วุฒิการศึกษา ${printLine(values.managerQualification)} สถาบัน ${printLine(values.managerInstitution)} เป็นผู้จัดการศึกษา</p>
+      <div style="text-align:center;margin-top:10px">พร้อมนี้ได้แนบเอกสารของผู้เรียนมาด้วยแล้ว ดังนี้</div>
+      <div class="attachments">
+        ${attachmentMark(values,"house_registration","สำเนาทะเบียนบ้านของครอบครัว ผู้เรียน และผู้จัดการศึกษา")}
+        ${attachmentMark(values,"national_id","สำเนาบัตรประจำตัวประชาชนของครอบครัว ผู้เรียน และผู้จัดการศึกษา")}
+        ${attachmentMark(values,"birth_certificate","สำเนาสูติบัตรของผู้เรียน")}
+        ${attachmentMark(values,"student_qualification","สำเนาหลักฐานวุฒิการศึกษาสูงสุดของผู้เรียน")}
+        ${attachmentMark(values,"manager_qualification","สำเนาหลักฐานวุฒิการศึกษาของผู้จัดการศึกษา")}
+        ${attachmentMark(values,"location_map","ที่ตั้งและแผนผังสถานที่จัดการศึกษา")}
+        ${attachmentMark(values,"education_plan","แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว")}
+        <div>${values.otherAttachment ? "☑" : "☐"} อื่น ๆ ${printLine(values.otherAttachment,"................................................")}</div>
+      </div>
+      <p class="paragraph">จึงเรียนมาเพื่อโปรดพิจารณา หากท่านมีผลการพิจารณาเป็นประการใด โปรดแจ้งให้ทราบด้วย จักขอบคุณยิ่ง</p>
+      <div class="signature">ขอแสดงความนับถือ<br><br><br>ลงชื่อ........................................................ผู้ยื่นคำขอ (ครอบครัว)<br>(${printLine(values.signatureName)})</div>
+      <div class="note">เอกสารนี้สร้างจากระบบ Homeschool โปรดตรวจสอบข้อมูลก่อนลงลายมือชื่อและนำส่งสำนักงานเขตพื้นที่การศึกษา</div>
+      </body></html>`;
+      printWindow.document.open();
+      printWindow.document.write(html);
+      printWindow.document.close();
+      printWindow.focus();
     }
 
     function refreshApplicationProgress() {
@@ -2158,6 +2395,8 @@
     $("#closeAuthModal").addEventListener("click", closeAuthModal);
     $("#authForm").addEventListener("submit", handleAuthSubmit);
     $("#onboardingForm").addEventListener("submit", handleOnboarding);
+    $("#requestForm").addEventListener("submit", saveRequestForm);
+    $("#downloadRequestPdf").addEventListener("click", downloadRequestPdf);
     $("#addStudentButton").addEventListener("click", openStudentModal);
     $("#closeOnboardingModal").addEventListener("click", closeStudentModal);
     $("#backToStudents").addEventListener("click", showStudentHub);
