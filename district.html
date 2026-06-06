@@ -39,8 +39,9 @@
         </div>
         <div class="field">
           <label for="districtName">สำนักงานเขตพื้นที่การศึกษาที่รับผิดชอบ</label>
-          <input id="districtName" name="districtName" list="districtOptions" required placeholder="พิมพ์ชื่อหรือรหัสเขต เช่น สพป. เชียงใหม่ เขต 1">
-          <datalist id="districtOptions"></datalist>
+          <select id="districtName" name="districtName" required disabled>
+            <option value="">กำลังโหลดรายชื่อเขต...</option>
+          </select>
           <p class="hint">ระบบจะนำเขตที่เลือกไปให้ Admin ตรวจสอบอีกครั้ง ก่อนกำหนดสิทธิ์เข้าถึงข้อมูล</p>
         </div>
         <div class="form-row">
@@ -101,7 +102,18 @@
     async function api(path,options={}){const response=await fetch(SUPABASE_URL+path,{...options,headers:headers(options.headers||{})});const text=await response.text();const body=text?JSON.parse(text):null;if(!response.ok)throw new Error(body?.message||body?.hint||"เกิดข้อผิดพลาดในการเชื่อมต่อ");return body}
     function show(id){["profileState","waitingState","dashboardState"].forEach(x=>$("#"+x).classList.toggle("hidden",x!==id))}
     function loadSession(){try{session=JSON.parse(localStorage.getItem(SESSION_KEY)||"null")}catch(_){}if(!session?.access_token){location.href="index.html";return false}user=session.user;return true}
-    async function loadDistricts(){try{const rows=await api("/rest/v1/education_districts?select=id,code,name&active=eq.true&order=name.asc");$("#districtOptions").innerHTML=rows.map(x=>`<option value="${escapeHtml(x.name)}">${escapeHtml(x.code)}</option>`).join("")}catch(_){}}
+    async function loadDistricts(){
+      const select=$("#districtName");
+      try{
+        const rows=await api("/rest/v1/education_districts?select=id,code,name&active=eq.true&order=code.asc");
+        select.innerHTML='<option value="">เลือกสำนักงานเขตพื้นที่การศึกษา</option>'+rows.map(x=>`<option value="${escapeHtml(x.id)}" data-name="${escapeHtml(x.name)}">${escapeHtml(x.code)} · ${escapeHtml(x.name)}</option>`).join("");
+        select.disabled=false;
+      }catch(error){
+        select.innerHTML='<option value="">โหลดรายชื่อเขตไม่สำเร็จ</option>';
+        $("#profileError").textContent=error.message;
+        $("#profileError").classList.remove("hidden");
+      }
+    }
     function escapeHtml(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;")}
 
     async function bootstrap(){
@@ -126,7 +138,9 @@
     async function submitProfile(event){
       event.preventDefault();const data=new FormData(event.currentTarget),button=$("#profileSubmit"),error=$("#profileError");button.disabled=true;button.textContent="กำลังส่งข้อมูล...";error.classList.add("hidden");
       try{
-        const body={user_id:user.id,first_name:String(data.get("firstName")).trim(),last_name:String(data.get("lastName")).trim(),requested_district_name:String(data.get("districtName")).trim(),phone:String(data.get("phone")).trim(),line_id:String(data.get("lineId")).trim()||null,position:String(data.get("position")).trim()};
+        const districtSelect=$("#districtName"),districtOption=districtSelect.options[districtSelect.selectedIndex];
+        if(!districtSelect.value)throw new Error("กรุณาเลือกสำนักงานเขตพื้นที่การศึกษา");
+        const body={user_id:user.id,first_name:String(data.get("firstName")).trim(),last_name:String(data.get("lastName")).trim(),requested_district_id:districtSelect.value,requested_district_name:districtOption.dataset.name||districtOption.textContent,phone:String(data.get("phone")).trim(),line_id:String(data.get("lineId")).trim()||null,position:String(data.get("position")).trim()};
         const rows=await api("/rest/v1/district_officer_profiles",{method:"POST",headers:{Prefer:"return=representation"},body:JSON.stringify(body)});officer=rows[0];renderWaiting();show("waitingState")
       }catch(e){error.textContent=e.message;error.classList.remove("hidden")}finally{button.disabled=false;button.textContent="ส่งข้อมูลให้ Admin ตรวจสอบ"}
     }
