@@ -681,17 +681,20 @@
     async function goToApp(session, expectedRole = null) {
       const profile = await getUserProfile(session);
       const role = profile.role || "parent";
-      if (profile.approval_status === "pending") {
+      if (expectedRole && role !== expectedRole) {
         localStorage.removeItem(SESSION_KEY);
+        throw new Error("บัญชีนี้ลงทะเบียนเป็น " + ROLE_LABELS[role] + " กรุณาเลือกประเภทผู้ใช้งานให้ถูกต้อง");
+      }
+      if (profile.approval_status === "pending") {
+        if (role === "district" || role === "teacher") {
+          window.location.href = ROLE_ROUTES[role];
+          return;
+        }
         throw new Error("บัญชี" + ROLE_LABELS[role] + "กำลังรอผู้ดูแลระบบตรวจสอบและอนุมัติ");
       }
       if (profile.approval_status === "suspended") {
         localStorage.removeItem(SESSION_KEY);
         throw new Error("บัญชีนี้ถูกระงับ กรุณาติดต่อผู้ดูแลระบบ");
-      }
-      if (expectedRole && role !== expectedRole) {
-        localStorage.removeItem(SESSION_KEY);
-        throw new Error("บัญชีนี้ลงทะเบียนเป็น " + ROLE_LABELS[role] + " กรุณาเลือกประเภทผู้ใช้งานให้ถูกต้อง");
       }
       window.location.href = ROLE_ROUTES[role] || NEXT_PAGE;
     }
