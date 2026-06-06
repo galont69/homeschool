@@ -169,6 +169,17 @@
       font-weight: 800;
     }
     .mobile-avatar { display: none; }
+    .auth-button {
+      min-height: 40px;
+      padding: 0 13px;
+      color: var(--brand);
+      background: var(--brand-soft);
+      border: 0;
+      border-radius: 13px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
     .dashboard-grid {
       display: grid;
@@ -641,6 +652,14 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 5px; }
     .form-error { margin: 0; color: var(--danger); font-size: 12px; }
     .file-input { display: none; }
+    .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 6px; margin-bottom: 18px; background: var(--paper); border-radius: 15px; }
+    .auth-tab { min-height: 40px; color: var(--sub); background: transparent; border: 0; border-radius: 11px; cursor: pointer; font-size: 13px; font-weight: 800; }
+    .auth-tab.active { color: var(--brand); background: #fff; box-shadow: 0 4px 12px rgba(41, 40, 79, .08); }
+    .auth-hint { margin: -4px 0 0; color: var(--sub); font-size: 11px; line-height: 1.6; }
+    .auth-user { display: flex; align-items: center; gap: 8px; }
+    .auth-user-email { max-width: 180px; overflow: hidden; color: var(--sub); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .upload-row.uploading { opacity: .65; }
+    .upload-row.uploading .select-file-button { cursor: wait; }
 
     .toast {
       position: fixed;
@@ -710,7 +729,7 @@
       .card-head { align-items: center; }
       .card-head h2 { font-size: 19px; }
       .add-label { display: none; }
-      .primary-button { width: 43px; padding: 0; }
+      #openTaskModal { width: 43px; padding: 0; }
       .task-row { grid-template-columns: 44px minmax(0, 1fr) 36px; gap: 10px; padding: 10px; }
       .task-icon { width: 44px; height: 44px; border-radius: 14px; }
       .task-name { font-size: 15px; }
@@ -764,6 +783,10 @@
         <div class="top-actions">
           <span class="member-pill">PRO MEMBER</span>
           <button class="icon-button" type="button" aria-label="การแจ้งเตือน" data-icon="bell"></button>
+          <div class="auth-user">
+            <span class="auth-user-email hidden" id="authUserEmail"></span>
+            <button class="auth-button" id="authButton" type="button">เข้าสู่ระบบ</button>
+          </div>
           <div class="avatar mobile-avatar">ก</div>
         </div>
       </header>
@@ -1041,6 +1064,66 @@
     </div>
   </div>
 
+  <div class="modal hidden" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="authModalTitle">เข้าสู่ระบบ Homeschool</h2>
+        <button class="icon-button close-button" id="closeAuthModal" type="button" aria-label="ปิด" data-icon="x"></button>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" type="button" data-auth-mode="signin">เข้าสู่ระบบ</button>
+        <button class="auth-tab" type="button" data-auth-mode="signup">สมัครสมาชิก</button>
+      </div>
+      <form class="form-grid" id="authForm">
+        <div class="field hidden" id="fullNameField">
+          <label for="authFullName">ชื่อ-นามสกุลผู้ปกครอง</label>
+          <input id="authFullName" name="fullName" type="text" autocomplete="name" placeholder="คุณกานต์ ใจดี">
+        </div>
+        <div class="field">
+          <label for="authEmail">อีเมล</label>
+          <input id="authEmail" name="email" type="email" autocomplete="email" required placeholder="parent@example.com">
+        </div>
+        <div class="field">
+          <label for="authPassword">รหัสผ่าน</label>
+          <input id="authPassword" name="password" type="password" minlength="6" autocomplete="current-password" required placeholder="อย่างน้อย 6 ตัวอักษร">
+        </div>
+        <p class="auth-hint">ใช้บัญชีนี้เพื่อเข้าถึงเอกสารส่วนบุคคลของครอบครัวอย่างปลอดภัย</p>
+        <p class="form-error hidden" id="authError"></p>
+        <button class="primary-button" id="authSubmit" type="submit">เข้าสู่ระบบ</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="onboardingModal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <div><h2 id="onboardingTitle">เริ่มต้นข้อมูลครอบครัว</h2><p class="date-line">กรอกครั้งเดียวเพื่อสร้างพื้นที่เอกสารของผู้เรียน</p></div>
+      </div>
+      <form class="form-grid" id="onboardingForm">
+        <div class="field">
+          <label for="familyName">ชื่อครอบครัว</label>
+          <input id="familyName" name="familyName" type="text" required placeholder="เช่น ครอบครัวใจดี">
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="studentFirstName">ชื่อผู้เรียน</label>
+            <input id="studentFirstName" name="firstName" type="text" required placeholder="พราว">
+          </div>
+          <div class="field">
+            <label for="studentLastName">นามสกุล</label>
+            <input id="studentLastName" name="lastName" type="text" placeholder="ใจดี">
+          </div>
+        </div>
+        <div class="field">
+          <label for="studentBirthDate">วันเกิดผู้เรียน</label>
+          <input id="studentBirthDate" name="birthDate" type="date">
+        </div>
+        <p class="form-error hidden" id="onboardingError"></p>
+        <button class="primary-button" id="onboardingSubmit" type="submit">สร้างพื้นที่เอกสาร</button>
+      </form>
+    </div>
+  </div>
+
   <div class="toast hidden" id="toast" role="status"></div>
 
   <script>
@@ -1051,6 +1134,18 @@
     const SUPABASE_URL = "https://ewsftltgehfrumfnmugi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3c2Z0bHRnZWhmcnVtZm5tdWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NTUwMzQsImV4cCI6MjA5NjIzMTAzNH0.rYefsViZAFttNqiRQvAPv2E8wcq1vph5WPv2n8nrYL0";
     const TASKS_ENDPOINT = SUPABASE_URL + "/rest/v1/tasks";
+    const AUTH_STORAGE_KEY = "homeschool_supabase_session";
+    const DOCUMENT_TYPE_MAP = {
+      father: "father_identity",
+      mother: "mother_identity",
+      manager: "education_manager_identity",
+      student: "student_identity",
+      birth: "student_birth_certificate",
+      managerEducation: "education_manager_qualification",
+      studentEducation: "student_education_record",
+      location: "education_location",
+      photo: "student_photo_2inch"
+    };
 
     const icons = {
       home: '<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
@@ -1097,6 +1192,10 @@
     let toastTimer;
     let activeUploadKey = "";
     const selectedOfficialFiles = {};
+    let authMode = "signin";
+    let authSession = null;
+    let currentUser = null;
+    let applicationContext = null;
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -1121,19 +1220,24 @@
         .replaceAll("'", "&#039;");
     }
 
-    function apiHeaders(extra = {}) {
+    function apiHeaders(extra = {}, requireAuth = false) {
+      if (requireAuth && !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อน");
+      const token = requireAuth ? authSession.access_token : SUPABASE_ANON_KEY;
       return {
         apikey: SUPABASE_ANON_KEY,
-        Authorization: "Bearer " + SUPABASE_ANON_KEY,
+        Authorization: "Bearer " + token,
         "Content-Type": "application/json",
         ...extra
       };
     }
 
     async function apiRequest(url, options = {}) {
+      const requireAuth = options.requireAuth === true;
+      const requestOptions = { ...options };
+      delete requestOptions.requireAuth;
       const response = await fetch(url, {
-        ...options,
-        headers: apiHeaders(options.headers || {})
+        ...requestOptions,
+        headers: apiHeaders(options.headers || {}, requireAuth)
       });
       if (!response.ok) {
         let message = "เกิดข้อผิดพลาดในการเชื่อมต่อ (" + response.status + ")";
@@ -1146,6 +1250,220 @@
       if (response.status === 204) return null;
       const text = await response.text();
       return text ? JSON.parse(text) : null;
+    }
+
+    async function authRequest(path, body) {
+      const response = await fetch(SUPABASE_URL + "/auth/v1/" + path, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: "Bearer " + SUPABASE_ANON_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.msg || result.message || result.error_description || "ไม่สามารถยืนยันตัวตนได้");
+      return result;
+    }
+
+    function saveSession(session) {
+      authSession = session;
+      if (session) localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+      else localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+
+    function loadStoredSession() {
+      try {
+        const session = JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY) || "null");
+        if (session?.access_token) authSession = session;
+      } catch (_) {
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+      }
+    }
+
+    async function refreshSessionIfNeeded() {
+      if (!authSession?.refresh_token) return;
+      const expiresAt = Number(authSession.expires_at || 0) * 1000;
+      if (expiresAt && expiresAt > Date.now() + 60000) return;
+      try {
+        const refreshed = await authRequest("token?grant_type=refresh_token", { refresh_token: authSession.refresh_token });
+        saveSession(refreshed);
+      } catch (_) {
+        saveSession(null);
+      }
+    }
+
+    async function getCurrentUser() {
+      if (!authSession?.access_token) return null;
+      await refreshSessionIfNeeded();
+      if (!authSession?.access_token) return null;
+      const response = await fetch(SUPABASE_URL + "/auth/v1/user", {
+        headers: apiHeaders({}, true)
+      });
+      if (!response.ok) {
+        saveSession(null);
+        return null;
+      }
+      return response.json();
+    }
+
+    function updateAuthUI() {
+      const button = $("#authButton");
+      const email = $("#authUserEmail");
+      if (currentUser) {
+        button.textContent = "ออกจากระบบ";
+        email.textContent = currentUser.email || "";
+        email.classList.remove("hidden");
+      } else {
+        button.textContent = "เข้าสู่ระบบ";
+        email.classList.add("hidden");
+        email.textContent = "";
+      }
+    }
+
+    function openAuthModal() {
+      $("#authModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => $("#authEmail").focus(), 0);
+    }
+
+    function closeAuthModal() {
+      $("#authModal").classList.add("hidden");
+      document.body.style.overflow = "";
+      $("#authError").classList.add("hidden");
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      $$("[data-auth-mode]").forEach((button) => button.classList.toggle("active", button.dataset.authMode === mode));
+      $("#fullNameField").classList.toggle("hidden", mode !== "signup");
+      $("#authFullName").required = mode === "signup";
+      $("#authPassword").autocomplete = mode === "signup" ? "new-password" : "current-password";
+      $("#authSubmit").textContent = mode === "signup" ? "สมัครสมาชิก" : "เข้าสู่ระบบ";
+      $("#authModalTitle").textContent = mode === "signup" ? "สร้างบัญชีผู้ปกครอง" : "เข้าสู่ระบบ Homeschool";
+      $("#authError").classList.add("hidden");
+    }
+
+    async function handleAuthSubmit(event) {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const email = String(data.get("email") || "").trim();
+      const password = String(data.get("password") || "");
+      const fullName = String(data.get("fullName") || "").trim();
+      const button = $("#authSubmit");
+      const errorBox = $("#authError");
+      button.disabled = true;
+      button.textContent = "กำลังดำเนินการ...";
+      errorBox.classList.add("hidden");
+      try {
+        if (authMode === "signup") {
+          const result = await authRequest("signup", { email, password, data: { full_name: fullName } });
+          if (!result.access_token) {
+            showToast("สมัครสำเร็จ กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ");
+            setAuthMode("signin");
+            return;
+          }
+          saveSession(result);
+        } else {
+          saveSession(await authRequest("token?grant_type=password", { email, password }));
+        }
+        currentUser = await getCurrentUser();
+        updateAuthUI();
+        closeAuthModal();
+        showToast("เข้าสู่ระบบสำเร็จ");
+        await ensureApplicationContext();
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+        button.textContent = authMode === "signup" ? "สมัครสมาชิก" : "เข้าสู่ระบบ";
+      }
+    }
+
+    async function signOut() {
+      try {
+        if (authSession?.access_token) {
+          await fetch(SUPABASE_URL + "/auth/v1/logout", { method: "POST", headers: apiHeaders({}, true) });
+        }
+      } catch (_) {}
+      saveSession(null);
+      currentUser = null;
+      applicationContext = null;
+      Object.keys(selectedOfficialFiles).forEach((key) => delete selectedOfficialFiles[key]);
+      updateAuthUI();
+      showToast("ออกจากระบบแล้ว");
+    }
+
+    async function ensureApplicationContext() {
+      if (!currentUser) return false;
+      const applications = await apiRequest(
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,status&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&order=created_at.desc&limit=1",
+        { requireAuth: true }
+      );
+      if (applications?.length) {
+        applicationContext = applications[0];
+        await loadUploadedDocuments();
+        return true;
+      }
+      $("#onboardingModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      return false;
+    }
+
+    async function handleOnboarding(event) {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const button = $("#onboardingSubmit");
+      const errorBox = $("#onboardingError");
+      button.disabled = true;
+      button.textContent = "กำลังสร้าง...";
+      errorBox.classList.add("hidden");
+      try {
+        const families = await apiRequest(SUPABASE_URL + "/rest/v1/families", {
+          method: "POST",
+          requireAuth: true,
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            owner_user_id: currentUser.id,
+            family_name: String(data.get("familyName") || "").trim()
+          })
+        });
+        const students = await apiRequest(SUPABASE_URL + "/rest/v1/students", {
+          method: "POST",
+          requireAuth: true,
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            owner_user_id: currentUser.id,
+            family_id: families[0].id,
+            first_name: String(data.get("firstName") || "").trim(),
+            last_name: String(data.get("lastName") || "").trim() || null,
+            birth_date: String(data.get("birthDate") || "") || null
+          })
+        });
+        const applications = await apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications", {
+          method: "POST",
+          requireAuth: true,
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            owner_user_id: currentUser.id,
+            family_id: families[0].id,
+            student_id: students[0].id,
+            application_type: "permission_request"
+          })
+        });
+        applicationContext = applications[0];
+        $("#onboardingModal").classList.add("hidden");
+        document.body.style.overflow = "";
+        showToast("สร้างพื้นที่เอกสารเรียบร้อยแล้ว");
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+        button.textContent = "สร้างพื้นที่เอกสาร";
+      }
     }
 
     function setStatus(message, type = "info") {
@@ -1203,6 +1521,8 @@
       $("#pageEyebrow").textContent = "จัดการเอกสารราชการ";
       $("#pageTitle").textContent = "ยื่นขออนุญาตจัดการบ้านเรียน";
       showWorkflow("uploads");
+      if (!currentUser) openAuthModal();
+      else ensureApplicationContext().catch((error) => showToast(error.message));
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1221,18 +1541,123 @@
       $("#applicationProgress").textContent = percentage + "%";
     }
 
-    function handleOfficialFiles(files) {
-      if (!activeUploadKey || !files.length) return;
-      const fileList = Array.from(files);
-      selectedOfficialFiles[activeUploadKey] = fileList;
-      const row = $('[data-upload-row="' + activeUploadKey + '"]');
+    function renderUploadedRow(key, filenames) {
+      const row = $('[data-upload-row="' + key + '"]');
+      if (!row) return;
       const description = $(".upload-row-copy span", row);
       const button = $(".select-file-button", row);
       row.classList.add("has-file");
-      description.textContent = fileList.length === 1 ? fileList[0].name : fileList.length + " ไฟล์: " + fileList.map((file) => file.name).join(", ");
+      description.textContent = filenames.length === 1 ? filenames[0] : filenames.length + " ไฟล์: " + filenames.join(", ");
       button.textContent = "เปลี่ยนไฟล์";
+    }
+
+    async function loadUploadedDocuments() {
+      if (!applicationContext || !currentUser) return;
+      const records = await apiRequest(
+        SUPABASE_URL + "/rest/v1/official_documents?select=document_type,original_filename,storage_path&application_id=eq." + applicationContext.id + "&order=created_at.asc",
+        { requireAuth: true }
+      );
+      Object.keys(selectedOfficialFiles).forEach((key) => delete selectedOfficialFiles[key]);
+      Object.entries(DOCUMENT_TYPE_MAP).forEach(([key, type]) => {
+        const matches = records.filter((record) => record.document_type === type);
+        if (matches.length) {
+          selectedOfficialFiles[key] = matches;
+          renderUploadedRow(key, matches.map((record) => record.original_filename));
+        }
+      });
       refreshApplicationProgress();
-      showToast("เลือกไฟล์สำหรับรายการนี้แล้ว");
+    }
+
+    function safeFileExtension(file) {
+      const byName = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
+      if (["pdf", "jpg", "jpeg", "png"].includes(byName)) return byName;
+      if (file.type === "application/pdf") return "pdf";
+      if (file.type === "image/png") return "png";
+      return "jpg";
+    }
+
+    async function uploadOneOfficialFile(key, file) {
+      const documentType = DOCUMENT_TYPE_MAP[key];
+      const path = [
+        currentUser.id,
+        applicationContext.id,
+        documentType,
+        crypto.randomUUID() + "." + safeFileExtension(file)
+      ].join("/");
+
+      const uploadResponse = await fetch(
+        SUPABASE_URL + "/storage/v1/object/official-documents/" + path.split("/").map(encodeURIComponent).join("/"),
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: "Bearer " + authSession.access_token,
+            "Content-Type": file.type || "application/octet-stream",
+            "x-upsert": "false"
+          },
+          body: file
+        }
+      );
+      if (!uploadResponse.ok) {
+        const error = await uploadResponse.json().catch(() => ({}));
+        throw new Error(error.message || error.error || "อัปโหลดไฟล์ไม่สำเร็จ");
+      }
+
+      try {
+        await apiRequest(SUPABASE_URL + "/rest/v1/official_documents", {
+          method: "POST",
+          requireAuth: true,
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({
+            owner_user_id: currentUser.id,
+            application_id: applicationContext.id,
+            document_type: documentType,
+            storage_path: path,
+            original_filename: file.name,
+            mime_type: file.type || "application/octet-stream",
+            file_size_bytes: file.size
+          })
+        });
+      } catch (error) {
+        await fetch(
+          SUPABASE_URL + "/storage/v1/object/official-documents/" + path.split("/").map(encodeURIComponent).join("/"),
+          { method: "DELETE", headers: apiHeaders({}, true) }
+        ).catch(() => {});
+        throw error;
+      }
+    }
+
+    async function handleOfficialFiles(files) {
+      if (!activeUploadKey || !files.length) return;
+      const fileList = Array.from(files);
+      const row = $('[data-upload-row="' + activeUploadKey + '"]');
+      const button = $(".select-file-button", row);
+      row.classList.add("uploading");
+      button.disabled = true;
+      button.textContent = "กำลังอัปโหลด...";
+      try {
+        await refreshSessionIfNeeded();
+        if (!currentUser || !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อนอัปโหลด");
+        if (!applicationContext) {
+          const ready = await ensureApplicationContext();
+          if (!ready) throw new Error("กรุณากรอกข้อมูลครอบครัวและผู้เรียนก่อน");
+        }
+        for (const file of fileList) {
+          if (file.size > 10 * 1024 * 1024) throw new Error(file.name + " มีขนาดเกิน 10 MB");
+          if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
+            throw new Error(file.name + " ไม่ใช่ไฟล์ PDF, JPG หรือ PNG");
+          }
+          await uploadOneOfficialFile(activeUploadKey, file);
+        }
+        await loadUploadedDocuments();
+        showToast("อัปโหลดและบันทึกเอกสารสำเร็จ");
+      } catch (error) {
+        showToast(error.message);
+        button.textContent = selectedOfficialFiles[activeUploadKey] ? "เปลี่ยนไฟล์" : "เลือกไฟล์";
+      } finally {
+        row.classList.remove("uploading");
+        button.disabled = false;
+      }
     }
 
     function refreshProgress() {
@@ -1419,10 +1844,28 @@
     $("#documentGuide").addEventListener("click", () => showToast("คู่มือเตรียมเอกสารจะพัฒนาในขั้นตอนถัดไป"));
     $("#backToDocuments").addEventListener("click", () => showPage("portfolio"));
     $("#officialDocumentInput").addEventListener("change", (event) => handleOfficialFiles(event.target.files));
+    $("#authButton").addEventListener("click", () => currentUser ? signOut() : openAuthModal());
+    $("#closeAuthModal").addEventListener("click", closeAuthModal);
+    $("#authForm").addEventListener("submit", handleAuthSubmit);
+    $("#onboardingForm").addEventListener("submit", handleOnboarding);
+    $$("[data-auth-mode]").forEach((button) => button.addEventListener("click", () => setAuthMode(button.dataset.authMode)));
+    $("#authModal").addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) closeAuthModal();
+    });
 
     mountIcons();
     setThaiDate();
-    fetchTasks();
+    loadStoredSession();
+    Promise.all([
+      fetchTasks(),
+      getCurrentUser().then(async (user) => {
+        currentUser = user;
+        updateAuthUI();
+      }).catch(() => {
+        currentUser = null;
+        updateAuthUI();
+      })
+    ]);
   </script>
 </body>
 </html>
