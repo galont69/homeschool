@@ -2159,15 +2159,15 @@
     async function loadUploadedDocuments() {
       if (!applicationContext || !currentUser) return;
       const records = await apiRequest(
-        SUPABASE_URL + "/rest/v1/official_documents?select=document_type,original_filename,storage_path&application_id=eq." + applicationContext.id + "&order=created_at.asc",
+        SUPABASE_URL + "/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq." + applicationContext.id + "&order=created_at.desc",
         { requireAuth: true }
       );
       Object.keys(selectedOfficialFiles).forEach((key) => delete selectedOfficialFiles[key]);
       Object.entries(DOCUMENT_TYPE_MAP).forEach(([key, type]) => {
-        const matches = records.filter((record) => record.document_type === type);
-        if (matches.length) {
-          selectedOfficialFiles[key] = matches;
-          renderUploadedRow(key, matches.map((record) => record.original_filename));
+        const latest = records.find((record) => record.document_type === type);
+        if (latest) {
+          selectedOfficialFiles[key] = [latest];
+          renderUploadedRow(key, [latest.original_filename]);
         }
       });
       refreshApplicationProgress();
@@ -2209,10 +2209,10 @@
       }
 
       try {
-        await apiRequest(SUPABASE_URL + "/rest/v1/official_documents", {
+        const records = await apiRequest(SUPABASE_URL + "/rest/v1/official_documents", {
           method: "POST",
           requireAuth: true,
-          headers: { Prefer: "return=minimal" },
+          headers: { Prefer: "return=representation" },
           body: JSON.stringify({
             owner_user_id: currentUser.id,
             application_id: applicationContext.id,
@@ -2223,6 +2223,7 @@
             file_size_bytes: file.size
           })
         });
+        return records[0];
       } catch (error) {
         await fetch(
           SUPABASE_URL + "/storage/v1/object/official-documents/" + path.split("/").map(encodeURIComponent).join("/"),
@@ -2232,9 +2233,25 @@
       }
     }
 
+    async function deleteOfficialDocument(record) {
+      const storageResponse = await fetch(
+        SUPABASE_URL + "/storage/v1/object/official-documents/" + record.storage_path.split("/").map(encodeURIComponent).join("/"),
+        { method: "DELETE", headers: apiHeaders({}, true) }
+      );
+      if (!storageResponse.ok && storageResponse.status !== 404) {
+        const storageError = await storageResponse.json().catch(() => ({}));
+        throw new Error(storageError.message || storageError.error || "ลบไฟล์เดิมไม่สำเร็จ");
+      }
+      await apiRequest(SUPABASE_URL + "/rest/v1/official_documents?id=eq." + record.id + "&owner_user_id=eq." + currentUser.id, {
+        method: "DELETE",
+        requireAuth: true,
+        headers: { Prefer: "return=minimal" }
+      });
+    }
+
     async function handleOfficialFiles(files) {
       if (!activeUploadKey || !files.length) return;
-      const fileList = Array.from(files);
+      const file = files[files.length - 1];
       const row = $('[data-upload-row="' + activeUploadKey + '"]');
       const button = $(".select-file-button", row);
       row.classList.add("uploading");
@@ -2247,15 +2264,20 @@
           const ready = await ensureApplicationContext();
           if (!ready) throw new Error("กรุณากรอกข้อมูลครอบครัวและผู้เรียนก่อน");
         }
-        for (const file of fileList) {
-          if (file.size > 10 * 1024 * 1024) throw new Error(file.name + " มีขนาดเกิน 10 MB");
-          if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
-            throw new Error(file.name + " ไม่ใช่ไฟล์ PDF, JPG หรือ PNG");
-          }
-          await uploadOneOfficialFile(activeUploadKey, file);
+        if (file.size > 10 * 1024 * 1024) throw new Error(file.name + " มีขนาดเกิน 10 MB");
+        if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
+          throw new Error(file.name + " ไม่ใช่ไฟล์ PDF, JPG หรือ PNG");
         }
+        const documentType = DOCUMENT_TYPE_MAP[activeUploadKey];
+        const previousRecords = await apiRequest(
+          SUPABASE_URL + "/rest/v1/official_documents?select=id,storage_path&application_id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id + "&document_type=eq." + documentType,
+          { requireAuth: true }
+        );
+        const uploadedRecord = await uploadOneOfficialFile(activeUploadKey, file);
+        const oldRecords = previousRecords.filter((record) => record.id !== uploadedRecord?.id);
+        const cleanupResults = await Promise.allSettled(oldRecords.map(deleteOfficialDocument));
         await loadUploadedDocuments();
-        showToast("อัปโหลดและบันทึกเอกสารสำเร็จ");
+        showToast(cleanupResults.some((result) => result.status === "rejected") ? "บันทึกไฟล์ล่าสุดแล้ว และซ่อนไฟล์เดิมเรียบร้อย" : "อัปโหลดไฟล์ล่าสุดและแทนที่ไฟล์เดิมแล้ว");
       } catch (error) {
         showToast(error.message);
         button.textContent = selectedOfficialFiles[activeUploadKey] ? "เปลี่ยนไฟล์" : defaultUploadButtonLabel(activeUploadKey);

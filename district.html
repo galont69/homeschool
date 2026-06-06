@@ -217,9 +217,9 @@
       rows.forEach(row=>{
         const personKey=[row.application_id||"",documentPerson(row.document_type)].join("|");
         if(legacyDocumentTypes.has(row.document_type)&&peopleWithSplitDocuments.has(personKey))return;
-        const key=[row.application_id||"",row.storage_path||row.original_filename||row.id].join("|");
+        const key=[row.application_id||"",row.document_type].join("|");
         const existing=preferred.get(key);
-        if(!existing||legacyDocumentTypes.has(existing.document_type)&&!legacyDocumentTypes.has(row.document_type)){
+        if(!existing||new Date(row.created_at||0)>new Date(existing.created_at||0)){
           preferred.set(key,row);
         }
       });
@@ -266,12 +266,14 @@
     }
 
     function requiredDocumentRow(requirement,rows){
-      const matches=rows.filter(row=>row.document_type===requirement.type);
-      if(!matches.length){
+      const latest=rows
+        .filter(row=>row.document_type===requirement.type)
+        .sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0))[0];
+      if(!latest){
         return`<article class="document-row document-row-missing"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไม่มีไฟล์แนบ</span></div></article>`;
       }
-      const actions=matches.map(document=>`<div class="document-file-actions"><span class="document-file-name">${escapeHtml(document.original_filename)}</span><button class="document-open" type="button" data-storage-path="${escapeHtml(document.storage_path)}">เปิด / พิมพ์</button></div>`).join("");
-      return`<article class="document-row"><div><strong>${escapeHtml(requirement.label)}</strong><span>${matches.length} ไฟล์แนบ</span></div><div>${actions}</div></article>`;
+      const action=`<div class="document-file-actions"><span class="document-file-name">${escapeHtml(latest.original_filename)}</span><button class="document-open" type="button" data-storage-path="${escapeHtml(latest.storage_path)}">เปิด / พิมพ์</button></div>`;
+      return`<article class="document-row"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไฟล์แนบล่าสุด</span></div><div>${action}</div></article>`;
     }
 
     function documentGroup(category,items,applicationId,hasGeneratedRequest){
@@ -293,7 +295,8 @@
       $("#documentModal").classList.remove("hidden");$("#documentList").innerHTML='<div class="empty">กำลังโหลดเอกสาร...</div>';
       try{
         const application=applications.find(x=>x.id===applicationId);
-        const rows=await api("/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.asc");
+        const records=await api("/rest/v1/official_documents?select=id,application_id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.desc");
+        const rows=uniqueDocuments(records);
         const generatedRequest=hasRequestForm(application);
         $("#documentList").innerHTML=documentCategories.map(category=>{
           const items=rows.filter(row=>documentCategory(row.document_type)===category.id);
