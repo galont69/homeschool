@@ -17,7 +17,7 @@
     .dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:24px}.dashboard-head h1{margin:0;font-size:clamp(28px,4vw,38px)}.dashboard-head p{margin:5px 0 0;color:var(--sub)}.readonly{padding:7px 11px;color:var(--brand);background:var(--soft);border-radius:999px;font-size:11px;font-weight:800}
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-bottom:20px}.stat{padding:21px}.stat span{color:var(--sub);font-size:12px}.stat strong{display:block;margin-top:7px;font-size:31px}.stat small{color:var(--sub)}
     .list-card{padding:clamp(18px,3vw,26px)}.list-head{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}.list-head h2{margin:0}.search{min-height:40px;padding:0 12px;border:1px solid var(--line);border-radius:11px;outline:none}.applications{display:grid;gap:10px}.application{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:15px;padding:15px;background:#f8f9fb;border-radius:16px}.application strong,.application span{display:block}.application span{margin-top:3px;color:var(--sub);font-size:12px}.view{padding:9px 13px;color:var(--brand);background:#fff;border:1px solid #cdd9ec;border-radius:11px;cursor:pointer;font-size:12px;font-weight:800}.empty{padding:35px;color:var(--sub);text-align:center}
-    .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(20,27,40,.48);backdrop-filter:blur(5px)}.modal-card{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px;background:#fff;border-radius:23px;box-shadow:0 28px 80px rgba(20,27,40,.24)}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.modal-head h2{margin:0}.close{display:grid;place-items:center;width:38px;height:38px;background:var(--paper);border:0;border-radius:11px;cursor:pointer;font-size:20px}.document-list{display:grid;gap:14px}.document-group{overflow:hidden;border:1px solid var(--line);border-radius:17px}.document-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--soft)}.document-group-head h3{margin:0;color:var(--brand-dark);font-size:15px}.document-group-head span{padding:4px 8px;color:var(--brand);background:#fff;border-radius:999px;font-size:10px;font-weight:800}.document-group-body{display:grid;gap:8px;padding:10px}.document-subgroup{padding:6px 3px 0;color:var(--sub);font-size:11px;font-weight:800}.document-group-empty{padding:16px;color:var(--sub);text-align:center;font-size:12px}.document-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px;background:#f8f9fb;border-radius:14px}.document-row strong,.document-row span{display:block}.document-row span{margin-top:3px;color:var(--sub);font-size:11px}.document-open{padding:8px 11px;color:#fff;background:var(--brand);border:0;border-radius:10px;cursor:pointer;font-size:11px;font-weight:800}
+    .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(20,27,40,.48);backdrop-filter:blur(5px)}.modal-card{width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;padding:24px;background:#fff;border-radius:23px;box-shadow:0 28px 80px rgba(20,27,40,.24)}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:17px}.modal-head h2{margin:0}.close{display:grid;place-items:center;width:38px;height:38px;background:var(--paper);border:0;border-radius:11px;cursor:pointer;font-size:20px}.document-list{display:grid;gap:14px}.document-group{overflow:hidden;border:1px solid var(--line);border-radius:17px}.document-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;background:var(--soft)}.document-group-head h3{margin:0;color:var(--brand-dark);font-size:15px}.document-group-head span{padding:4px 8px;color:var(--brand);background:#fff;border-radius:999px;font-size:10px;font-weight:800}.document-group-body{display:grid;gap:8px;padding:10px}.document-subgroup{padding:6px 3px 0;color:var(--sub);font-size:11px;font-weight:800}.document-group-empty{padding:16px;color:var(--sub);text-align:center;font-size:12px}.document-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px;background:#f8f9fb;border-radius:14px}.document-row strong,.document-row span{display:block}.document-row span{margin-top:3px;color:var(--sub);font-size:11px}.document-row-missing{background:#fbfbfc;border:1px dashed #dfe3ea}.document-row-missing span{color:#989ca8}.document-file-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px}.document-file-name{max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--sub);font-size:10px}.document-open{padding:8px 11px;color:#fff;background:var(--brand);border:0;border-radius:10px;cursor:pointer;font-size:11px;font-weight:800}
     @media(max-width:650px){.container{width:min(100% - 24px,1080px);padding-top:20px}.form-row,.stats{grid-template-columns:1fr}.dashboard-head{align-items:flex-start;flex-direction:column}.list-head{align-items:stretch;flex-direction:column}.application{grid-template-columns:1fr}.view{width:100%}.topbar{padding:12px 14px}.brand small{display:none}}
   </style>
 </head>
@@ -204,14 +204,19 @@
 
     function uniqueDocuments(rows){
       const preferred=new Map();
-      const modernFiles=new Set(rows.filter(row=>!legacyDocumentTypes.has(row.document_type)).map(row=>[
-        row.application_id||"",
-        documentPerson(row.document_type),
-        row.original_filename||""
-      ].join("|")));
+      const peopleWithSplitDocuments=new Set(
+        rows
+          .filter(row=>!legacyDocumentTypes.has(row.document_type)&&[
+            "father_house_registration","father_national_id",
+            "mother_house_registration","mother_national_id",
+            "education_manager_house_registration","education_manager_national_id",
+            "student_house_registration","student_national_id"
+          ].includes(row.document_type))
+          .map(row=>[row.application_id||"",documentPerson(row.document_type)].join("|"))
+      );
       rows.forEach(row=>{
-        const modernKey=[row.application_id||"",documentPerson(row.document_type),row.original_filename||""].join("|");
-        if(legacyDocumentTypes.has(row.document_type)&&modernFiles.has(modernKey))return;
+        const personKey=[row.application_id||"",documentPerson(row.document_type)].join("|");
+        if(legacyDocumentTypes.has(row.document_type)&&peopleWithSplitDocuments.has(personKey))return;
         const key=[row.application_id||"",row.storage_path||row.original_filename||row.id].join("|");
         const existing=preferred.get(key);
         if(!existing||legacyDocumentTypes.has(existing.document_type)&&!legacyDocumentTypes.has(row.document_type)){
@@ -226,6 +231,20 @@
       {id:"plan",title:"แผนการศึกษา"},
       {id:"assessment",title:"เอกสารประเมินผล"},
       {id:"supporting",title:"เอกสารประกอบการยื่นขออนุญาต"}
+    ];
+
+    const requiredSupportingDocuments=[
+      {type:"father_national_id",label:"สำเนาบัตรประชาชนของบิดา"},
+      {type:"father_house_registration",label:"สำเนาทะเบียนบ้านบิดา"},
+      {type:"mother_national_id",label:"สำเนาบัตรประชาชนของมารดา"},
+      {type:"mother_house_registration",label:"สำเนาทะเบียนบ้านมารดา"},
+      {type:"education_manager_national_id",label:"สำเนาบัตรประชนผู้จัดการศึกษา"},
+      {type:"education_manager_house_registration",label:"สำเนาทะเบียนบ้านผู้จัดการศึกษา"},
+      {type:"student_national_id",label:"สำเนาบัตรประชนผู้เรียน"},
+      {type:"student_house_registration",label:"สำเนาทะเบียนบ้านผู้เรียน"},
+      {type:"student_birth_certificate",label:"สำเนาสูติบัตรผู้เรียน"},
+      {type:"education_location",label:"แผนที่ ที่ตั้ง และแผนผังสถานที่จัดการศึกษา"},
+      {type:"education_manager_qualification",label:"สำเนาหลักฐานวุฒิการศึกษาของผู้จัดการศึกษา"}
     ];
 
     function documentCategory(type){
@@ -246,20 +265,27 @@
       return`<article class="document-row"><div><strong>${escapeHtml(documentLabels[document.document_type]||"เอกสารประกอบ")}</strong><span>${escapeHtml(document.original_filename)}</span></div><button class="document-open" type="button" data-storage-path="${escapeHtml(document.storage_path)}">เปิด / พิมพ์</button></article>`;
     }
 
+    function requiredDocumentRow(requirement,rows){
+      const matches=rows.filter(row=>row.document_type===requirement.type);
+      if(!matches.length){
+        return`<article class="document-row document-row-missing"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไม่มีไฟล์แนบ</span></div></article>`;
+      }
+      const actions=matches.map(document=>`<div class="document-file-actions"><span class="document-file-name">${escapeHtml(document.original_filename)}</span><button class="document-open" type="button" data-storage-path="${escapeHtml(document.storage_path)}">เปิด / พิมพ์</button></div>`).join("");
+      return`<article class="document-row"><div><strong>${escapeHtml(requirement.label)}</strong><span>${matches.length} ไฟล์แนบ</span></div><div>${actions}</div></article>`;
+    }
+
     function documentGroup(category,items,applicationId,hasGeneratedRequest){
       let content="";
       if(category.id==="permission"){
         content=(hasGeneratedRequest?`<article class="document-row"><div><strong>แบบยื่นขออนุญาตจัดการบ้านเรียน</strong><span>แบบคำขอที่ผู้ปกครองกรอกและบันทึกในระบบ</span></div><button class="document-open" type="button" data-request-form="${escapeHtml(applicationId)}">เปิด / พิมพ์</button></article>`:"")+items.map(documentRow).join("");
-      }else if(category.id==="supporting"&&items.length){
-        const subgroupOrder=["เอกสารส่วนตัว","หลักฐานวุฒิและการศึกษา","สถานที่และรูปถ่าย"];
-        content=subgroupOrder.map(subgroup=>{
-          const subgroupItems=items.filter(item=>supportingSubgroup(item.document_type)===subgroup);
-          return subgroupItems.length?`<div class="document-subgroup">${subgroup}</div>${subgroupItems.map(documentRow).join("")}`:"";
-        }).join("");
+      }else if(category.id==="supporting"){
+        content=requiredSupportingDocuments.map(requirement=>requiredDocumentRow(requirement,items)).join("");
       }else{
         content=items.map(documentRow).join("");
       }
-      const count=items.length+(category.id==="permission"&&hasGeneratedRequest?1:0);
+      const count=category.id==="supporting"
+        ?requiredSupportingDocuments.filter(requirement=>items.some(item=>item.document_type===requirement.type)).length
+        :items.length+(category.id==="permission"&&hasGeneratedRequest?1:0);
       return`<section class="document-group"><div class="document-group-head"><h3>${escapeHtml(category.title)}</h3><span>${count} รายการ</span></div><div class="document-group-body">${content||'<div class="document-group-empty">ยังไม่มีเอกสารในหมวดนี้</div>'}</div></section>`;
     }
 
@@ -267,8 +293,7 @@
       $("#documentModal").classList.remove("hidden");$("#documentList").innerHTML='<div class="empty">กำลังโหลดเอกสาร...</div>';
       try{
         const application=applications.find(x=>x.id===applicationId);
-        const records=await api("/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.asc");
-        const rows=uniqueDocuments(records);
+        const rows=await api("/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.asc");
         const generatedRequest=hasRequestForm(application);
         $("#documentList").innerHTML=documentCategories.map(category=>{
           const items=rows.filter(row=>documentCategory(row.document_type)===category.id);
