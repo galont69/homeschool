@@ -360,6 +360,100 @@
 
     .bottom-nav { display: none; }
 
+    .documents-page { display: grid; gap: 22px; }
+    .documents-hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(24px, 4vw, 38px);
+      background: linear-gradient(135deg, #514ddc, #706cf0);
+      border: 0;
+      color: #fff;
+    }
+    .documents-hero::after {
+      position: absolute;
+      top: -90px;
+      right: -55px;
+      width: 270px;
+      height: 270px;
+      border: 45px solid rgba(255, 255, 255, .08);
+      border-radius: 50%;
+      content: "";
+    }
+    .documents-hero-copy { position: relative; z-index: 1; max-width: 650px; }
+    .documents-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 16px;
+      padding: 7px 11px;
+      background: rgba(255, 255, 255, .14);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .documents-hero-badge svg { width: 16px; height: 16px; }
+    .documents-hero h2 { font-size: clamp(25px, 3vw, 34px); }
+    .documents-hero p { margin: 10px 0 0; color: rgba(255, 255, 255, .82); line-height: 1.75; }
+    .document-section-head { display: flex; align-items: end; justify-content: space-between; gap: 15px; }
+    .document-section-head p { margin: 4px 0 0; color: var(--sub); font-size: 13px; }
+    .plan-badge { padding: 7px 11px; color: var(--brand); background: var(--brand-soft); border-radius: 999px; font-size: 11px; font-weight: 800; }
+    .document-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .document-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 360px;
+      padding: clamp(20px, 3vw, 27px);
+    }
+    .document-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; }
+    .document-icon {
+      display: grid;
+      place-items: center;
+      width: 55px;
+      height: 55px;
+      color: var(--brand);
+      background: var(--brand-soft);
+      border-radius: 18px;
+    }
+    .document-card:nth-child(2) .document-icon { color: var(--mint); background: var(--mint-soft); }
+    .document-icon svg { width: 27px; height: 27px; }
+    .document-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      color: #697080;
+      background: #f3f3f6;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .document-status svg { width: 14px; height: 14px; }
+    .document-card h3 { margin: 19px 0 7px; font-size: 20px; line-height: 1.45; }
+    .document-card > p { margin: 0; color: var(--sub); font-size: 13px; line-height: 1.7; }
+    .document-checklist { display: grid; gap: 9px; margin: 20px 0 24px; padding: 0; list-style: none; }
+    .document-checklist li { display: flex; align-items: flex-start; gap: 9px; color: #555967; font-size: 13px; }
+    .document-checklist svg { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 1px; color: var(--mint); }
+    .document-card .primary-button, .document-card .secondary-button { width: 100%; margin-top: auto; }
+    .document-help {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 15px;
+      padding: 19px 22px;
+    }
+    .document-help-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      color: var(--brand);
+      background: var(--brand-soft);
+      border-radius: 14px;
+    }
+    .document-help-icon svg { width: 21px; height: 21px; }
+    .document-help strong { display: block; font-size: 14px; }
+    .document-help p { margin: 3px 0 0; color: var(--sub); font-size: 12px; }
+
     .modal {
       position: fixed;
       inset: 0;
@@ -442,6 +536,8 @@
       .schedule-card { padding: 20px 16px; }
       .right-column { gap: 16px; }
       .upload-card, .network-card { padding: 20px; }
+      .document-grid { grid-template-columns: 1fr; }
+      .document-card { min-height: 0; }
       .bottom-nav {
         position: fixed;
         right: 0;
@@ -472,6 +568,11 @@
       .task-name { font-size: 15px; }
       .task-detail { font-size: 12px; }
       .form-row { grid-template-columns: 105px 1fr; }
+      .documents-hero { padding: 24px 20px; }
+      .documents-hero p { font-size: 13px; }
+      .document-section-head { align-items: flex-start; flex-direction: column; }
+      .document-help { grid-template-columns: auto minmax(0, 1fr); }
+      .document-help .secondary-button { grid-column: 1 / -1; width: 100%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -501,8 +602,8 @@
     <main class="main">
       <header class="topbar">
         <div>
-          <p class="eyebrow" id="greeting">สวัสดี</p>
-          <h1>คุณกานต์ ใจดี</h1>
+          <p class="eyebrow" id="pageEyebrow">สวัสดี</p>
+          <h1 id="pageTitle">คุณกานต์ ใจดี</h1>
         </div>
         <div class="top-actions">
           <span class="member-pill">PRO MEMBER</span>
@@ -511,7 +612,7 @@
         </div>
       </header>
 
-      <div class="dashboard-grid">
+      <div class="dashboard-grid" id="homePage">
         <section class="card schedule-card" aria-labelledby="schedule-title">
           <div class="card-head">
             <div>
@@ -553,12 +654,71 @@
           </section>
         </div>
       </div>
+
+      <section class="documents-page hidden" id="documentsPage" aria-labelledby="documents-title">
+        <div class="card documents-hero">
+          <div class="documents-hero-copy">
+            <span class="documents-hero-badge"><span data-icon="shield"></span>สำหรับสมาชิก Plus และ Pro</span>
+            <h2 id="documents-title">เอกสารราชการ ทำให้ง่ายในที่เดียว</h2>
+            <p>กรอกข้อมูลครอบครัวและผู้เรียนครั้งเดียว ระบบจะช่วยจัดทำเอกสารตามขั้นตอน พร้อมตรวจความครบถ้วนก่อนดาวน์โหลด</p>
+          </div>
+        </div>
+
+        <div class="document-section-head">
+          <div>
+            <h2>เลือกเอกสารที่ต้องการสร้าง</h2>
+            <p>ระบบจะบันทึกร่างอัตโนมัติ คุณสามารถกลับมาทำต่อได้ภายหลัง</p>
+          </div>
+          <span class="plan-badge">2 แบบฟอร์ม</span>
+        </div>
+
+        <div class="document-grid">
+          <article class="card document-card">
+            <div class="document-card-top">
+              <div class="document-icon" data-icon="fileText"></div>
+              <span class="document-status"><span data-icon="clock"></span>ยังไม่เริ่ม</span>
+            </div>
+            <h3>สร้างเอกสารยื่นขออนุญาตการจัดการบ้านเรียน</h3>
+            <p>สำหรับครอบครัวที่ต้องการยื่นคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัวต่อเขตพื้นที่การศึกษา</p>
+            <ul class="document-checklist">
+              <li><span data-icon="checkCircle"></span>ข้อมูลครอบครัวและผู้เรียน</li>
+              <li><span data-icon="checkCircle"></span>แผนการจัดการศึกษาและหลักสูตร</li>
+              <li><span data-icon="checkCircle"></span>รายการเอกสารประกอบคำขอ</li>
+            </ul>
+            <button class="primary-button document-action" type="button" data-document="permission">เริ่มสร้างเอกสาร <span data-icon="arrowRight"></span></button>
+          </article>
+
+          <article class="card document-card">
+            <div class="document-card-top">
+              <div class="document-icon" data-icon="clipboard"></div>
+              <span class="document-status"><span data-icon="clock"></span>ยังไม่เริ่ม</span>
+            </div>
+            <h3>สร้างแบบประเมินประจำปี</h3>
+            <p>รวบรวมผลการเรียนรู้ พัฒนาการ และหลักฐานผลงาน เพื่อจัดทำรายงานประเมินผลประจำปี</p>
+            <ul class="document-checklist">
+              <li><span data-icon="checkCircle"></span>สรุปผลตามกลุ่มสาระการเรียนรู้</li>
+              <li><span data-icon="checkCircle"></span>พัฒนาการและคุณลักษณะผู้เรียน</li>
+              <li><span data-icon="checkCircle"></span>แนบผลงานและร่องรอยการเรียนรู้</li>
+            </ul>
+            <button class="secondary-button document-action" type="button" data-document="annual">เริ่มสร้างแบบประเมิน <span data-icon="arrowRight"></span></button>
+          </article>
+        </div>
+
+        <div class="card document-help">
+          <div class="document-help-icon" data-icon="book"></div>
+          <div>
+            <strong>ไม่แน่ใจว่าต้องเตรียมอะไรบ้าง?</strong>
+            <p>ดูรายการเอกสารและข้อมูลที่ควรเตรียมก่อนเริ่มกรอกแบบฟอร์ม</p>
+          </div>
+          <button class="secondary-button" id="documentGuide" type="button">ดูคู่มือเตรียมเอกสาร</button>
+        </div>
+      </section>
     </main>
 
     <nav class="bottom-nav" aria-label="เมนูด้านล่าง">
       <button class="nav-button active" type="button" data-page="home"><span data-icon="grid"></span><span>หน้าหลัก</span></button>
       <button class="nav-button" type="button" data-page="store"><span data-icon="store"></span><span>ร้านค้า</span></button>
-      <button class="nav-button" type="button" data-page="portfolio"><span data-icon="folder"></span><span>จัดการเอกสารราชการ</span></button>
+      <button class="nav-button" type="button" data-page="portfolio"><span data-icon="folder"></span><span>เอกสาร</span></button>
       <button class="nav-button" type="button" data-page="settings"><span data-icon="settings"></span><span>ตั้งค่า</span></button>
     </nav>
   </div>
@@ -622,7 +782,13 @@
       sprout: '<path d="M12 22V9"/><path d="M7 12c-3 0-5-2-5-5 3 0 5 2 5 5Zm5-3c0-4 3-7 7-7 0 4-3 7-7 7Z"/><path d="M5 22h14"/>',
       activity: '<path d="M3 12h4l2-7 4 14 2-7h6"/>',
       star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/>',
-      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'
+      calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+      fileText: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/>',
+      clipboard: '<rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V2h6v2M9 10h6M9 14h6M9 18h4"/>',
+      shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>',
+      clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+      checkCircle: '<circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/>',
+      arrowRight: '<path d="M5 12h14M14 7l5 5-5 5"/>'
     };
 
     const subjectStyles = {
@@ -714,7 +880,23 @@
         year: "numeric"
       }).format(now);
       const hour = now.getHours();
-      $("#greeting").textContent = hour < 12 ? "สวัสดีตอนเช้า," : hour < 17 ? "สวัสดีตอนบ่าย," : "สวัสดีตอนเย็น,";
+      $("#pageEyebrow").textContent = hour < 12 ? "สวัสดีตอนเช้า," : hour < 17 ? "สวัสดีตอนบ่าย," : "สวัสดีตอนเย็น,";
+    }
+
+    function showPage(page) {
+      const isDocuments = page === "portfolio";
+      $("#homePage").classList.toggle("hidden", isDocuments);
+      $("#documentsPage").classList.toggle("hidden", !isDocuments);
+
+      if (isDocuments) {
+        $("#pageEyebrow").textContent = "เครื่องมือสำหรับผู้ปกครอง";
+        $("#pageTitle").textContent = "จัดการเอกสารราชการ";
+      } else {
+        setThaiDate();
+        $("#pageTitle").textContent = "คุณกานต์ ใจดี";
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function refreshProgress() {
@@ -848,7 +1030,19 @@
       const navButton = event.target.closest("[data-page]");
       if (navButton) {
         $$("[data-page]").forEach((button) => button.classList.toggle("active", button.dataset.page === navButton.dataset.page));
-        if (navButton.dataset.page !== "home") showToast("ส่วนนี้จะพัฒนาในขั้นตอนถัดไป");
+        if (navButton.dataset.page === "home" || navButton.dataset.page === "portfolio") {
+          showPage(navButton.dataset.page);
+        } else {
+          showToast("ส่วนนี้จะพัฒนาในขั้นตอนถัดไป");
+        }
+      }
+
+      const documentAction = event.target.closest(".document-action");
+      if (documentAction) {
+        const label = documentAction.dataset.document === "permission"
+          ? "แบบยื่นขออนุญาตจัดการบ้านเรียน"
+          : "แบบประเมินประจำปี";
+        showToast("ขั้นตอนต่อไป: สร้างแบบฟอร์ม " + label);
       }
     });
 
@@ -867,6 +1061,7 @@
       if (event.target.files[0]) showToast("เลือกไฟล์แล้ว ระบบอัปโหลดจะเชื่อมต่อในขั้นตอน Portfolio");
     });
     $("#findFriends").addEventListener("click", () => showToast("แผนที่จะเปิดเมื่อผู้ใช้ยินยอมแชร์พื้นที่โดยประมาณ"));
+    $("#documentGuide").addEventListener("click", () => showToast("คู่มือเตรียมเอกสารจะพัฒนาในขั้นตอนถัดไป"));
 
     mountIcons();
     setThaiDate();
