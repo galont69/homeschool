@@ -443,6 +443,53 @@
     .documents-hero-badge svg { width: 16px; height: 16px; }
     .documents-hero h2 { font-size: clamp(25px, 3vw, 34px); }
     .documents-hero p { margin: 10px 0 0; color: rgba(255, 255, 255, .82); line-height: 1.75; }
+    .official-process-alert {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      padding: 20px 22px;
+      background: #fff9e9;
+      border: 1px solid #f1d68d;
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(134, 99, 24, .08);
+    }
+    .official-process-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      color: #9b6814;
+      background: #ffedbd;
+      border-radius: 15px;
+    }
+    .official-process-icon svg { width: 24px; height: 24px; }
+    .official-process-alert h3 { margin: 0; color: #6e4808; font-size: 18px; }
+    .official-process-alert > div > p { margin: 6px 0 0; color: #65583f; font-size: 13px; line-height: 1.75; }
+    .official-process-steps { display: grid; gap: 8px; margin: 15px 0 0; padding: 0; list-style: none; }
+    .official-process-steps li { display: flex; align-items: flex-start; gap: 9px; color: #544934; font-size: 12px; line-height: 1.55; }
+    .official-process-number {
+      display: grid;
+      place-items: center;
+      flex: 0 0 24px;
+      width: 24px;
+      height: 24px;
+      color: #fff;
+      background: #b47b1c;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .official-process-warning {
+      margin-top: 15px;
+      padding: 11px 13px;
+      color: #8b2e2e;
+      background: #fff;
+      border-left: 4px solid #d94a4a;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.6;
+    }
     .document-section-head { display: flex; align-items: end; justify-content: space-between; gap: 15px; }
     .document-section-head p { margin: 4px 0 0; color: var(--sub); font-size: 13px; }
     .plan-badge { padding: 7px 11px; color: var(--brand); background: var(--brand-soft); border-radius: 999px; font-size: 11px; font-weight: 800; }
@@ -792,6 +839,7 @@
       .form-row { grid-template-columns: 105px 1fr; }
       .documents-hero { padding: 24px 20px; }
       .documents-hero p { font-size: 13px; }
+      .official-process-alert { grid-template-columns: 1fr; padding: 18px; }
       .document-section-head { align-items: flex-start; flex-direction: column; }
       .document-help { grid-template-columns: auto minmax(0, 1fr); }
       .document-help .secondary-button { grid-column: 1 / -1; width: 100%; }
@@ -917,6 +965,21 @@
             <p>กรอกข้อมูลครอบครัวและผู้เรียนครั้งเดียว ระบบจะช่วยจัดทำเอกสารตามขั้นตอน พร้อมตรวจความครบถ้วนก่อนดาวน์โหลด</p>
           </div>
         </div>
+
+        <section class="official-process-alert" aria-labelledby="official-process-title">
+          <div class="official-process-icon" data-icon="bell"></div>
+          <div>
+            <h3 id="official-process-title">ขั้นตอนสำคัญก่อนยื่นขออนุญาตจัดการศึกษาบ้านเรียน</h3>
+            <p>ผู้ปกครองหรือผู้จัดการศึกษาต้องติดต่อขอรับคำปรึกษาจาก <strong>กลุ่มส่งเสริมการจัดการศึกษา</strong> ณ สำนักงานเขตพื้นที่การศึกษาที่รับผิดชอบตามพื้นที่อยู่อาศัยก่อนเริ่มกระบวนการยื่นคำขอ</p>
+            <ol class="official-process-steps">
+              <li><span class="official-process-number">1</span><span>ติดต่อกลุ่มส่งเสริมการจัดการศึกษา ณ สำนักงานเขตพื้นที่การศึกษาประถมศึกษา (สพป.) หรือสำนักงานเขตพื้นที่การศึกษามัธยมศึกษา (สพม.) ที่รับผิดชอบพื้นที่ของคุณ</span></li>
+              <li><span class="official-process-number">2</span><span>ขอรับคำปรึกษาเกี่ยวกับขั้นตอน คุณสมบัติ แผนการจัดการศึกษา และรายการเอกสารที่เขตพื้นที่กำหนด</span></li>
+              <li><span class="official-process-number">3</span><span>ใช้เว็บไซต์นี้ช่วยจัดเตรียมข้อมูล แบบคำขอ แผนการศึกษา และตรวจความครบถ้วนของเอกสาร</span></li>
+              <li><span class="official-process-number">4</span><span>ยื่นคำขอและเอกสารตามช่องทาง วันเวลา และวิธีการที่สำนักงานเขตพื้นที่การศึกษาแจ้งให้ทราบ</span></li>
+            </ol>
+            <div class="official-process-warning">เว็บไซต์ Homeschool เป็นเครื่องมือช่วยจัดเตรียมเอกสารเท่านั้น ไม่ใช่ช่องทางยื่นคำขออนุญาตต่อหน่วยงานราชการ และไม่สามารถใช้แทนการติดต่อสำนักงานเขตพื้นที่การศึกษาได้</div>
+          </div>
+        </section>
 
         <div class="document-section-head">
           <div>

@@ -262,7 +262,7 @@
     }
 
     function documentRow(document){
-      return`<article class="document-row"><div><strong>${escapeHtml(documentLabels[document.document_type]||"เอกสารประกอบ")}</strong><span>${escapeHtml(document.original_filename)}</span></div><button class="document-open" type="button" data-storage-path="${escapeHtml(document.storage_path)}">เปิด / พิมพ์</button></article>`;
+      return`<article class="document-row"><div><strong>${escapeHtml(documentLabels[document.document_type]||"เอกสารประกอบ")}</strong><span>${escapeHtml(document.original_filename)}</span></div><button class="document-open" type="button" data-storage-path="${escapeHtml(document.storage_path)}" data-filename="${escapeHtml(document.original_filename)}">เปิด / พิมพ์</button></article>`;
     }
 
     function requiredDocumentRow(requirement,rows){
@@ -272,7 +272,7 @@
       if(!latest){
         return`<article class="document-row document-row-missing"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไม่มีไฟล์แนบ</span></div></article>`;
       }
-      const action=`<div class="document-file-actions"><span class="document-file-name">${escapeHtml(latest.original_filename)}</span><button class="document-open" type="button" data-storage-path="${escapeHtml(latest.storage_path)}">เปิด / พิมพ์</button></div>`;
+      const action=`<div class="document-file-actions"><span class="document-file-name">${escapeHtml(latest.original_filename)}</span><button class="document-open" type="button" data-storage-path="${escapeHtml(latest.storage_path)}" data-filename="${escapeHtml(latest.original_filename)}">เปิด / พิมพ์</button></div>`;
       return`<article class="document-row"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไฟล์แนบล่าสุด</span></div><div>${action}</div></article>`;
     }
 
@@ -406,9 +406,47 @@
       printWindow.focus();
     }
 
-    async function openDocument(path,button){
+    function absoluteSignedUrl(value){
+      if(/^https?:\/\//i.test(value))return value;
+      if(value.startsWith("/storage/v1/"))return SUPABASE_URL+value;
+      if(value.startsWith("/object/"))return SUPABASE_URL+"/storage/v1"+value;
+      return SUPABASE_URL+"/storage/v1/"+value.replace(/^\/+/,"");
+    }
+
+    function previewDocument(previewWindow,blobUrl,mimeType,filename){
+      const isImage=mimeType.startsWith("image/");
+      const content=isImage
+        ?`<img class="image-preview" src="${blobUrl}" alt="${escapeHtml(filename)}">`
+        :`<iframe class="file-preview" src="${blobUrl}" title="${escapeHtml(filename)}"></iframe>`;
+      previewWindow.document.open();
+      previewWindow.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>${escapeHtml(filename)}</title><style>
+        *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Noto Sans Thai",Tahoma,sans-serif;background:#eef2f7;color:#171923}
+        .toolbar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;background:#fff;border-bottom:1px solid #dfe5ee}
+        .toolbar strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.actions{display:flex;gap:8px;flex-shrink:0}
+        button,a{padding:9px 13px;border:0;border-radius:9px;font-family:inherit;font-size:13px;font-weight:700;text-decoration:none;cursor:pointer}
+        button{color:#fff;background:#3867b7}a{color:#3867b7;background:#eaf1fc}
+        main{display:grid;place-items:center;min-height:calc(100vh - 62px);padding:18px}.image-preview{display:block;max-width:100%;max-height:calc(100vh - 98px);object-fit:contain;background:#fff;box-shadow:0 8px 30px rgba(30,45,65,.15)}
+        .file-preview{width:min(1100px,100%);height:calc(100vh - 98px);border:0;background:#fff}
+        @media print{.toolbar{display:none}main{padding:0;min-height:0;background:#fff}.image-preview{width:100%;max-width:none;max-height:none;box-shadow:none}.file-preview{width:100%;height:100vh}}
+      </style></head><body><header class="toolbar"><strong>${escapeHtml(filename)}</strong><div class="actions"><a href="${blobUrl}" download="${escapeHtml(filename)}">ดาวน์โหลด</a><button onclick="window.print()">พิมพ์เอกสาร</button></div></header><main>${content}</main></body></html>`);
+      previewWindow.document.close();
+      previewWindow.addEventListener("beforeunload",()=>URL.revokeObjectURL(blobUrl),{once:true});
+    }
+
+    async function openDocument(path,filename,button){
+      const previewWindow=window.open("","_blank");
+      if(!previewWindow){alert("เบราว์เซอร์บล็อกหน้าต่างเอกสาร กรุณาอนุญาต Pop-up");return}
+      previewWindow.document.write('<!doctype html><html lang="th"><meta charset="utf-8"><title>กำลังเปิดเอกสาร</title><body style="font-family:Tahoma,sans-serif;padding:30px">กำลังโหลดเอกสาร...</body></html>');
       button.disabled=true;button.textContent="กำลังเปิด...";
-      try{const result=await api("/storage/v1/object/sign/official-documents/"+path.split("/").map(encodeURIComponent).join("/"),{method:"POST",body:JSON.stringify({expiresIn:300})});const signedUrl=result.signedURL||result.signedUrl;if(!signedUrl)throw new Error("สร้างลิงก์เอกสารไม่ได้");window.open(SUPABASE_URL+"/storage/v1"+signedUrl,"_blank","noopener")}catch(error){alert(error.message)}finally{button.disabled=false;button.textContent="เปิด / พิมพ์"}
+      try{
+        const result=await api("/storage/v1/object/sign/official-documents/"+path.split("/").map(encodeURIComponent).join("/"),{method:"POST",body:JSON.stringify({expiresIn:300})});
+        const signedUrl=result.signedURL||result.signedUrl;
+        if(!signedUrl)throw new Error("สร้างลิงก์เอกสารไม่ได้");
+        const response=await fetch(absoluteSignedUrl(signedUrl));
+        if(!response.ok)throw new Error("เปิดไฟล์เอกสารไม่ได้");
+        const blob=await response.blob();
+        previewDocument(previewWindow,URL.createObjectURL(blob),blob.type||"application/octet-stream",filename||"เอกสาร");
+      }catch(error){previewWindow.close();alert(error.message)}finally{button.disabled=false;button.textContent="เปิด / พิมพ์"}
     }
 
     $("#officerForm").addEventListener("submit",submitProfile);
@@ -417,7 +455,7 @@
     $("#searchInput").addEventListener("input",event=>{const q=event.target.value.trim().toLowerCase();renderApplications(applications.filter(x=>[x.student?.first_name,x.student?.last_name].join(" ").toLowerCase().includes(q)))});
     $("#closeDocumentModal").addEventListener("click",()=>$("#documentModal").classList.add("hidden"));
     $("#documentModal").addEventListener("click",event=>{if(event.target===event.currentTarget)event.currentTarget.classList.add("hidden")});
-    document.addEventListener("click",event=>{const appButton=event.target.closest("[data-application]");if(appButton)showDocuments(appButton.dataset.application);const requestButton=event.target.closest("[data-request-form]");if(requestButton)printSavedRequest(requestButton.dataset.requestForm);const documentButton=event.target.closest("[data-storage-path]");if(documentButton)openDocument(documentButton.dataset.storagePath,documentButton)});
+    document.addEventListener("click",event=>{const appButton=event.target.closest("[data-application]");if(appButton)showDocuments(appButton.dataset.application);const requestButton=event.target.closest("[data-request-form]");if(requestButton)printSavedRequest(requestButton.dataset.requestForm);const documentButton=event.target.closest("[data-storage-path]");if(documentButton)openDocument(documentButton.dataset.storagePath,documentButton.dataset.filename,documentButton)});
     bootstrap();
   </script>
 </body>
