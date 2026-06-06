@@ -181,6 +181,44 @@
       font-weight: 800;
     }
 
+    .student-hub { display: grid; gap: 22px; }
+    .student-hub-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    .student-hub-head h2 { font-size: clamp(24px, 3vw, 32px); }
+    .student-hub-head p { margin: 6px 0 0; color: var(--sub); line-height: 1.65; }
+    .student-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .student-card {
+      display: grid;
+      min-height: 220px;
+      padding: 22px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid var(--line);
+      border-radius: 25px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      text-align: left;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+    .student-card:hover { transform: translateY(-3px); border-color: #c8c6f5; }
+    .student-avatar {
+      display: grid;
+      place-items: center;
+      width: 68px;
+      height: 68px;
+      color: #fff;
+      background: linear-gradient(145deg,#7773ef,#514cda);
+      border-radius: 23px;
+      font-size: 25px;
+      font-weight: 900;
+    }
+    .student-card h3 { margin: 18px 0 3px; font-size: 20px; }
+    .student-card p { margin: 0; color: var(--sub); font-size: 13px; }
+    .student-card-footer { display: flex; align-items: center; justify-content: space-between; align-self: end; margin-top: 22px; color: var(--brand); font-size: 12px; font-weight: 800; }
+    .student-card-footer svg { width: 18px; height: 18px; }
+    .student-empty { grid-column: 1/-1; padding: 45px 24px; color: var(--sub); text-align: center; }
+    .student-detail-head { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .student-back { display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; color: var(--brand); background: var(--brand-soft); border: 0; border-radius: 12px; cursor: pointer; font-weight: 800; }
+    .student-back svg { width: 18px; height: 18px; }
+
     .dashboard-grid {
       display: grid;
       grid-template-columns: minmax(0, 1.65fr) minmax(270px, .85fr);
@@ -683,6 +721,7 @@
       .nav-button { justify-content: center; padding: 0; }
       .side-profile { justify-content: center; right: 14px; left: 14px; padding: 8px; }
       .dashboard-grid { grid-template-columns: minmax(0, 1.5fr) minmax(245px, .8fr); }
+      .student-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
     @media (max-width: 760px) {
@@ -697,6 +736,7 @@
       .member-pill, .top-actions .icon-button { display: none; }
       .mobile-avatar { display: grid; width: 44px; height: 44px; }
       .dashboard-grid { grid-template-columns: 1fr; gap: 16px; }
+      .student-grid { grid-template-columns: 1fr 1fr; }
       .card { box-shadow: 0 8px 28px rgba(41, 40, 79, .07); }
       .schedule-card { padding: 20px 16px; }
       .right-column { gap: 16px; }
@@ -748,6 +788,9 @@
       .form-workspace { grid-template-columns: 52px minmax(0, 1fr); }
       .form-workspace-icon { width: 52px; height: 52px; border-radius: 16px; }
       .form-workspace .primary-button { grid-column: 1 / -1; width: 100%; }
+      .student-grid { grid-template-columns: 1fr; }
+      .student-hub-head { align-items: stretch; flex-direction: column; }
+      .student-hub-head .primary-button { width: 100%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -769,8 +812,8 @@
         <button class="nav-button" type="button" data-page="settings"><span data-icon="settings"></span><span>ตั้งค่า</span></button>
       </nav>
       <div class="side-profile">
-        <div class="avatar">ก</div>
-        <div class="profile-copy"><strong>คุณกานต์ ใจดี</strong><span>ผู้ปกครอง · Pro</span></div>
+        <div class="avatar" id="parentSideAvatar">ผ</div>
+        <div class="profile-copy"><strong id="parentSideName">ผู้ปกครอง</strong><span>ผู้ปกครอง · Pro</span></div>
       </div>
     </aside>
 
@@ -778,7 +821,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow" id="pageEyebrow">สวัสดี</p>
-          <h1 id="pageTitle">คุณกานต์ ใจดี</h1>
+          <h1 id="pageTitle">กำลังโหลดข้อมูล...</h1>
         </div>
         <div class="top-actions">
           <span class="member-pill">PRO MEMBER</span>
@@ -787,16 +830,28 @@
             <span class="auth-user-email hidden" id="authUserEmail"></span>
             <button class="auth-button" id="authButton" type="button">เข้าสู่ระบบ</button>
           </div>
-          <div class="avatar mobile-avatar">ก</div>
+          <div class="avatar mobile-avatar" id="parentMobileAvatar">ผ</div>
         </div>
       </header>
 
-      <div class="dashboard-grid" id="homePage">
+      <section class="student-hub" id="studentHubPage">
+        <div class="student-hub-head">
+          <div><h2>ลูกของฉัน</h2><p>เลือกผู้เรียนเพื่อดูภารกิจ บันทึกร่องรอยการเรียนรู้ และจัดการเอกสารเฉพาะบุคคล</p></div>
+          <button class="primary-button" id="addStudentButton" type="button"><span data-icon="plus"></span>เพิ่มนักเรียน</button>
+        </div>
+        <div class="student-grid" id="studentGrid"><div class="card student-empty">กำลังโหลดรายชื่อนักเรียน...</div></div>
+      </section>
+
+      <div class="student-detail-head hidden" id="studentDetailHead">
+        <button class="student-back" id="backToStudents" type="button"><span data-icon="arrowLeft"></span>กลับไปเลือกลูก</button>
+      </div>
+
+      <div class="dashboard-grid hidden" id="homePage">
         <section class="card schedule-card" aria-labelledby="schedule-title">
           <div class="card-head">
             <div>
               <h2 id="schedule-title">ภารกิจวันนี้</h2>
-              <p class="date-line"><span id="thaiDate">กำลังคำนวณวันที่...</span> · น้องพราว (5 ขวบ)</p>
+              <p class="date-line"><span id="thaiDate">กำลังคำนวณวันที่...</span> · <span id="selectedStudentLabel">ยังไม่ได้เลือกผู้เรียน</span></p>
             </div>
             <button class="primary-button" id="openTaskModal" type="button" aria-label="เพิ่มกิจกรรม">
               <span data-icon="plus"></span><span class="add-label">เพิ่มกิจกรรม</span>
@@ -1117,10 +1172,11 @@
   <div class="modal hidden" id="onboardingModal" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
     <div class="modal-panel">
       <div class="modal-head">
-        <div><h2 id="onboardingTitle">เริ่มต้นข้อมูลครอบครัว</h2><p class="date-line">กรอกครั้งเดียวเพื่อสร้างพื้นที่เอกสารของผู้เรียน</p></div>
+        <div><h2 id="onboardingTitle">เพิ่มนักเรียน</h2><p class="date-line" id="onboardingDescription">เพิ่มข้อมูลลูกเพื่อแยกภารกิจและเอกสารเป็นรายบุคคล</p></div>
+        <button class="icon-button close-button" id="closeOnboardingModal" type="button" aria-label="ปิด" data-icon="x"></button>
       </div>
       <form class="form-grid" id="onboardingForm">
-        <div class="field">
+        <div class="field" id="familyNameField">
           <label for="familyName">ชื่อครอบครัว</label>
           <input id="familyName" name="familyName" type="text" required placeholder="เช่น ครอบครัวใจดี">
         </div>
@@ -1139,7 +1195,7 @@
           <input id="studentBirthDate" name="birthDate" type="date">
         </div>
         <p class="form-error hidden" id="onboardingError"></p>
-        <button class="primary-button" id="onboardingSubmit" type="submit">สร้างพื้นที่เอกสาร</button>
+        <button class="primary-button" id="onboardingSubmit" type="submit">เพิ่มนักเรียน</button>
       </form>
     </div>
   </div>
@@ -1220,6 +1276,10 @@
     let authSession = null;
     let currentUser = null;
     let applicationContext = null;
+    let parentProfile = null;
+    let familyRecord = null;
+    let students = [];
+    let selectedStudent = null;
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -1346,6 +1406,104 @@
       }
     }
 
+    function initial(value, fallback = "ผ") {
+      return String(value || "").trim().charAt(0) || fallback;
+    }
+
+    function studentAge(birthDate) {
+      if (!birthDate) return "ยังไม่ได้ระบุวันเกิด";
+      const birth = new Date(birthDate + "T00:00:00");
+      const today = new Date();
+      let years = today.getFullYear() - birth.getFullYear();
+      const beforeBirthday = today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
+      if (beforeBirthday) years -= 1;
+      return years >= 0 ? years + " ขวบ" : "วันเกิดไม่ถูกต้อง";
+    }
+
+    function updateParentIdentity() {
+      const name = parentProfile?.full_name?.trim() || currentUser?.email || "ผู้ปกครอง";
+      $("#parentSideName").textContent = name;
+      $("#parentSideAvatar").textContent = initial(name);
+      $("#parentMobileAvatar").textContent = initial(name);
+      if (!selectedStudent) $("#pageTitle").textContent = name;
+    }
+
+    function renderStudents() {
+      const grid = $("#studentGrid");
+      if (!students.length) {
+        grid.innerHTML = '<div class="card student-empty"><strong>ยังไม่มีข้อมูลนักเรียน</strong><br>กด “เพิ่มนักเรียน” เพื่อสร้างพื้นที่ให้ลูกคนแรก</div>';
+        return;
+      }
+      grid.innerHTML = students.map((student) => {
+        const fullName = [student.first_name, student.last_name].filter(Boolean).join(" ");
+        return `<button class="student-card" type="button" data-student-id="${escapeHTML(student.id)}"><span class="student-avatar">${escapeHTML(initial(student.first_name, "น"))}</span><span><h3>${escapeHTML(fullName)}</h3><p>${escapeHTML(studentAge(student.birth_date))}</p></span><span class="student-card-footer">เปิดพื้นที่ของผู้เรียน ${svgIcon("arrowRight")}</span></button>`;
+      }).join("");
+    }
+
+    async function loadParentWorkspace() {
+      if (!currentUser) return;
+      const [profiles, families, studentRows] = await Promise.all([
+        apiRequest(SUPABASE_URL + "/rest/v1/profiles?select=full_name,phone,role&id=eq." + currentUser.id + "&limit=1", { requireAuth: true }),
+        apiRequest(SUPABASE_URL + "/rest/v1/families?select=id,family_name&owner_user_id=eq." + currentUser.id + "&order=created_at.asc&limit=1", { requireAuth: true }),
+        apiRequest(SUPABASE_URL + "/rest/v1/students?select=id,family_id,first_name,last_name,birth_date,current_education_level&owner_user_id=eq." + currentUser.id + "&order=created_at.asc", { requireAuth: true })
+      ]);
+      parentProfile = profiles[0] || null;
+      familyRecord = families[0] || null;
+      students = studentRows || [];
+      updateParentIdentity();
+      renderStudents();
+      showStudentHub();
+    }
+
+    function showStudentHub() {
+      selectedStudent = null;
+      applicationContext = null;
+      tasks = [];
+      $("#studentHubPage").classList.remove("hidden");
+      $("#studentDetailHead").classList.add("hidden");
+      $("#homePage").classList.add("hidden");
+      $("#documentsPage").classList.add("hidden");
+      $("#applicationPage").classList.add("hidden");
+      setThaiDate();
+      updateParentIdentity();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function selectStudent(studentId) {
+      const student = students.find((item) => item.id === studentId);
+      if (!student) return;
+      selectedStudent = student;
+      applicationContext = null;
+      resetUploadedDocumentsUI();
+      const fullName = [student.first_name, student.last_name].filter(Boolean).join(" ");
+      $("#studentHubPage").classList.add("hidden");
+      $("#studentDetailHead").classList.remove("hidden");
+      $("#homePage").classList.remove("hidden");
+      $("#documentsPage").classList.add("hidden");
+      $("#applicationPage").classList.add("hidden");
+      $("#pageEyebrow").textContent = "พื้นที่การเรียนรู้ของ";
+      $("#pageTitle").textContent = fullName;
+      $("#selectedStudentLabel").textContent = fullName + " (" + studentAge(student.birth_date) + ")";
+      await Promise.all([fetchTasks(), ensureApplicationContext(false)]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openStudentModal() {
+      $("#onboardingForm").reset();
+      $("#onboardingError").classList.add("hidden");
+      $("#familyNameField").classList.toggle("hidden", Boolean(familyRecord));
+      $("#familyName").required = !familyRecord;
+      if (familyRecord) $("#familyName").value = familyRecord.family_name || "";
+      $("#onboardingModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => $("#studentFirstName").focus(), 0);
+    }
+
+    function closeStudentModal() {
+      $("#onboardingModal").classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
     function openAuthModal() {
       $("#authModal").classList.remove("hidden");
       document.body.style.overflow = "hidden";
@@ -1396,7 +1554,7 @@
         updateAuthUI();
         closeAuthModal();
         showToast("เข้าสู่ระบบสำเร็จ");
-        await ensureApplicationContext();
+        await loadParentWorkspace();
       } catch (error) {
         errorBox.textContent = error.message;
         errorBox.classList.remove("hidden");
@@ -1415,15 +1573,22 @@
       saveSession(null);
       currentUser = null;
       applicationContext = null;
+      parentProfile = null;
+      familyRecord = null;
+      students = [];
+      selectedStudent = null;
       Object.keys(selectedOfficialFiles).forEach((key) => delete selectedOfficialFiles[key]);
       updateAuthUI();
+      $("#pageTitle").textContent = "กรุณาเข้าสู่ระบบ";
+      $("#studentGrid").innerHTML = '<div class="card student-empty">กรุณาเข้าสู่ระบบเพื่อดูรายชื่อนักเรียน</div>';
+      showStudentHub();
       showToast("ออกจากระบบแล้ว");
     }
 
-    async function ensureApplicationContext() {
-      if (!currentUser) return false;
+    async function ensureApplicationContext(createIfMissing = false) {
+      if (!currentUser || !selectedStudent) return false;
       const applications = await apiRequest(
-        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,status&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&order=created_at.desc&limit=1",
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,status&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
         { requireAuth: true }
       );
       if (applications?.length) {
@@ -1431,8 +1596,21 @@
         await loadUploadedDocuments();
         return true;
       }
-      $("#onboardingModal").classList.remove("hidden");
-      document.body.style.overflow = "hidden";
+      if (createIfMissing) {
+        const created = await apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications", {
+          method: "POST",
+          requireAuth: true,
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({
+            owner_user_id: currentUser.id,
+            family_id: selectedStudent.family_id,
+            student_id: selectedStudent.id,
+            application_type: "permission_request"
+          })
+        });
+        applicationContext = created[0];
+        return true;
+      }
       return false;
     }
 
@@ -1445,48 +1623,53 @@
       button.textContent = "กำลังสร้าง...";
       errorBox.classList.add("hidden");
       try {
-        const families = await apiRequest(SUPABASE_URL + "/rest/v1/families", {
-          method: "POST",
-          requireAuth: true,
-          headers: { Prefer: "return=representation" },
-          body: JSON.stringify({
-            owner_user_id: currentUser.id,
-            family_name: String(data.get("familyName") || "").trim()
-          })
-        });
+        let family = familyRecord;
+        if (!family) {
+          const families = await apiRequest(SUPABASE_URL + "/rest/v1/families", {
+            method: "POST",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({
+              owner_user_id: currentUser.id,
+              family_name: String(data.get("familyName") || "").trim()
+            })
+          });
+          family = families[0];
+        }
         const students = await apiRequest(SUPABASE_URL + "/rest/v1/students", {
           method: "POST",
           requireAuth: true,
           headers: { Prefer: "return=representation" },
           body: JSON.stringify({
             owner_user_id: currentUser.id,
-            family_id: families[0].id,
+            family_id: family.id,
             first_name: String(data.get("firstName") || "").trim(),
             last_name: String(data.get("lastName") || "").trim() || null,
             birth_date: String(data.get("birthDate") || "") || null
           })
         });
-        const applications = await apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications", {
+        await apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications", {
           method: "POST",
           requireAuth: true,
           headers: { Prefer: "return=representation" },
           body: JSON.stringify({
             owner_user_id: currentUser.id,
-            family_id: families[0].id,
+            family_id: family.id,
             student_id: students[0].id,
             application_type: "permission_request"
           })
         });
-        applicationContext = applications[0];
-        $("#onboardingModal").classList.add("hidden");
-        document.body.style.overflow = "";
-        showToast("สร้างพื้นที่เอกสารเรียบร้อยแล้ว");
+        closeStudentModal();
+        familyRecord = family;
+        await loadParentWorkspace();
+        await selectStudent(students[0].id);
+        showToast("เพิ่มนักเรียนเรียบร้อยแล้ว");
       } catch (error) {
         errorBox.textContent = error.message;
         errorBox.classList.remove("hidden");
       } finally {
         button.disabled = false;
-        button.textContent = "สร้างพื้นที่เอกสาร";
+        button.textContent = "เพิ่มนักเรียน";
       }
     }
 
@@ -1522,7 +1705,18 @@
     }
 
     function showPage(page) {
+      if (page === "home") {
+        showStudentHub();
+        return;
+      }
+      if (!selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อนจัดการเอกสาร");
+        showStudentHub();
+        return;
+      }
       const isDocuments = page === "portfolio";
+      $("#studentHubPage").classList.add("hidden");
+      $("#studentDetailHead").classList.remove("hidden");
       $("#homePage").classList.toggle("hidden", isDocuments);
       $("#documentsPage").classList.toggle("hidden", !isDocuments);
       $("#applicationPage").classList.add("hidden");
@@ -1532,13 +1726,20 @@
         $("#pageTitle").textContent = "จัดการเอกสารราชการ";
       } else {
         setThaiDate();
-        $("#pageTitle").textContent = "คุณกานต์ ใจดี";
+        $("#pageTitle").textContent = [selectedStudent.first_name, selectedStudent.last_name].filter(Boolean).join(" ");
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showApplicationPage() {
+      if (!selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อน");
+        showStudentHub();
+        return;
+      }
+      $("#studentHubPage").classList.add("hidden");
+      $("#studentDetailHead").classList.remove("hidden");
       $("#homePage").classList.add("hidden");
       $("#documentsPage").classList.add("hidden");
       $("#applicationPage").classList.remove("hidden");
@@ -1546,7 +1747,7 @@
       $("#pageTitle").textContent = "ยื่นขออนุญาตจัดการบ้านเรียน";
       showWorkflow("uploads");
       if (!currentUser) openAuthModal();
-      else ensureApplicationContext().catch((error) => showToast(error.message));
+      else ensureApplicationContext(true).then(loadUploadedDocuments).catch((error) => showToast(error.message));
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -1563,6 +1764,18 @@
       const uploaded = Object.keys(selectedOfficialFiles).length;
       const percentage = Math.round((uploaded / total) * 100);
       $("#applicationProgress").textContent = percentage + "%";
+    }
+
+    function resetUploadedDocumentsUI() {
+      Object.keys(selectedOfficialFiles).forEach((key) => delete selectedOfficialFiles[key]);
+      $$("[data-upload-row]").forEach((row) => {
+        const key = row.dataset.uploadRow;
+        if (!row.dataset.defaultDescription) row.dataset.defaultDescription = $(".upload-row-copy span", row).textContent;
+        row.classList.remove("has-file", "uploading");
+        $(".upload-row-copy span", row).textContent = row.dataset.defaultDescription;
+        $(".select-file-button", row).textContent = defaultUploadButtonLabel(key);
+      });
+      refreshApplicationProgress();
     }
 
     function renderUploadedRow(key, filenames) {
@@ -1727,9 +1940,14 @@
     }
 
     async function fetchTasks() {
+      if (!currentUser || !selectedStudent) {
+        tasks = [];
+        renderTasks();
+        return;
+      }
       setStatus("กำลังโหลดกิจกรรมจาก Supabase...");
       try {
-        tasks = await apiRequest(TASKS_ENDPOINT + "?select=id,t,name,detail,icon,tint,fg,done&order=t.asc");
+        tasks = await apiRequest(TASKS_ENDPOINT + "?select=id,t,name,detail,icon,tint,fg,done&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=t.asc", { requireAuth: true });
         renderTasks();
         hideStatus();
       } catch (error) {
@@ -1750,6 +1968,7 @@
       try {
         await apiRequest(TASKS_ENDPOINT + "?id=eq." + encodeURIComponent(id), {
           method: "PATCH",
+          requireAuth: true,
           headers: { Prefer: "return=minimal" },
           body: JSON.stringify({ done: nextValue })
         });
@@ -1763,6 +1982,10 @@
     }
 
     function openModal() {
+      if (!selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อนเพิ่มกิจกรรม");
+        return;
+      }
       $("#taskModal").classList.remove("hidden");
       document.body.style.overflow = "hidden";
       setTimeout(() => $("#taskName").focus(), 0);
@@ -1784,9 +2007,14 @@
         t: String(data.get("t") || "").trim(),
         name: String(data.get("name") || "").trim(),
         detail: String(data.get("detail") || "").trim(),
+        owner_user_id: currentUser?.id,
+        student_id: selectedStudent?.id,
         done: false
       };
-      if (!newTask.t || !newTask.name) return;
+      if (!newTask.t || !newTask.name || !currentUser || !selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อนเพิ่มกิจกรรม");
+        return;
+      }
 
       const button = $("#saveTask");
       const errorBox = $("#formError");
@@ -1796,6 +2024,7 @@
       try {
         const created = await apiRequest(TASKS_ENDPOINT, {
           method: "POST",
+          requireAuth: true,
           headers: { Prefer: "return=representation" },
           body: JSON.stringify(newTask)
         });
@@ -1817,6 +2046,9 @@
     document.addEventListener("click", (event) => {
       const checkButton = event.target.closest(".check-button");
       if (checkButton) toggleTask(checkButton);
+
+      const studentCard = event.target.closest("[data-student-id]");
+      if (studentCard) selectStudent(studentCard.dataset.studentId).catch((error) => showToast(error.message));
 
       const navButton = event.target.closest("[data-page]");
       if (navButton) {
@@ -1878,19 +2110,29 @@
     $("#closeAuthModal").addEventListener("click", closeAuthModal);
     $("#authForm").addEventListener("submit", handleAuthSubmit);
     $("#onboardingForm").addEventListener("submit", handleOnboarding);
+    $("#addStudentButton").addEventListener("click", openStudentModal);
+    $("#closeOnboardingModal").addEventListener("click", closeStudentModal);
+    $("#backToStudents").addEventListener("click", showStudentHub);
     $$("[data-auth-mode]").forEach((button) => button.addEventListener("click", () => setAuthMode(button.dataset.authMode)));
     $("#authModal").addEventListener("click", (event) => {
       if (event.target === event.currentTarget) closeAuthModal();
+    });
+    $("#onboardingModal").addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) closeStudentModal();
     });
 
     mountIcons();
     setThaiDate();
     loadStoredSession();
     Promise.all([
-      fetchTasks(),
       getCurrentUser().then(async (user) => {
         currentUser = user;
         updateAuthUI();
+        if (user) await loadParentWorkspace();
+        else {
+          $("#pageTitle").textContent = "กรุณาเข้าสู่ระบบ";
+          $("#studentGrid").innerHTML = '<div class="card student-empty">กรุณาเข้าสู่ระบบเพื่อดูรายชื่อนักเรียน</div>';
+        }
       }).catch(() => {
         currentUser = null;
         updateAuthUI();
