@@ -206,6 +206,40 @@
     .field { display: grid; gap: 7px; }
     .field-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .field label { font-size: 13px; font-weight: 800; }
+    .role-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .role-option {
+      position: relative;
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      align-items: center;
+      gap: 9px;
+      min-height: 58px;
+      padding: 9px 10px;
+      color: var(--sub);
+      background: #fafafd;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: .16s ease;
+    }
+    .role-option:hover { border-color: #bbb9ee; }
+    .role-option.active { color: var(--brand); background: var(--brand-soft); border-color: #aaa7ee; }
+    .role-icon {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      color: inherit;
+      background: #fff;
+      border-radius: 11px;
+    }
+    .role-icon svg { width: 19px; height: 19px; }
+    .role-option strong, .role-option small { display: block; }
+    .role-option strong { color: var(--ink); font-size: 12px; }
+    .role-option.active strong { color: var(--brand); }
+    .role-option small { margin-top: 1px; font-size: 9px; line-height: 1.35; }
+    .role-hint { margin: 0; color: var(--sub); font-size: 10px; line-height: 1.55; }
     .forgot {
       padding: 0;
       color: var(--brand);
@@ -338,6 +372,7 @@
       .brand { margin: 0; font-size: 20px; }
       .brand-mark { width: 42px; height: 42px; }
       .auth-head h2 { font-size: 25px; }
+      .role-grid { grid-template-columns: 1fr 1fr; }
       .footer { display: none; }
     }
 
@@ -381,8 +416,31 @@
         </div>
 
         <form class="form" id="authForm">
+          <div class="field">
+            <label>คุณเข้าใช้งานในฐานะ</label>
+            <div class="role-grid" role="radiogroup" aria-label="เลือกประเภทผู้ใช้งาน">
+              <button class="role-option active" type="button" role="radio" aria-checked="true" data-role="parent">
+                <span class="role-icon" data-icon="family"></span>
+                <span><strong>ผู้ปกครอง</strong><small>จัดการบ้านเรียน</small></span>
+              </button>
+              <button class="role-option" type="button" role="radio" aria-checked="false" data-role="student">
+                <span class="role-icon" data-icon="student"></span>
+                <span><strong>นักเรียน</strong><small>ใช้ ID จากผู้ปกครอง</small></span>
+              </button>
+              <button class="role-option" type="button" role="radio" aria-checked="false" data-role="district">
+                <span class="role-icon" data-icon="building"></span>
+                <span><strong>เจ้าหน้าที่เขต</strong><small>ตรวจแผนและประเมิน</small></span>
+              </button>
+              <button class="role-option" type="button" role="radio" aria-checked="false" data-role="teacher">
+                <span class="role-icon" data-icon="teacher"></span>
+                <span><strong>ครูผู้สร้างสื่อ</strong><small>สร้างและขายสื่อ</small></span>
+              </button>
+            </div>
+            <p class="role-hint" id="roleHint">ผู้ปกครองสามารถสมัครสมาชิกและสร้างข้อมูลผู้เรียนได้</p>
+          </div>
+
           <div class="field hidden" id="nameField">
-            <label for="fullName">ชื่อ-นามสกุลผู้ปกครอง</label>
+            <label for="fullName" id="fullNameLabel">ชื่อ-นามสกุลผู้ปกครอง</label>
             <div class="input-wrap">
               <span class="input-icon" data-icon="user"></span>
               <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="คุณกานต์ ใจดี">
@@ -446,11 +504,28 @@
       eyeOff: '<path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.8 5.2A10.8 10.8 0 0 1 12 5c6 0 10 7 10 7a18 18 0 0 1-2.1 2.8M6.6 6.6C3.7 8.5 2 12 2 12s4 7 10 7c1 0 2-.2 2.9-.5"/>',
       arrow: '<path d="M5 12h14M14 7l5 5-5 5"/>',
       shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/>'
+      ,family: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20a6 6 0 0 1 12 0M14 15a5 5 0 0 1 7 5"/>'
+      ,student: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>'
+      ,building: '<path d="M4 21V5l8-3 8 3v16M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01M9 21v-5h6v5"/>'
+      ,teacher: '<circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4h5v10h-5M18 8h3"/>'
     };
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => Array.from(document.querySelectorAll(selector));
     let mode = "signin";
+    let selectedRole = "parent";
+    const ROLE_ROUTES = {
+      parent: "parent.html",
+      student: "student.html",
+      district: "district.html",
+      teacher: "teacher.html"
+    };
+    const ROLE_LABELS = {
+      parent: "ผู้ปกครอง",
+      student: "นักเรียน",
+      district: "เจ้าหน้าที่เขตการศึกษา",
+      teacher: "ครูผู้สร้างสื่อ"
+    };
 
     function icon(name) {
       return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + icons[name] + '</svg>';
@@ -472,12 +547,69 @@
       $("#acceptTerms").required = signingUp;
       $("#forgotPassword").classList.toggle("hidden", signingUp);
       $("#password").autocomplete = signingUp ? "new-password" : "current-password";
-      $("#auth-title").textContent = signingUp ? "สร้างบัญชีครอบครัว" : "ยินดีต้อนรับกลับมา";
-      $("#auth-description").textContent = signingUp
-        ? "เริ่มวางแผนการเรียนและเก็บพัฒนาการของลูกในพื้นที่ของคุณ"
-        : "เข้าสู่ระบบเพื่อดูแผนการเรียนและข้อมูลครอบครัวของคุณ";
       $("#submitButton").innerHTML = (signingUp ? "สมัครสมาชิก" : "เข้าสู่ระบบ") + " " + icon("arrow");
+      updateAuthCopy();
       clearMessage();
+      if (signingUp && selectedRole === "student") {
+        showError("บัญชีนักเรียนต้องให้ผู้ปกครองสร้างจากหน้าจัดการผู้เรียน");
+        $("#submitButton").disabled = true;
+      } else {
+        $("#submitButton").disabled = false;
+      }
+    }
+
+    function setRole(role) {
+      selectedRole = role;
+      $$("[data-role]").forEach((button) => {
+        const active = button.dataset.role === role;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-checked", String(active));
+      });
+      const hints = {
+        parent: "ผู้ปกครองสามารถสมัครสมาชิกและสร้างข้อมูลผู้เรียนได้",
+        student: "นักเรียนเข้าสู่ระบบด้วยบัญชีที่ผู้ปกครองสร้างให้",
+        district: "บัญชีเจ้าหน้าที่เขตต้องผ่านการตรวจสอบและอนุมัติ",
+        teacher: "บัญชีครูใช้สำหรับสร้าง อัปโหลด และจำหน่ายสื่อการเรียน"
+      };
+      $("#roleHint").textContent = hints[role];
+      $("#email").placeholder = role === "student" ? "อีเมลบัญชีนักเรียนที่ผู้ปกครองสร้าง" : "name@example.com";
+      updateAuthCopy();
+      if (mode === "signup" && role === "student") {
+        showError("บัญชีนักเรียนต้องให้ผู้ปกครองสร้างจากหน้าจัดการผู้เรียน");
+        $("#submitButton").disabled = true;
+      } else {
+        $("#submitButton").disabled = false;
+        clearMessage();
+      }
+    }
+
+    function updateAuthCopy() {
+      if (mode === "signin") {
+        $("#auth-title").textContent = "ยินดีต้อนรับกลับมา";
+        $("#auth-description").textContent = "เข้าสู่ระบบในฐานะ" + ROLE_LABELS[selectedRole] + " เพื่อไปยังพื้นที่ของคุณ";
+        return;
+      }
+      const titles = {
+        parent: "สร้างบัญชีครอบครัว",
+        student: "บัญชีนักเรียน",
+        district: "สมัครบัญชีเจ้าหน้าที่เขต",
+        teacher: "สมัครบัญชีครูผู้สร้างสื่อ"
+      };
+      const descriptions = {
+        parent: "เริ่มวางแผนการเรียนและเก็บพัฒนาการของลูกในพื้นที่ของคุณ",
+        student: "บัญชีนักเรียนต้องสร้างและดูแลโดยผู้ปกครอง",
+        district: "กรอกข้อมูลเพื่อขอสิทธิ์ตรวจแผนและประเมินบ้านเรียน",
+        teacher: "สร้างบัญชีเพื่ออัปโหลดและจัดการสื่อการเรียนของคุณ"
+      };
+      const labels = {
+        parent: "ชื่อ-นามสกุลผู้ปกครอง",
+        student: "ชื่อ-นามสกุลนักเรียน",
+        district: "ชื่อ-นามสกุลเจ้าหน้าที่",
+        teacher: "ชื่อ-นามสกุลครู"
+      };
+      $("#auth-title").textContent = titles[selectedRole];
+      $("#auth-description").textContent = descriptions[selectedRole];
+      $("#fullNameLabel").textContent = labels[selectedRole];
     }
 
     function clearMessage() {
@@ -521,7 +653,9 @@
       if (text.includes("Email not confirmed")) return "กรุณายืนยันอีเมลก่อนเข้าสู่ระบบ";
       if (text.includes("User already registered")) return "อีเมลนี้มีบัญชีอยู่แล้ว กรุณาเข้าสู่ระบบ";
       if (text.includes("Password should be")) return "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
-      if (text.includes("rate limit")) return "ส่งคำขอบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่";
+      if (text.toLowerCase().includes("rate limit")) {
+        return "ระบบส่งอีเมลถึงขีดจำกัดแล้ว กรุณารอประมาณ 60 นาที หรือลองเข้าสู่ระบบหากบัญชีถูกสร้างไว้แล้ว";
+      }
       return text;
     }
 
@@ -529,8 +663,37 @@
       localStorage.setItem(SESSION_KEY, JSON.stringify(result));
     }
 
-    function goToApp() {
-      window.location.href = NEXT_PAGE;
+    async function getUserProfile(session) {
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/profiles?select=role,approval_status&id=eq." + encodeURIComponent(session.user.id) + "&limit=1",
+        {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: "Bearer " + session.access_token
+          }
+        }
+      );
+      if (!response.ok) throw new Error("ไม่สามารถตรวจสอบสิทธิ์ผู้ใช้งานได้");
+      const profiles = await response.json();
+      return profiles[0] || { role: "parent", approval_status: "active" };
+    }
+
+    async function goToApp(session, expectedRole = null) {
+      const profile = await getUserProfile(session);
+      const role = profile.role || "parent";
+      if (profile.approval_status === "pending") {
+        localStorage.removeItem(SESSION_KEY);
+        throw new Error("บัญชี" + ROLE_LABELS[role] + "กำลังรอผู้ดูแลระบบตรวจสอบและอนุมัติ");
+      }
+      if (profile.approval_status === "suspended") {
+        localStorage.removeItem(SESSION_KEY);
+        throw new Error("บัญชีนี้ถูกระงับ กรุณาติดต่อผู้ดูแลระบบ");
+      }
+      if (expectedRole && role !== expectedRole) {
+        localStorage.removeItem(SESSION_KEY);
+        throw new Error("บัญชีนี้ลงทะเบียนเป็น " + ROLE_LABELS[role] + " กรุณาเลือกประเภทผู้ใช้งานให้ถูกต้อง");
+      }
+      window.location.href = ROLE_ROUTES[role] || NEXT_PAGE;
     }
 
     async function submitAuth(event) {
@@ -549,25 +712,28 @@
           const result = await authRequest("signup", {
             email,
             password,
-            data: { full_name: fullName }
+            data: { full_name: fullName, requested_role: selectedRole }
           });
           if (result.access_token) {
             saveSession(result);
-            goToApp();
+            await goToApp(result, selectedRole);
           } else {
-            showSuccess("สมัครสมาชิกสำเร็จ กรุณาเปิดอีเมลเพื่อยืนยันบัญชี แล้วกลับมาเข้าสู่ระบบ");
+            const approvalNote = ["district", "teacher"].includes(selectedRole)
+              ? " หลังยืนยันอีเมล บัญชีจะรอผู้ดูแลระบบอนุมัติ"
+              : "";
+            showSuccess("สมัครสมาชิกสำเร็จ กรุณาเปิดอีเมลเพื่อยืนยันบัญชี" + approvalNote);
             setMode("signin");
             $("#email").value = email;
           }
         } else {
           const result = await authRequest("token?grant_type=password", { email, password });
           saveSession(result);
-          goToApp();
+          await goToApp(result, selectedRole);
         }
       } catch (error) {
         showError(error.message);
       } finally {
-        button.disabled = false;
+        button.disabled = mode === "signup" && selectedRole === "student";
         button.innerHTML = (mode === "signup" ? "สมัครสมาชิก" : "เข้าสู่ระบบ") + " " + icon("arrow");
       }
     }
@@ -600,16 +766,17 @@
       $("#togglePassword").setAttribute("aria-label", showing ? "แสดงรหัสผ่าน" : "ซ่อนรหัสผ่าน");
     }
 
-    function redirectExistingSession() {
+    async function redirectExistingSession() {
       try {
         const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
-        if (session?.access_token && Number(session.expires_at || 0) * 1000 > Date.now()) goToApp();
+        if (session?.access_token && Number(session.expires_at || 0) * 1000 > Date.now()) await goToApp(session);
       } catch (_) {
         localStorage.removeItem(SESSION_KEY);
       }
     }
 
     $$("[data-mode]").forEach((button) => button.addEventListener("click", () => setMode(button.dataset.mode)));
+    $$("[data-role]").forEach((button) => button.addEventListener("click", () => setRole(button.dataset.role)));
     $$("[data-placeholder]").forEach((link) => link.addEventListener("click", (event) => {
       event.preventDefault();
       showSuccess(link.dataset.placeholder + " กำลังจัดทำ");
