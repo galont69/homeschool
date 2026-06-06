@@ -322,7 +322,12 @@
 </div>
 
 <script>
-  const SUPABASE_URL = "https://ewsftltgehrumfnmugi.supabase.co";
+  /*
+    สำคัญ:
+    URL นี้แก้ให้ตรงกับ project ref ใน anon key แล้ว
+    ewsftltgehfrumfnmugi
+  */
+  const SUPABASE_URL = "https://ewsftltgehfrumfnmugi.supabase.co";
 
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3c2Z0bHRnZWhmcnVtZm5tdWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NTUwMzQsImV4cCI6MjA5NjIzMTAzNH0.rYefsViZAFttNqiRQvAPv2E8wcq1vph5WPv2n8nrYL0";
 
@@ -391,7 +396,6 @@
       }
 
       tasks = data || [];
-
       renderTasks();
 
       if (tasks.length === 0) {
@@ -426,7 +430,7 @@
     if (!tasks || tasks.length === 0) {
       list.innerHTML = `<div class="text-sub text-[14px] py-6 text-center">ยังไม่มีกิจกรรมวันนี้</div>`;
       refreshProgress();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       return;
     }
 
@@ -446,7 +450,7 @@
         <div class="task-row flex items-center gap-4 p-3.5 rounded-3xl bg-paper/70 hover:bg-paper transition ${isDone ? "row-done" : ""}"
              data-id="${escapeHTML(x.id)}"
              data-i="${i}">
-          
+
           <div class="w-12 h-12 rounded-2xl grid place-items-center shrink-0" style="background:${escapeHTML(currentBg)}">
             <i data-lucide="${escapeHTML(currentIcon)}" class="w-[22px] h-[22px]" style="color:${escapeHTML(currentFg)}"></i>
           </div>
@@ -468,7 +472,7 @@
       `;
     }).join("");
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
     bindClickEvents();
     refreshProgress();
   }
@@ -558,7 +562,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     fit();
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
     fetchTasks();
   });
 </script>
