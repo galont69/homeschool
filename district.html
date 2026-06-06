@@ -149,7 +149,8 @@
       const districtRows=await api("/rest/v1/education_districts?select=id,code,name&id=eq."+officer.verified_district_id+"&limit=1"),district=districtRows[0];
       $("#districtTitle").textContent=district?district.name:"ภาพรวมเขตพื้นที่";
       applications=await api("/rest/v1/homeschool_applications?select=id,student_id,status,created_at,request_form_data,student:students(first_name,last_name)&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
-      officialDocuments=applications.length?await api("/rest/v1/official_documents?select=id,application_id&application_id=in.("+applications.map(x=>x.id).join(",")+")"):[];
+      const documentRecords=applications.length?await api("/rest/v1/official_documents?select=id,application_id,document_type,original_filename,storage_path,created_at&application_id=in.("+applications.map(x=>x.id).join(",")+")"):[];
+      officialDocuments=uniqueDocuments(documentRecords);
       const generatedDocuments=applications.filter(x=>hasRequestForm(x)).length;
       $("#studentCount").textContent=new Set(applications.map(x=>x.student_id||x.id)).size||applications.length;
       $("#applicationCount").textContent=applications.length;
@@ -167,18 +168,18 @@
     }
 
     const documentLabels={
-      father_house_registration:"สำเนาทะเบียนบ้านของบิดา",
+      father_house_registration:"สำเนาทะเบียนบ้านบิดา",
       father_national_id:"สำเนาบัตรประชาชนของบิดา",
-      mother_house_registration:"สำเนาทะเบียนบ้านของมารดา",
+      mother_house_registration:"สำเนาทะเบียนบ้านมารดา",
       mother_national_id:"สำเนาบัตรประชาชนของมารดา",
-      education_manager_house_registration:"สำเนาทะเบียนบ้านของผู้จัดการศึกษา",
-      education_manager_national_id:"สำเนาบัตรประชาชนของผู้จัดการศึกษา",
-      student_house_registration:"สำเนาทะเบียนบ้านของผู้เรียน",
-      student_national_id:"สำเนาบัตรประชาชนของผู้เรียน",
-      student_birth_certificate:"สำเนาสูติบัตรของผู้เรียน",
-      education_manager_qualification:"สำเนาวุฒิการศึกษาของผู้จัดการศึกษา",
+      education_manager_house_registration:"สำเนาทะเบียนบ้านผู้จัดการศึกษา",
+      education_manager_national_id:"สำเนาบัตรประชาชนผู้จัดการศึกษา",
+      student_house_registration:"สำเนาทะเบียนบ้านผู้เรียน",
+      student_national_id:"สำเนาบัตรประชาชนผู้เรียน",
+      student_birth_certificate:"สำเนาสูติบัตรผู้เรียน",
+      education_manager_qualification:"สำเนาหลักฐานวุฒิการศึกษาของผู้จัดการศึกษา",
       student_education_record:"สำเนาหลักฐานการศึกษาของผู้เรียน",
-      education_location:"แผนผังและที่ตั้งสถานที่จัดการศึกษา",
+      education_location:"แผนที่ ที่ตั้ง และแผนผังสถานที่จัดการศึกษา",
       student_photo_2inch:"รูปถ่ายผู้เรียน ขนาด 2 นิ้ว",
       father_identity:"บัตรประชาชนและทะเบียนบ้านของบิดา (ไฟล์เดิม)",
       mother_identity:"บัตรประชาชนและทะเบียนบ้านของมารดา (ไฟล์เดิม)",
@@ -190,6 +191,35 @@
       annual_evaluation:"แบบประเมินผลประจำปี",
       assessment_report:"เอกสารประเมินผล"
     };
+
+    const legacyDocumentTypes=new Set(["father_identity","mother_identity","education_manager_identity","student_identity"]);
+
+    function documentPerson(type){
+      if(String(type).startsWith("father_"))return"father";
+      if(String(type).startsWith("mother_"))return"mother";
+      if(String(type).startsWith("education_manager_"))return"manager";
+      if(String(type).startsWith("student_"))return"student";
+      return"";
+    }
+
+    function uniqueDocuments(rows){
+      const preferred=new Map();
+      const modernFiles=new Set(rows.filter(row=>!legacyDocumentTypes.has(row.document_type)).map(row=>[
+        row.application_id||"",
+        documentPerson(row.document_type),
+        row.original_filename||""
+      ].join("|")));
+      rows.forEach(row=>{
+        const modernKey=[row.application_id||"",documentPerson(row.document_type),row.original_filename||""].join("|");
+        if(legacyDocumentTypes.has(row.document_type)&&modernFiles.has(modernKey))return;
+        const key=[row.application_id||"",row.storage_path||row.original_filename||row.id].join("|");
+        const existing=preferred.get(key);
+        if(!existing||legacyDocumentTypes.has(existing.document_type)&&!legacyDocumentTypes.has(row.document_type)){
+          preferred.set(key,row);
+        }
+      });
+      return Array.from(preferred.values());
+    }
 
     const documentCategories=[
       {id:"permission",title:"แบบขออนุญาต"},
@@ -237,7 +267,8 @@
       $("#documentModal").classList.remove("hidden");$("#documentList").innerHTML='<div class="empty">กำลังโหลดเอกสาร...</div>';
       try{
         const application=applications.find(x=>x.id===applicationId);
-        const rows=await api("/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.asc");
+        const records=await api("/rest/v1/official_documents?select=id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.asc");
+        const rows=uniqueDocuments(records);
         const generatedRequest=hasRequestForm(application);
         $("#documentList").innerHTML=documentCategories.map(category=>{
           const items=rows.filter(row=>documentCategory(row.document_type)===category.id);
