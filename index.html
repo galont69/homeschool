@@ -518,13 +518,15 @@
       parent: "parent.html",
       student: "student.html",
       district: "district.html",
-      teacher: "teacher.html"
+      teacher: "teacher.html",
+      admin: "admin.html"
     };
     const ROLE_LABELS = {
       parent: "ผู้ปกครอง",
       student: "นักเรียน",
       district: "เจ้าหน้าที่เขตการศึกษา",
-      teacher: "ครูผู้สร้างสื่อ"
+      teacher: "ครูผู้สร้างสื่อ",
+      admin: "ผู้ดูแลระบบ"
     };
 
     function icon(name) {
@@ -681,6 +683,10 @@
     async function goToApp(session, expectedRole = null) {
       const profile = await getUserProfile(session);
       const role = profile.role || "parent";
+      if (role === "admin") {
+        window.location.href = ROLE_ROUTES.admin;
+        return;
+      }
       if (expectedRole && role !== expectedRole) {
         localStorage.removeItem(SESSION_KEY);
         throw new Error("บัญชีนี้ลงทะเบียนเป็น " + ROLE_LABELS[role] + " กรุณาเลือกประเภทผู้ใช้งานให้ถูกต้อง");
