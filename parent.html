@@ -1654,6 +1654,13 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3c2Z0bHRnZWhmcnVtZm5tdWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2NTUwMzQsImV4cCI6MjA5NjIzMTAzNH0.rYefsViZAFttNqiRQvAPv2E8wcq1vph5WPv2n8nrYL0";
     const TASKS_ENDPOINT = SUPABASE_URL + "/rest/v1/tasks";
     const AUTH_STORAGE_KEY = "homeschool_supabase_session";
+    const ROLE_ROUTES = {
+      parent: "parent.html",
+      student: "student.html",
+      district: "district.html",
+      teacher: "teacher.html",
+      admin: "admin.html"
+    };
     const DOCUMENT_TYPE_MAP = {
       fatherHouse: "father_house_registration",
       fatherId: "father_national_id",
@@ -1837,6 +1844,26 @@
         return null;
       }
       return response.json();
+    }
+
+    async function requireParentRole() {
+      if (!currentUser) return false;
+      const profiles = await apiRequest(
+        SUPABASE_URL + "/rest/v1/profiles?select=role,approval_status&id=eq." + encodeURIComponent(currentUser.id) + "&limit=1",
+        { requireAuth: true }
+      );
+      const profile = profiles[0] || { role: "parent", approval_status: "active" };
+      const role = profile.role || "parent";
+      if (role !== "parent") {
+        window.location.replace(ROLE_ROUTES[role] || "index.html");
+        return false;
+      }
+      if (profile.approval_status === "suspended") {
+        saveSession(null);
+        currentUser = null;
+        throw new Error("บัญชีนี้ถูกระงับ กรุณาติดต่อผู้ดูแลระบบ");
+      }
+      return true;
     }
 
     function updateAuthUI() {
@@ -2025,6 +2052,7 @@
           saveSession(await authRequest("token?grant_type=password", { email, password }));
         }
         currentUser = await getCurrentUser();
+        if (!await requireParentRole()) return;
         updateAuthUI();
         closeAuthModal();
         showToast("เข้าสู่ระบบสำเร็จ");
@@ -2056,7 +2084,7 @@
       $("#pageTitle").textContent = "กรุณาเข้าสู่ระบบ";
       $("#studentGrid").innerHTML = '<div class="card student-empty">กรุณาเข้าสู่ระบบเพื่อดูรายชื่อนักเรียน</div>';
       showStudentHub();
-      showToast("ออกจากระบบแล้ว");
+      window.location.replace("index.html");
     }
 
     async function ensureApplicationContext(createIfMissing = false) {
@@ -3095,6 +3123,7 @@
     Promise.all([
       getCurrentUser().then(async (user) => {
         currentUser = user;
+        if (user && !await requireParentRole()) return;
         updateAuthUI();
         if (user) await loadParentWorkspace();
         else {
