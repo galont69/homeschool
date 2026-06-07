@@ -1268,20 +1268,16 @@
           <section class="card template-exchange">
             <div class="template-exchange-head">
               <h2>แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h2>
-              <p>ดาวน์โหลดแม่แบบ Word แก้ไขข้อมูลให้ครบถ้วน แล้วอัปโหลดฉบับที่ต้องการส่งให้เจ้าหน้าที่ตรวจดู</p>
+              <p>ดาวน์โหลดเอกสารจากสำนักงานเขตพื้นที่ แก้ไขข้อมูลให้ครบถ้วน แล้วอัปโหลดฉบับที่ต้องการส่งให้เจ้าหน้าที่ตรวจดู</p>
             </div>
             <div class="template-steps">
-              <div class="template-step"><strong>1. ดาวน์โหลด</strong><span>รับไฟล์ Word ตัวอย่างจากระบบ</span></div>
+              <div class="template-step"><strong>1. ดาวน์โหลด</strong><span>เลือกเอกสารล่าสุดที่เจ้าหน้าที่เขตเผยแพร่</span></div>
               <div class="template-step"><strong>2. แก้ไขเอกสาร</strong><span>เปิดด้วย Microsoft Word หรือ Pages และปรึกษาเจ้าหน้าที่</span></div>
               <div class="template-step"><strong>3. อัปโหลดกลับ</strong><span>รองรับ Word และ PDF ระบบจะเก็บเฉพาะฉบับล่าสุด</span></div>
             </div>
             <div class="district-template-library">
               <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>รายการนี้มาจากเขตที่ผู้เรียนสังกัด โปรดเลือกใช้ไฟล์และแนวทางล่าสุดที่เจ้าหน้าที่เผยแพร่</p></div>
               <div class="district-template-groups" id="requestDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
-            </div>
-            <div class="template-download">
-              <div><strong>แม่แบบคำขอจัดการศึกษาโดยครอบครัว</strong><span>ไฟล์ Word สามารถแก้ไขข้อความและจัดหน้าเพิ่มเติมได้</span></div>
-              <a class="primary-button" href="assets/templates/แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว.docx" download>ดาวน์โหลด Word</a>
             </div>
             <div class="upload-row template-upload-row" data-upload-row="requestDocument">
               <div class="upload-row-icon" data-icon="fileText"></div>
@@ -2270,7 +2266,7 @@
     }
 
     function renderDistrictTemplates() {
-      if (!districtTemplates.length) return '<div class="template-upload-note">เขตพื้นที่นี้ยังไม่ได้อัปโหลดเอกสารตัวอย่าง คุณยังสามารถใช้แม่แบบส่วนกลางด้านล่างได้</div>';
+      if (!districtTemplates.length) return '<div class="template-upload-note">เขตพื้นที่นี้ยังไม่ได้อัปโหลดเอกสารตัวอย่าง โปรดติดต่อเจ้าหน้าที่เขตก่อนจัดทำเอกสาร</div>';
       return Object.keys(districtTemplateCategoryLabels).map((category) => {
         const items = districtTemplates.filter((item) => item.category === category);
         if (!items.length) return "";
