@@ -760,6 +760,30 @@
     .auth-user-email { max-width: 180px; overflow: hidden; color: var(--sub); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
     .upload-row.uploading { opacity: .65; }
     .upload-row.uploading .select-file-button { cursor: wait; }
+    .plan-choice-intro { margin: -8px 0 18px; color: var(--sub); font-size: 12px; line-height: 1.65; }
+    .plan-choice-list { display: grid; gap: 12px; }
+    .plan-choice {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 13px;
+      width: 100%;
+      padding: 15px;
+      color: var(--ink);
+      text-align: left;
+      background: #fafafd;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: border .15s ease, transform .15s ease, box-shadow .15s ease;
+    }
+    .plan-choice:hover { transform: translateY(-1px); border-color: #aaa7f2; box-shadow: 0 9px 25px rgba(72, 68, 170, .09); }
+    .plan-choice-icon { display: grid; place-items: center; width: 44px; height: 44px; color: var(--brand); background: var(--brand-soft); border-radius: 14px; }
+    .plan-choice-icon svg { width: 22px; height: 22px; }
+    .plan-choice strong, .plan-choice span { display: block; }
+    .plan-choice strong { font-size: 14px; }
+    .plan-choice span { margin-top: 3px; color: var(--sub); font-size: 11px; line-height: 1.55; }
+    .plan-choice-arrow { color: var(--brand); font-size: 21px; font-weight: 900; }
 
     .toast {
       position: fixed;
@@ -1261,7 +1285,7 @@
           <div class="card form-workspace">
             <div class="form-workspace-icon" data-icon="book"></div>
             <div><h2>จัดทำแผนการจัดการศึกษา</h2><p>กำหนดแนวคิด จุดมุ่งหมาย หลักสูตร กลุ่มประสบการณ์ วิธีจัดการเรียนรู้ การวัดผล และแผนการเรียนรายปีของผู้เรียน</p></div>
-            <button class="primary-button prototype-action" type="button" data-label="แผนการจัดการศึกษา">เริ่มจัดทำแผน</button>
+            <button class="primary-button" id="openPlanChoice" type="button">เริ่มจัดทำแผน</button>
           </div>
         </div>
 
@@ -1304,6 +1328,28 @@
           <button class="primary-button" id="saveTask" type="submit">บันทึกกิจกรรม</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="planChoiceModal" role="dialog" aria-modal="true" aria-labelledby="planChoiceTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="planChoiceTitle">เลือกระดับแผนการจัดการศึกษา</h2>
+        <button class="icon-button close-button" id="closePlanChoice" type="button" aria-label="ปิด" data-icon="x"></button>
+      </div>
+      <p class="plan-choice-intro">เลือกรูปแบบแผนให้ตรงกับระดับการศึกษาของผู้เรียน ระบบจะพาไปยังแบบฟอร์มที่เหมาะสม</p>
+      <div class="plan-choice-list">
+        <button class="plan-choice" type="button" data-plan-level="early_childhood">
+          <span class="plan-choice-icon" data-icon="star"></span>
+          <span><strong>จัดทำแผนระดับอนุบาล (ปฐมวัย)</strong><span>เน้นพัฒนาการ กลุ่มประสบการณ์ และการเรียนรู้ผ่านการเล่น</span></span>
+          <span class="plan-choice-arrow">›</span>
+        </button>
+        <button class="plan-choice" type="button" data-plan-level="primary">
+          <span class="plan-choice-icon" data-icon="book"></span>
+          <span><strong>จัดทำแผนระดับประถมศึกษา</strong><span>เน้นกลุ่มสาระการเรียนรู้ จุดประสงค์ เนื้อหา และการวัดประเมินผล</span></span>
+          <span class="plan-choice-arrow">›</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2446,6 +2492,31 @@
       $("#formError").classList.add("hidden");
     }
 
+    function openPlanChoiceModal() {
+      if (!selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อนจัดทำแผน");
+        return;
+      }
+      $("#planChoiceModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closePlanChoiceModal() {
+      $("#planChoiceModal").classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
+    function choosePlanLevel(level) {
+      if (!selectedStudent) return;
+      const labels = {
+        early_childhood: "แผนระดับอนุบาล (ปฐมวัย)",
+        primary: "แผนระดับประถมศึกษา"
+      };
+      localStorage.setItem("homeschool_plan_level_" + selectedStudent.id, level);
+      closePlanChoiceModal();
+      showToast("เลือก" + labels[level] + "แล้ว ขั้นตอนต่อไปจะเป็นแบบฟอร์มเฉพาะระดับ");
+    }
+
     async function createTask(event) {
       event.preventDefault();
       const form = event.currentTarget;
@@ -2529,10 +2600,8 @@
       const nextWorkflow = event.target.closest("[data-next-workflow]");
       if (nextWorkflow) showWorkflow(nextWorkflow.dataset.nextWorkflow);
 
-      const prototypeAction = event.target.closest(".prototype-action");
-      if (prototypeAction) {
-        showToast("ขั้นตอนต่อไป: ออกแบบฟอร์ม" + prototypeAction.dataset.label);
-      }
+      const planChoice = event.target.closest("[data-plan-level]");
+      if (planChoice) choosePlanLevel(planChoice.dataset.planLevel);
     });
 
     $("#openTaskModal").addEventListener("click", openModal);
@@ -2542,8 +2611,14 @@
     $("#taskModal").addEventListener("click", (event) => {
       if (event.target === event.currentTarget) closeModal();
     });
+    $("#openPlanChoice").addEventListener("click", openPlanChoiceModal);
+    $("#closePlanChoice").addEventListener("click", closePlanChoiceModal);
+    $("#planChoiceModal").addEventListener("click", (event) => {
+      if (event.target === event.currentTarget) closePlanChoiceModal();
+    });
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !$("#taskModal").classList.contains("hidden")) closeModal();
+      if (event.key === "Escape" && !$("#planChoiceModal").classList.contains("hidden")) closePlanChoiceModal();
     });
     $("#chooseEvidence").addEventListener("click", () => $("#evidenceFile").click());
     $("#evidenceFile").addEventListener("change", (event) => {
