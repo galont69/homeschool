@@ -197,11 +197,15 @@
 
     async function uploadDistrictTemplate(event){
       event.preventDefault();
+      const form=event.currentTarget;
       const file=$("#templateFile").files[0],button=$("#uploadTemplateButton"),error=$("#templateError");
+      const category=$("#templateCategory").value;
+      const title=$("#templateTitle").value.trim();
       error.classList.add("hidden");
       if(!file)return;
       button.disabled=true;button.textContent="กำลังอัปโหลด...";
       let path="";
+      let metadataSaved=false;
       try{
         if(file.size>20*1024*1024)throw new Error("ไฟล์มีขนาดเกิน 20 MB");
         const extension=templateExtension(file);
@@ -209,11 +213,12 @@
         path=[officer.verified_district_id,user.id,crypto.randomUUID()+"."+extension].join("/");
         const upload=await fetch(SUPABASE_URL+"/storage/v1/object/district-templates/"+path.split("/").map(encodeURIComponent).join("/"),{method:"POST",headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+session.access_token,"Content-Type":file.type||"application/octet-stream","x-upsert":"false"},body:file});
         if(!upload.ok){const body=await upload.json().catch(()=>({}));throw new Error(body.message||body.error||"อัปโหลดไฟล์ไม่สำเร็จ")}
-        await api("/rest/v1/district_document_templates",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({district_id:officer.verified_district_id,uploaded_by:user.id,category:$("#templateCategory").value,title:$("#templateTitle").value.trim(),storage_path:path,original_filename:file.name,mime_type:file.type||"application/octet-stream",file_size_bytes:file.size})});
-        event.currentTarget.reset();
+        await api("/rest/v1/district_document_templates",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify({district_id:officer.verified_district_id,uploaded_by:user.id,category,title,storage_path:path,original_filename:file.name,mime_type:file.type||"application/octet-stream",file_size_bytes:file.size})});
+        metadataSaved=true;
+        form.reset();
         await loadDistrictTemplates();
       }catch(e){
-        if(path)await fetch(SUPABASE_URL+"/storage/v1/object/district-templates/"+path.split("/").map(encodeURIComponent).join("/"),{method:"DELETE",headers:headers()}).catch(()=>{});
+        if(path&&!metadataSaved)await fetch(SUPABASE_URL+"/storage/v1/object/district-templates/"+path.split("/").map(encodeURIComponent).join("/"),{method:"DELETE",headers:headers()}).catch(()=>{});
         error.textContent=e.message;error.classList.remove("hidden");
       }finally{button.disabled=false;button.textContent="อัปโหลดเอกสาร"}
     }
