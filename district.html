@@ -188,6 +188,18 @@
       return["doc","docx","pdf","odt"].includes(extension)?extension:"bin";
     }
 
+    async function removeDistrictTemplateFile(path){
+      const response=await fetch(SUPABASE_URL+"/storage/v1/object/district-templates",{
+        method:"DELETE",
+        headers:headers(),
+        body:JSON.stringify({prefixes:[path]})
+      });
+      if(!response.ok){
+        const body=await response.json().catch(()=>({}));
+        throw new Error(body.message||body.error||"ลบไฟล์จากพื้นที่จัดเก็บไม่ได้");
+      }
+    }
+
     async function loadDistrictTemplates(){
       districtTemplates=await api("/rest/v1/district_document_templates?select=id,district_id,category,title,original_filename,storage_path,mime_type,file_size_bytes,created_at&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
       const list=$("#districtTemplateList");
@@ -218,7 +230,7 @@
         form.reset();
         await loadDistrictTemplates();
       }catch(e){
-        if(path&&!metadataSaved)await fetch(SUPABASE_URL+"/storage/v1/object/district-templates/"+path.split("/").map(encodeURIComponent).join("/"),{method:"DELETE",headers:headers()}).catch(()=>{});
+        if(path&&!metadataSaved)await removeDistrictTemplateFile(path).catch(()=>{});
         error.textContent=e.message;error.classList.remove("hidden");
       }finally{button.disabled=false;button.textContent="อัปโหลดเอกสาร"}
     }
@@ -235,8 +247,7 @@
     async function deleteDistrictTemplate(id){
       const item=districtTemplates.find(x=>x.id===id);if(!item)return;
       if(!confirm("ต้องการลบเอกสาร “"+item.title+"” ใช่หรือไม่"))return;
-      const storage=await fetch(SUPABASE_URL+"/storage/v1/object/district-templates/"+item.storage_path.split("/").map(encodeURIComponent).join("/"),{method:"DELETE",headers:headers()});
-      if(!storage.ok&&storage.status!==404)throw new Error("ลบไฟล์จากพื้นที่จัดเก็บไม่ได้");
+      await removeDistrictTemplateFile(item.storage_path);
       await api("/rest/v1/district_document_templates?id=eq."+id,{method:"DELETE",headers:{Prefer:"return=minimal"}});
       await loadDistrictTemplates();
     }
