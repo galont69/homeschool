@@ -841,6 +841,15 @@
     .template-download a { flex-shrink: 0; text-decoration: none; }
     .template-upload-row { border: 1px dashed #cfd3e3; }
     .template-upload-note { color: var(--sub); font-size: 11px; line-height: 1.65; }
+    .district-template-library { display: grid; gap: 12px; padding: 18px; background: #f7faff; border: 1px solid #dbe7f7; border-radius: 18px; }
+    .district-template-library-head h3 { margin-bottom: 4px; color: #29549b; }
+    .district-template-library-head p { color: var(--sub); font-size: 11px; line-height: 1.6; }
+    .district-template-groups { display: grid; gap: 12px; }
+    .district-template-group { display: grid; gap: 7px; }
+    .district-template-group h4 { margin: 0; color: var(--sub); font-size: 12px; }
+    .district-template-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 13px; background: #fff; border-radius: 13px; }
+    .district-template-item strong, .district-template-item span { display: block; }
+    .district-template-item span { margin-top: 3px; color: var(--sub); font-size: 10px; }
 
     .toast {
       position: fixed;
@@ -945,6 +954,8 @@
       .plan-editor-actions .save-status { margin: 0; text-align: center; }
       .template-download { align-items: stretch; flex-direction: column; }
       .template-download a { width: 100%; text-align: center; }
+      .district-template-item { grid-template-columns: 1fr; }
+      .district-template-item button { width: 100%; }
       .student-grid { grid-template-columns: 1fr; }
       .student-hub-head { align-items: stretch; flex-direction: column; }
       .student-hub-head .primary-button { width: 100%; }
@@ -1264,6 +1275,10 @@
               <div class="template-step"><strong>2. แก้ไขเอกสาร</strong><span>เปิดด้วย Microsoft Word หรือ Pages และปรึกษาเจ้าหน้าที่</span></div>
               <div class="template-step"><strong>3. อัปโหลดกลับ</strong><span>รองรับ Word และ PDF ระบบจะเก็บเฉพาะฉบับล่าสุด</span></div>
             </div>
+            <div class="district-template-library">
+              <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>รายการนี้มาจากเขตที่ผู้เรียนสังกัด โปรดเลือกใช้ไฟล์และแนวทางล่าสุดที่เจ้าหน้าที่เผยแพร่</p></div>
+              <div class="district-template-groups" id="requestDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
+            </div>
             <div class="template-download">
               <div><strong>แม่แบบคำขอจัดการศึกษาโดยครอบครัว</strong><span>ไฟล์ Word สามารถแก้ไขข้อความและจัดหน้าเพิ่มเติมได้</span></div>
               <a class="primary-button" href="assets/templates/แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว.docx" download>ดาวน์โหลด Word</a>
@@ -1377,6 +1392,10 @@
             <div class="plan-warning">
               <strong>แผนนี้เป็นเพียงตัวอย่าง</strong>
               ควรปรึกษาเจ้าหน้าที่กลุ่มส่งเสริมการจัดการศึกษา และปรับแนวคิด จุดมุ่งหมาย กิจกรรม การวัดผล และรายละเอียดอื่นให้เหมาะสมกับผู้เรียนและบริบทของแต่ละครอบครัว
+            </div>
+            <div class="district-template-library">
+              <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>แสดงเอกสารทั้งหมดที่เจ้าหน้าที่ของเขตผู้เรียนอัปโหลด รวมทั้งแบบคำขอ แผน และเอกสารแนะนำอื่น ๆ</p></div>
+              <div class="district-template-groups" id="planDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
             </div>
             <div class="template-download">
               <div><strong>แม่แบบแผนระดับอนุบาล (ปฐมวัย)</strong><span>เน้นพัฒนาการ 4 ด้าน กลุ่มประสบการณ์ การเรียนรู้ผ่านการเล่น และการประเมินตามสภาพจริง</span></div>
@@ -1711,6 +1730,7 @@
     let students = [];
     let selectedStudent = null;
     let educationDistricts = [];
+    let districtTemplates = [];
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -2221,10 +2241,67 @@
       $("#earlyChildhoodPlanPanel").classList.add("hidden");
       if (name === "request") {
         ensureApplicationContext(true)
-          .then(() => loadRequestForm())
+          .then(() => Promise.all([loadRequestForm(), loadDistrictTemplates()]))
           .catch((error) => showToast(error.message));
       }
+      if (name === "plan") loadDistrictTemplates().catch((error) => showToast(error.message));
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    const districtTemplateCategoryLabels = {
+      request_form: "แบบคำขอ",
+      early_childhood_plan: "แผนระดับปฐมวัย (อนุบาล)",
+      primary_plan: "แผนระดับประถมศึกษา",
+      other: "เอกสารตัวอย่างอื่น ๆ"
+    };
+
+    async function loadDistrictTemplates() {
+      const targets = [$("#requestDistrictTemplates"), $("#planDistrictTemplates")];
+      if (!selectedStudent?.district_id) {
+        targets.forEach((target) => target.innerHTML = '<div class="template-upload-note">ยังไม่ได้กำหนดสำนักงานเขตพื้นที่ของผู้เรียน</div>');
+        return;
+      }
+      districtTemplates = await apiRequest(
+        SUPABASE_URL + "/rest/v1/district_document_templates?select=id,category,title,description,original_filename,storage_path,mime_type,created_at&district_id=eq." + selectedStudent.district_id + "&order=category.asc,created_at.desc",
+        { requireAuth: true }
+      );
+      const html = renderDistrictTemplates();
+      targets.forEach((target) => target.innerHTML = html);
+    }
+
+    function renderDistrictTemplates() {
+      if (!districtTemplates.length) return '<div class="template-upload-note">เขตพื้นที่นี้ยังไม่ได้อัปโหลดเอกสารตัวอย่าง คุณยังสามารถใช้แม่แบบส่วนกลางด้านล่างได้</div>';
+      return Object.keys(districtTemplateCategoryLabels).map((category) => {
+        const items = districtTemplates.filter((item) => item.category === category);
+        if (!items.length) return "";
+        return `<section class="district-template-group"><h4>${escapeHTML(districtTemplateCategoryLabels[category])}</h4>${items.map((item) => `<article class="district-template-item"><div><strong>${escapeHTML(item.title)}</strong><span>${escapeHTML(item.original_filename)} · อัปโหลด ${new Date(item.created_at).toLocaleDateString("th-TH")}</span></div><button class="secondary-button" type="button" data-download-district-template="${escapeHTML(item.id)}">ดาวน์โหลด</button></article>`).join("")}</section>`;
+      }).join("");
+    }
+
+    function absoluteStorageUrl(value) {
+      if (/^https?:\/\//i.test(value)) return value;
+      if (value.startsWith("/storage/v1/")) return SUPABASE_URL + value;
+      if (value.startsWith("/object/")) return SUPABASE_URL + "/storage/v1" + value;
+      return SUPABASE_URL + "/storage/v1/" + value.replace(/^\/+/, "");
+    }
+
+    async function downloadDistrictTemplate(id) {
+      const item = districtTemplates.find((template) => template.id === id);
+      if (!item) return;
+      const signed = await apiRequest(
+        SUPABASE_URL + "/storage/v1/object/sign/district-templates/" + item.storage_path.split("/").map(encodeURIComponent).join("/"),
+        { method: "POST", requireAuth: true, body: JSON.stringify({ expiresIn: 300 }) }
+      );
+      const response = await fetch(absoluteStorageUrl(signed.signedURL || signed.signedUrl));
+      if (!response.ok) throw new Error("ดาวน์โหลดเอกสารจากเขตไม่ได้");
+      const blobUrl = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = item.original_filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     }
 
     function requestFormValues() {
@@ -2966,6 +3043,9 @@
 
       const planChoice = event.target.closest("[data-plan-level]");
       if (planChoice) choosePlanLevel(planChoice.dataset.planLevel);
+
+      const districtTemplate = event.target.closest("[data-download-district-template]");
+      if (districtTemplate) downloadDistrictTemplate(districtTemplate.dataset.downloadDistrictTemplate).catch((error) => showToast(error.message));
     });
 
     $("#openTaskModal").addEventListener("click", openModal);
