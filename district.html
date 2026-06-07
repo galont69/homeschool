@@ -148,7 +148,7 @@
     async function loadDashboard(){
       const districtRows=await api("/rest/v1/education_districts?select=id,code,name&id=eq."+officer.verified_district_id+"&limit=1"),district=districtRows[0];
       $("#districtTitle").textContent=district?district.name:"ภาพรวมเขตพื้นที่";
-      applications=await api("/rest/v1/homeschool_applications?select=id,student_id,status,created_at,request_form_data,early_childhood_plan_data,student:students(first_name,last_name)&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
+      applications=await api("/rest/v1/homeschool_applications?select=id,student_id,status,created_at,request_form_data,student:students(first_name,last_name)&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
       const documentRecords=applications.length?await api("/rest/v1/official_documents?select=id,application_id,document_type,original_filename,storage_path,created_at&application_id=in.("+applications.map(x=>x.id).join(",")+")"):[];
       officialDocuments=uniqueDocuments(documentRecords);
       const generatedDocuments=applications.reduce((count,item)=>count+(hasRequestForm(item)?1:0)+(hasEarlyPlan(item)?1:0),0);
@@ -185,6 +185,7 @@
       student_education_record:"สำเนาหลักฐานการศึกษาของผู้เรียน",
       education_location:"แผนที่ ที่ตั้ง และแผนผังสถานที่จัดการศึกษา",
       student_photo_2inch:"รูปถ่ายผู้เรียน ขนาด 2 นิ้ว",
+      request_form_document:"แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว",
       father_identity:"บัตรประชาชนและทะเบียนบ้านของบิดา (ไฟล์เดิม)",
       mother_identity:"บัตรประชาชนและทะเบียนบ้านของมารดา (ไฟล์เดิม)",
       education_manager_identity:"บัตรประชาชนและทะเบียนบ้านของผู้จัดการศึกษา (ไฟล์เดิม)",
@@ -455,9 +456,12 @@
 
     function previewDocument(previewWindow,blobUrl,mimeType,filename){
       const isImage=mimeType.startsWith("image/");
+      const isWord=mimeType==="application/msword"||mimeType==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"||/\.docx?$/i.test(filename);
       const content=isImage
         ?`<img class="image-preview" src="${blobUrl}" alt="${escapeHtml(filename)}">`
-        :`<iframe class="file-preview" src="${blobUrl}" title="${escapeHtml(filename)}"></iframe>`;
+        :isWord
+          ?`<section class="word-preview"><h2>ไฟล์ Microsoft Word</h2><p>เบราว์เซอร์ไม่สามารถแสดงเอกสาร Word ได้โดยตรง กรุณาดาวน์โหลดเพื่อเปิดด้วย Microsoft Word, Pages หรือโปรแกรมที่รองรับ</p><a href="${blobUrl}" download="${escapeHtml(filename)}">ดาวน์โหลดไฟล์ Word</a></section>`
+          :`<iframe class="file-preview" src="${blobUrl}" title="${escapeHtml(filename)}"></iframe>`;
       previewWindow.document.open();
       previewWindow.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>${escapeHtml(filename)}</title><style>
         *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Noto Sans Thai",Tahoma,sans-serif;background:#eef2f7;color:#171923}
@@ -467,6 +471,7 @@
         button{color:#fff;background:#3867b7}a{color:#3867b7;background:#eaf1fc}
         main{display:grid;place-items:center;min-height:calc(100vh - 62px);padding:18px}.image-preview{display:block;max-width:100%;max-height:calc(100vh - 98px);object-fit:contain;background:#fff;box-shadow:0 8px 30px rgba(30,45,65,.15)}
         .file-preview{width:min(1100px,100%);height:calc(100vh - 98px);border:0;background:#fff}
+        .word-preview{width:min(560px,100%);padding:34px;text-align:center;background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(30,45,65,.15)}.word-preview h2{margin-top:0}.word-preview p{color:#687080;line-height:1.7}.word-preview a{display:inline-block;margin-top:12px;color:#fff;background:#3867b7}
         @media print{.toolbar{display:none}main{padding:0;min-height:0;background:#fff}.image-preview{width:100%;max-width:none;max-height:none;box-shadow:none}.file-preview{width:100%;height:100vh}}
       </style></head><body><header class="toolbar"><strong>${escapeHtml(filename)}</strong><div class="actions"><a href="${blobUrl}" download="${escapeHtml(filename)}">ดาวน์โหลด</a><button onclick="window.print()">พิมพ์เอกสาร</button></div></header><main>${content}</main></body></html>`);
       previewWindow.document.close();

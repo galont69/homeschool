@@ -819,6 +819,28 @@
     .plan-domain strong { color: var(--brand); font-size: 14px; }
     .plan-editor-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
     .plan-editor-actions .save-status { margin-right: auto; }
+    .template-exchange { display: grid; gap: 18px; padding: clamp(22px, 4vw, 34px); }
+    .template-exchange-head h2 { margin-bottom: 6px; }
+    .template-exchange-head p { color: var(--sub); line-height: 1.7; }
+    .template-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .template-step { padding: 14px; background: var(--paper); border-radius: 15px; }
+    .template-step strong { display: block; margin-bottom: 4px; color: var(--brand); }
+    .template-step span { color: var(--sub); font-size: 11px; line-height: 1.55; }
+    .template-download {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      background: #f4f3ff;
+      border: 1px solid #dddbff;
+      border-radius: 17px;
+    }
+    .template-download strong, .template-download span { display: block; }
+    .template-download span { margin-top: 4px; color: var(--sub); font-size: 11px; }
+    .template-download a { flex-shrink: 0; text-decoration: none; }
+    .template-upload-row { border: 1px dashed #cfd3e3; }
+    .template-upload-note { color: var(--sub); font-size: 11px; line-height: 1.65; }
 
     .toast {
       position: fixed;
@@ -908,6 +930,7 @@
       .request-form-head { flex-direction:column; }
       .request-form-grid,.checkbox-grid { grid-template-columns:1fr; }
       .plan-form-grid,.plan-domain-grid { grid-template-columns:1fr; }
+      .template-steps { grid-template-columns:1fr; }
       .request-form-grid .wide { grid-column:auto; }
       .plan-form-grid .wide { grid-column:auto; }
       .request-form-actions { display:grid; grid-template-columns:1fr; }
@@ -920,6 +943,8 @@
       .plan-editor-head { flex-direction: column; }
       .plan-editor-actions { display: grid; grid-template-columns: 1fr; }
       .plan-editor-actions .save-status { margin: 0; text-align: center; }
+      .template-download { align-items: stretch; flex-direction: column; }
+      .template-download a { width: 100%; text-align: center; }
       .student-grid { grid-template-columns: 1fr; }
       .student-hub-head { align-items: stretch; flex-direction: column; }
       .student-hub-head .primary-button { width: 100%; }
@@ -1229,7 +1254,29 @@
         </div>
 
         <div class="workflow-panel hidden" id="requestPanel">
-          <form class="card request-form-card" id="requestForm">
+          <section class="card template-exchange">
+            <div class="template-exchange-head">
+              <h2>แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h2>
+              <p>ดาวน์โหลดแม่แบบ Word แก้ไขข้อมูลให้ครบถ้วน แล้วอัปโหลดฉบับที่ต้องการส่งให้เจ้าหน้าที่ตรวจดู</p>
+            </div>
+            <div class="template-steps">
+              <div class="template-step"><strong>1. ดาวน์โหลด</strong><span>รับไฟล์ Word ตัวอย่างจากระบบ</span></div>
+              <div class="template-step"><strong>2. แก้ไขเอกสาร</strong><span>เปิดด้วย Microsoft Word หรือ Pages และปรึกษาเจ้าหน้าที่</span></div>
+              <div class="template-step"><strong>3. อัปโหลดกลับ</strong><span>รองรับ Word และ PDF ระบบจะเก็บเฉพาะฉบับล่าสุด</span></div>
+            </div>
+            <div class="template-download">
+              <div><strong>แม่แบบคำขอจัดการศึกษาโดยครอบครัว</strong><span>ไฟล์ Word สามารถแก้ไขข้อความและจัดหน้าเพิ่มเติมได้</span></div>
+              <a class="primary-button" href="assets/templates/แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว.docx" download>ดาวน์โหลด Word</a>
+            </div>
+            <div class="upload-row template-upload-row" data-upload-row="requestDocument">
+              <div class="upload-row-icon" data-icon="fileText"></div>
+              <div class="upload-row-copy"><strong>อัปโหลดแบบคำขอฉบับที่แก้ไขแล้ว</strong><span>ไฟล์ DOC, DOCX หรือ PDF ขนาดไม่เกิน 10 MB</span></div>
+              <button class="select-file-button" type="button" data-upload="requestDocument">อัปโหลดเอกสาร</button>
+            </div>
+            <p class="template-upload-note">เว็บไซต์นี้เป็นเครื่องมือจัดเตรียมและส่งเอกสารให้เจ้าหน้าที่ดูเท่านั้น การยื่นคำขออย่างเป็นทางการต้องดำเนินการตามช่องทางที่สำนักงานเขตพื้นที่แจ้ง</p>
+          </section>
+
+          <form class="card request-form-card hidden" id="requestForm">
             <div class="request-form-head">
               <div><h2>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษา</h2><p>ข้อมูลจะถูกบันทึกเฉพาะคำขอของผู้เรียนที่เลือก และนำไปจัดหน้าเอกสารราชการอัตโนมัติ</p></div>
               <span class="security-badge"><span data-icon="shield"></span>บันทึกใน Supabase</span>
@@ -1322,11 +1369,29 @@
         </div>
 
         <div class="workflow-panel hidden" id="planPanel">
-          <div class="card form-workspace">
-            <div class="form-workspace-icon" data-icon="book"></div>
-            <div><h2>จัดทำแผนการจัดการศึกษา</h2><p>กำหนดแนวคิด จุดมุ่งหมาย หลักสูตร กลุ่มประสบการณ์ วิธีจัดการเรียนรู้ การวัดผล และแผนการเรียนรายปีของผู้เรียน</p></div>
-            <button class="primary-button" id="openPlanChoice" type="button">เริ่มจัดทำแผน</button>
-          </div>
+          <section class="card template-exchange">
+            <div class="template-exchange-head">
+              <h2>แผนการจัดการศึกษา</h2>
+              <p>ดาวน์โหลดแม่แบบให้ตรงกับระดับของผู้เรียน ปรับเนื้อหาร่วมกับเจ้าหน้าที่ แล้วอัปโหลด Word หรือ PDF ฉบับล่าสุดกลับเข้าระบบ</p>
+            </div>
+            <div class="plan-warning">
+              <strong>แผนนี้เป็นเพียงตัวอย่าง</strong>
+              ควรปรึกษาเจ้าหน้าที่กลุ่มส่งเสริมการจัดการศึกษา และปรับแนวคิด จุดมุ่งหมาย กิจกรรม การวัดผล และรายละเอียดอื่นให้เหมาะสมกับผู้เรียนและบริบทของแต่ละครอบครัว
+            </div>
+            <div class="template-download">
+              <div><strong>แม่แบบแผนระดับอนุบาล (ปฐมวัย)</strong><span>เน้นพัฒนาการ 4 ด้าน กลุ่มประสบการณ์ การเรียนรู้ผ่านการเล่น และการประเมินตามสภาพจริง</span></div>
+              <a class="primary-button" href="assets/templates/ตัวอย่างแผนการจัดการศึกษาระดับปฐมวัย.docx" download>ดาวน์โหลด Word</a>
+            </div>
+            <div class="template-download">
+              <div><strong>แม่แบบแผนระดับประถมศึกษา</strong><span>จะเพิ่มเมื่อมีแม่แบบที่ผ่านการตรวจรูปแบบและเนื้อหาแล้ว</span></div>
+              <button class="secondary-button" type="button" disabled>กำลังจัดเตรียม</button>
+            </div>
+            <div class="upload-row template-upload-row" data-upload-row="educationPlanDocument">
+              <div class="upload-row-icon" data-icon="book"></div>
+              <div class="upload-row-copy"><strong>อัปโหลดแผนการศึกษาฉบับที่แก้ไขแล้ว</strong><span>ไฟล์ DOC, DOCX หรือ PDF ขนาดไม่เกิน 10 MB</span></div>
+              <button class="select-file-button" type="button" data-upload="educationPlanDocument">อัปโหลดแผน</button>
+            </div>
+          </section>
         </div>
 
         <div class="workflow-panel hidden" id="earlyChildhoodPlanPanel">
@@ -1415,7 +1480,7 @@
           </form>
         </div>
 
-        <input class="file-input" id="officialDocumentInput" type="file" accept=".pdf,image/jpeg,image/png">
+        <input class="file-input" id="officialDocumentInput" type="file" accept=".pdf,.doc,.docx,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
       </section>
     </main>
 
@@ -1587,7 +1652,9 @@
       managerEducation: "education_manager_qualification",
       studentEducation: "student_education_record",
       location: "education_location",
-      photo: "student_photo_2inch"
+      photo: "student_photo_2inch",
+      requestDocument: "request_form_document",
+      educationPlanDocument: "education_plan_document"
     };
 
     const icons = {
@@ -1979,7 +2046,7 @@
     async function ensureApplicationContext(createIfMissing = false) {
       if (!currentUser || !selectedStudent) return false;
       const applications = await apiRequest(
-        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,district_id,status,request_form_data,early_childhood_plan_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,district_id,status,request_form_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
         { requireAuth: true }
       );
       if (applications?.length) {
@@ -2358,8 +2425,8 @@
     }
 
     function refreshApplicationProgress() {
-      const total = $$("[data-upload-row]").length;
-      const uploaded = Object.keys(selectedOfficialFiles).length;
+      const total = $$("[data-upload-row]", $("#uploadsPanel")).length;
+      const uploaded = Object.keys(selectedOfficialFiles).filter((key) => $('[data-upload-row="' + key + '"]', $("#uploadsPanel"))).length;
       const percentage = Math.round((uploaded / total) * 100);
       $("#applicationProgress").textContent = percentage + "%";
     }
@@ -2389,6 +2456,8 @@
     function defaultUploadButtonLabel(key) {
       if (key.endsWith("House")) return "อัปโหลดทะเบียนบ้าน";
       if (key.endsWith("Id")) return "อัปโหลดบัตรประชาชน";
+      if (key === "requestDocument") return "อัปโหลดเอกสาร";
+      if (key === "educationPlanDocument") return "อัปโหลดแผน";
       return "เลือกไฟล์";
     }
 
@@ -2411,9 +2480,11 @@
 
     function safeFileExtension(file) {
       const byName = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
-      if (["pdf", "jpg", "jpeg", "png"].includes(byName)) return byName;
+      if (["pdf", "jpg", "jpeg", "png", "doc", "docx"].includes(byName)) return byName;
       if (file.type === "application/pdf") return "pdf";
       if (file.type === "image/png") return "png";
+      if (file.type === "application/msword") return "doc";
+      if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") return "docx";
       return "jpg";
     }
 
@@ -2501,8 +2572,10 @@
           if (!ready) throw new Error("กรุณากรอกข้อมูลครอบครัวและผู้เรียนก่อน");
         }
         if (file.size > 10 * 1024 * 1024) throw new Error(file.name + " มีขนาดเกิน 10 MB");
-        if (!["application/pdf", "image/jpeg", "image/png"].includes(file.type)) {
-          throw new Error(file.name + " ไม่ใช่ไฟล์ PDF, JPG หรือ PNG");
+        const extension = safeFileExtension(file);
+        const allowed = ["pdf", "jpg", "jpeg", "png", "doc", "docx"];
+        if (!allowed.includes(extension)) {
+          throw new Error(file.name + " ไม่ใช่ไฟล์ DOC, DOCX, PDF, JPG หรือ PNG");
         }
         const documentType = DOCUMENT_TYPE_MAP[activeUploadKey];
         const previousRecords = await apiRequest(
@@ -2902,7 +2975,7 @@
     $("#taskModal").addEventListener("click", (event) => {
       if (event.target === event.currentTarget) closeModal();
     });
-    $("#openPlanChoice").addEventListener("click", openPlanChoiceModal);
+    $("#openPlanChoice")?.addEventListener("click", openPlanChoiceModal);
     $("#closePlanChoice").addEventListener("click", closePlanChoiceModal);
     $("#planChoiceModal").addEventListener("click", (event) => {
       if (event.target === event.currentTarget) closePlanChoiceModal();
