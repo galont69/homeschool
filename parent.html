@@ -784,6 +784,41 @@
     .plan-choice strong { font-size: 14px; }
     .plan-choice span { margin-top: 3px; color: var(--sub); font-size: 11px; line-height: 1.55; }
     .plan-choice-arrow { color: var(--brand); font-size: 21px; font-weight: 900; }
+    .plan-editor { display: grid; gap: 18px; }
+    .plan-editor-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+    .plan-editor-head h2 { margin-bottom: 5px; }
+    .plan-warning {
+      padding: 17px 19px;
+      color: #704d15;
+      background: #fff7df;
+      border: 1px solid #f0d890;
+      border-radius: 18px;
+      font-size: 13px;
+      line-height: 1.75;
+    }
+    .plan-warning strong { display: block; margin-bottom: 3px; color: #62400b; font-size: 15px; }
+    .plan-form-section {
+      padding-top: 21px;
+      border-top: 1px solid var(--line);
+    }
+    .plan-form-section:first-of-type { padding-top: 0; border-top: 0; }
+    .plan-form-section h3 { margin-bottom: 5px; font-size: 18px; }
+    .plan-form-section > p { margin: 0 0 15px; color: var(--sub); font-size: 12px; line-height: 1.6; }
+    .plan-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .plan-form-grid .wide { grid-column: 1 / -1; }
+    .plan-form-grid textarea { min-height: 112px; }
+    .plan-domain-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .plan-domain {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      background: #fafafd;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+    .plan-domain strong { color: var(--brand); font-size: 14px; }
+    .plan-editor-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+    .plan-editor-actions .save-status { margin-right: auto; }
 
     .toast {
       position: fixed;
@@ -872,7 +907,9 @@
       .workspace-intro { flex-direction: column; }
       .request-form-head { flex-direction:column; }
       .request-form-grid,.checkbox-grid { grid-template-columns:1fr; }
+      .plan-form-grid,.plan-domain-grid { grid-template-columns:1fr; }
       .request-form-grid .wide { grid-column:auto; }
+      .plan-form-grid .wide { grid-column:auto; }
       .request-form-actions { display:grid; grid-template-columns:1fr; }
       .request-form-actions .save-status { margin:0; text-align:center; }
       .upload-row { grid-template-columns: 41px minmax(0, 1fr); }
@@ -880,6 +917,9 @@
       .form-workspace { grid-template-columns: 52px minmax(0, 1fr); }
       .form-workspace-icon { width: 52px; height: 52px; border-radius: 16px; }
       .form-workspace .primary-button { grid-column: 1 / -1; width: 100%; }
+      .plan-editor-head { flex-direction: column; }
+      .plan-editor-actions { display: grid; grid-template-columns: 1fr; }
+      .plan-editor-actions .save-status { margin: 0; text-align: center; }
       .student-grid { grid-template-columns: 1fr; }
       .student-hub-head { align-items: stretch; flex-direction: column; }
       .student-hub-head .primary-button { width: 100%; }
@@ -1287,6 +1327,92 @@
             <div><h2>จัดทำแผนการจัดการศึกษา</h2><p>กำหนดแนวคิด จุดมุ่งหมาย หลักสูตร กลุ่มประสบการณ์ วิธีจัดการเรียนรู้ การวัดผล และแผนการเรียนรายปีของผู้เรียน</p></div>
             <button class="primary-button" id="openPlanChoice" type="button">เริ่มจัดทำแผน</button>
           </div>
+        </div>
+
+        <div class="workflow-panel hidden" id="earlyChildhoodPlanPanel">
+          <form class="card request-form-card plan-editor" id="earlyChildhoodPlanForm">
+            <div class="plan-editor-head">
+              <div>
+                <p class="eyebrow">แผนการจัดการศึกษาโดยครอบครัว</p>
+                <h2>แบบฟอร์มแผนระดับปฐมวัย</h2>
+                <p>ระดับอนุบาล 1-3 สำหรับการเรียนรู้ผ่านการเล่นและประสบการณ์ในชีวิตประจำวัน</p>
+              </div>
+              <button class="secondary-button" id="backToPlanChoice" type="button">เปลี่ยนระดับแผน</button>
+            </div>
+
+            <div class="plan-warning">
+              <strong>ข้อควรทราบก่อนจัดทำแผน</strong>
+              แผนนี้เป็นเพียงตัวอย่างและเครื่องมือช่วยจัดเตรียมข้อมูล ผู้ปกครองควรปรึกษาเจ้าหน้าที่กลุ่มส่งเสริมการจัดการศึกษา และปรับเนื้อหา จุดมุ่งหมาย กิจกรรม ตลอดจนการวัดผลให้เหมาะสมกับผู้เรียนและบริบทของแต่ละครอบครัวก่อนนำไปใช้หรือยื่นต่อเขตพื้นที่
+            </div>
+
+            <section class="plan-form-section">
+              <h3>1. ข้อมูลหน้าปกและข้อมูลทั่วไป</h3>
+              <p>ข้อมูลผู้เรียนและเขตพื้นที่จะเติมจากข้อมูลที่มีในระบบ คุณสามารถแก้ไขเฉพาะในแผนฉบับนี้ได้</p>
+              <div class="plan-form-grid">
+                <div class="field"><label for="planHomeName">ชื่อบ้านเรียน</label><input id="planHomeName" name="homeName" placeholder="เช่น บ้านเรียนใจดี"></div>
+                <div class="field"><label for="planAcademicYear">ปีการศึกษา</label><input id="planAcademicYear" name="academicYear" placeholder="เช่น 2569"></div>
+                <div class="field"><label for="planStudentName">ชื่อ-นามสกุลผู้เรียน</label><input id="planStudentName" name="studentName" required></div>
+                <div class="field"><label for="planStudentBirthDate">วันเกิดผู้เรียน</label><input id="planStudentBirthDate" name="studentBirthDate" type="date"></div>
+                <div class="field"><label for="planLevel">ระดับที่จัดการศึกษา</label><select id="planLevel" name="educationLevel"><option>อนุบาล 1</option><option>อนุบาล 2</option><option>อนุบาล 3</option></select></div>
+                <div class="field"><label for="planDistrictName">สำนักงานเขตพื้นที่การศึกษา</label><input id="planDistrictName" name="districtName"></div>
+                <div class="field wide"><label for="planManagerName">ชื่อ-นามสกุลผู้จัดการศึกษา</label><input id="planManagerName" name="managerName" required></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>2. ข้อมูลพื้นฐานของครอบครัวและผู้เรียน</h3>
+              <p>สรุปประสบการณ์ของผู้จัดการศึกษา ประวัติผู้เรียน และสิ่งที่ควรรู้เพื่อออกแบบการเรียนรู้</p>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="planFamilyBackground">ข้อมูลพื้นฐานของครอบครัวและประสบการณ์ของผู้จัดการศึกษา</label><textarea id="planFamilyBackground" name="familyBackground" placeholder="การศึกษา อาชีพ ประสบการณ์ ความถนัด และทรัพยากรการเรียนรู้ของครอบครัว"></textarea></div>
+                <div class="field wide"><label for="planEducationHistory">ประวัติการศึกษาและประสบการณ์เดิมของผู้เรียน</label><textarea id="planEducationHistory" name="educationHistory"></textarea></div>
+              </div>
+              <div class="plan-domain-grid">
+                <label class="plan-domain"><strong>พัฒนาการด้านร่างกาย</strong><textarea name="developmentPhysical" placeholder="สุขภาพ การเคลื่อนไหว กล้ามเนื้อ และการดูแลตนเอง"></textarea></label>
+                <label class="plan-domain"><strong>พัฒนาการด้านอารมณ์และจิตใจ</strong><textarea name="developmentEmotional" placeholder="อารมณ์ ความมั่นใจ ความสนใจ และการแสดงออก"></textarea></label>
+                <label class="plan-domain"><strong>พัฒนาการด้านสังคม</strong><textarea name="developmentSocial" placeholder="การอยู่ร่วมกับผู้อื่น ความรับผิดชอบ และวินัย"></textarea></label>
+                <label class="plan-domain"><strong>พัฒนาการด้านสติปัญญา</strong><textarea name="developmentIntellectual" placeholder="ภาษา การคิด การแก้ปัญหา ความสนใจและความต้องการพิเศษ"></textarea></label>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>3. เหตุผลและจุดมุ่งหมายของการจัดการศึกษา</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="planReason">เหตุผลที่ครอบครัวเลือกจัดการศึกษาโดยครอบครัว</label><textarea id="planReason" name="reason"></textarea></div>
+                <div class="field wide"><label for="planGoals">จุดมุ่งหมายและคุณลักษณะที่ต้องการให้เกิดกับผู้เรียน</label><textarea id="planGoals" name="goals" placeholder="ระบุเป้าหมายของครอบครัว โดยครอบคลุมพัฒนาการทั้ง 4 ด้าน"></textarea></div>
+                <div class="field wide"><label for="planFormat">รูปแบบการจัดการศึกษาและแหล่งเรียนรู้</label><textarea id="planFormat" name="educationFormat" placeholder="เช่น จัดโดยครอบครัวเดียว เรียนรู้ร่วมกับเครือข่าย ใช้พิพิธภัณฑ์ ห้องสมุด ธรรมชาติ และชุมชน"></textarea></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>4. กลุ่มประสบการณ์และกิจกรรมการเรียนรู้</h3>
+              <p>ระบุสิ่งที่คาดหวังและตัวอย่างกิจกรรมซึ่งยืดหยุ่นตามความสนใจของผู้เรียน</p>
+              <div class="plan-domain-grid">
+                <label class="plan-domain"><strong>ด้านร่างกาย</strong><textarea name="experiencePhysicalGoals" placeholder="คุณลักษณะและประสบการณ์สำคัญ"></textarea><textarea name="experiencePhysicalActivities" placeholder="กิจกรรมและกระบวนการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>ด้านอารมณ์และจิตใจ</strong><textarea name="experienceEmotionalGoals" placeholder="คุณลักษณะและประสบการณ์สำคัญ"></textarea><textarea name="experienceEmotionalActivities" placeholder="กิจกรรมและกระบวนการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>ด้านสังคม</strong><textarea name="experienceSocialGoals" placeholder="คุณลักษณะและประสบการณ์สำคัญ"></textarea><textarea name="experienceSocialActivities" placeholder="กิจกรรมและกระบวนการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>ด้านสติปัญญา</strong><textarea name="experienceIntellectualGoals" placeholder="คุณลักษณะและประสบการณ์สำคัญ"></textarea><textarea name="experienceIntellectualActivities" placeholder="กิจกรรมและกระบวนการเรียนรู้"></textarea></label>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>5. กระบวนการเรียนรู้ ตารางกิจกรรม และการประเมินผล</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="planLearningProcess">แนวทางและกระบวนการจัดการเรียนรู้</label><textarea id="planLearningProcess" name="learningProcess" placeholder="การเรียนรู้ผ่านการเล่น ลงมือทำ สนทนา สังเกต ทดลอง และใช้ชีวิตประจำวัน"></textarea></div>
+                <div class="field wide"><label for="planSchedule">ตารางกิจกรรมโดยสังเขป</label><textarea id="planSchedule" name="schedule" placeholder="ตัวอย่าง: จันทร์-ศุกร์ ช่วงเช้าอ่านนิทาน เล่นกลางแจ้ง ทำอาหาร ศิลปะ และกิจกรรมตามความสนใจ"></textarea></div>
+                <div class="field wide"><label for="planEvaluation">วิธีวัดและประเมินพัฒนาการ</label><textarea id="planEvaluation" name="evaluation" placeholder="สังเกตพฤติกรรม สนทนา บันทึกพัฒนาการ แฟ้มผลงาน ภาพถ่าย และประเมินร่วมกับเขตพื้นที่"></textarea></div>
+                <div class="field wide"><label for="planPromotion">เกณฑ์การผ่านและการเลื่อนระดับ</label><textarea id="planPromotion" name="promotion" placeholder="พิจารณาพัฒนาการตามวัย ความก้าวหน้ารายบุคคล และผลการประเมินร่วม"></textarea></div>
+                <div class="field wide"><label for="planAppendix">รายการภาคผนวก</label><textarea id="planAppendix" name="appendix" placeholder="เช่น ตารางกิจกรรม แผนผังแหล่งเรียนรู้ ภาพสถานที่ ตัวอย่างสื่อ และเอกสารอ้างอิง"></textarea></div>
+              </div>
+            </section>
+
+            <p class="form-error hidden" id="earlyPlanError"></p>
+            <div class="plan-editor-actions">
+              <span class="save-status" id="earlyPlanSaveStatus">ยังไม่ได้บันทึก</span>
+              <button class="secondary-button" id="downloadEarlyPlanWord" type="button">ดาวน์โหลด Word</button>
+              <button class="secondary-button" id="downloadEarlyPlanPdf" type="button">ดาวน์โหลด / พิมพ์ PDF</button>
+              <button class="primary-button" id="saveEarlyPlan" type="submit">บันทึกแผนในระบบ</button>
+            </div>
+          </form>
         </div>
 
         <input class="file-input" id="officialDocumentInput" type="file" accept=".pdf,image/jpeg,image/png">
@@ -1853,7 +1979,7 @@
     async function ensureApplicationContext(createIfMissing = false) {
       if (!currentUser || !selectedStudent) return false;
       const applications = await apiRequest(
-        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,district_id,status,request_form_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,district_id,status,request_form_data,early_childhood_plan_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
         { requireAuth: true }
       );
       if (applications?.length) {
@@ -2025,6 +2151,7 @@
       $("#uploadsPanel").classList.toggle("hidden", name !== "uploads");
       $("#requestPanel").classList.toggle("hidden", name !== "request");
       $("#planPanel").classList.toggle("hidden", name !== "plan");
+      $("#earlyChildhoodPlanPanel").classList.add("hidden");
       if (name === "request") {
         ensureApplicationContext(true)
           .then(() => loadRequestForm())
@@ -2506,7 +2633,162 @@
       document.body.style.overflow = "";
     }
 
-    function choosePlanLevel(level) {
+    function earlyPlanDefaults() {
+      const request = applicationContext?.request_form_data || {};
+      const studentName = [selectedStudent?.first_name, selectedStudent?.last_name].filter(Boolean).join(" ");
+      return {
+        homeName: familyRecord?.family_name ? "บ้านเรียน" + familyRecord.family_name : "",
+        academicYear: String(new Date().getFullYear() + 543),
+        studentName,
+        studentBirthDate: selectedStudent?.birth_date || "",
+        educationLevel: selectedStudent?.current_education_level?.includes("อนุบาล") ? selectedStudent.current_education_level : "อนุบาล 1",
+        districtName: selectedStudent?.district?.name || request.districtName || "",
+        managerName: request.managerName || parentProfile?.full_name || "",
+        familyBackground: "",
+        educationHistory: "",
+        developmentPhysical: "",
+        developmentEmotional: "",
+        developmentSocial: "",
+        developmentIntellectual: "",
+        reason: "ครอบครัวต้องการจัดการเรียนรู้ที่ยืดหยุ่น สอดคล้องกับพัฒนาการ ความสนใจ และวิถีชีวิตของผู้เรียน",
+        goals: "ส่งเสริมให้ผู้เรียนมีพัฒนาการสมวัยทั้งด้านร่างกาย อารมณ์และจิตใจ สังคม และสติปัญญา มีความสุขในการเรียนรู้ ช่วยเหลือตนเอง และอยู่ร่วมกับผู้อื่นได้",
+        educationFormat: "จัดการศึกษาโดยครอบครัว ใช้บ้าน ชุมชน ธรรมชาติ และแหล่งเรียนรู้ใกล้ตัวเป็นพื้นที่เรียนรู้ พร้อมเข้าร่วมกิจกรรมกับเครือข่ายตามความเหมาะสม",
+        learningProcess: "จัดประสบการณ์ผ่านการเล่น การลงมือทำ กิจวัตรประจำวัน การอ่านนิทาน การสนทนา การสำรวจธรรมชาติ ศิลปะ ดนตรี และกิจกรรมที่ผู้เรียนสนใจ โดยปรับระยะเวลาและความยากตามพัฒนาการรายบุคคล",
+        schedule: "จัดกิจกรรมอย่างยืดหยุ่นตลอดสัปดาห์ โดยมีทั้งกิจกรรมเคลื่อนไหว กิจกรรมสร้างสรรค์ อ่านนิทาน เล่นอิสระ ช่วยงานบ้าน สำรวจชุมชน และพักผ่อนอย่างเพียงพอ",
+        evaluation: "ประเมินจากการสังเกตและบันทึกพฤติกรรม การสนทนา ภาพถ่าย คลิปวิดีโอ ชิ้นงาน และแฟ้มสะสมพัฒนาการ เปรียบเทียบความก้าวหน้าของผู้เรียนกับตนเอง และประเมินร่วมกับสำนักงานเขตพื้นที่ตามแนวทางที่ตกลงกัน",
+        promotion: "พิจารณาจากพัฒนาการตามวัย ความก้าวหน้ารายบุคคล ความพร้อมของผู้เรียน และผลการประเมินร่วมระหว่างครอบครัวกับสำนักงานเขตพื้นที่การศึกษา",
+        appendix: "ตารางกิจกรรมโดยสังเขป แผนผังแหล่งเรียนรู้ ภาพสถานที่จัดการศึกษา ตัวอย่างสื่อ และตัวอย่างผลงานของผู้เรียน"
+      };
+    }
+
+    function earlyPlanValues() {
+      return Object.fromEntries(new FormData($("#earlyChildhoodPlanForm")).entries());
+    }
+
+    function fillEarlyPlanForm(values = {}) {
+      const form = $("#earlyChildhoodPlanForm");
+      Object.entries(values).forEach(([name, value]) => {
+        const field = form.elements.namedItem(name);
+        if (field && value !== null && value !== undefined) field.value = value;
+      });
+    }
+
+    function showEarlyChildhoodPlan() {
+      $$(".workflow-tab").forEach((button) => button.classList.toggle("active", button.dataset.workflow === "plan"));
+      $("#uploadsPanel").classList.add("hidden");
+      $("#requestPanel").classList.add("hidden");
+      $("#planPanel").classList.add("hidden");
+      $("#earlyChildhoodPlanPanel").classList.remove("hidden");
+      const saved = applicationContext?.early_childhood_plan_data || {};
+      fillEarlyPlanForm({ ...earlyPlanDefaults(), ...saved });
+      $("#earlyPlanSaveStatus").textContent = Object.keys(saved).length ? "โหลดแผนที่บันทึกไว้แล้ว" : "ยังไม่ได้บันทึก";
+      $("#earlyPlanError").classList.add("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function saveEarlyChildhoodPlan(event) {
+      event.preventDefault();
+      if (!applicationContext) await ensureApplicationContext(true);
+      const button = $("#saveEarlyPlan");
+      const errorBox = $("#earlyPlanError");
+      button.disabled = true;
+      button.textContent = "กำลังบันทึก...";
+      errorBox.classList.add("hidden");
+      try {
+        const values = earlyPlanValues();
+        values.planType = "early_childhood";
+        values.updatedAt = new Date().toISOString();
+        const rows = await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ early_childhood_plan_data: values })
+          }
+        );
+        applicationContext = rows[0] || { ...applicationContext, early_childhood_plan_data: values };
+        $("#earlyPlanSaveStatus").textContent = "บันทึกล่าสุด " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        showToast("บันทึกแผนปฐมวัยในระบบเรียบร้อยแล้ว");
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+        button.textContent = "บันทึกแผนในระบบ";
+      }
+    }
+
+    function planText(value, fallback = "-") {
+      return escapeHTML(String(value || fallback)).replace(/\n/g, "<br>");
+    }
+
+    function earlyPlanDocument(values, includePrintButton = true) {
+      const regularFontUrl = new URL("assets/fonts/THSarabunNew.ttf", window.location.href).href;
+      const boldFontUrl = new URL("assets/fonts/THSarabunNew-Bold.ttf", window.location.href).href;
+      const domainRows = [
+        ["ด้านร่างกาย", values.experiencePhysicalGoals, values.experiencePhysicalActivities],
+        ["ด้านอารมณ์และจิตใจ", values.experienceEmotionalGoals, values.experienceEmotionalActivities],
+        ["ด้านสังคม", values.experienceSocialGoals, values.experienceSocialActivities],
+        ["ด้านสติปัญญา", values.experienceIntellectualGoals, values.experienceIntellectualActivities]
+      ].map(row => `<tr><td>${row[0]}</td><td>${planText(row[1])}</td><td>${planText(row[2])}</td></tr>`).join("");
+      return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แผนการจัดการศึกษาระดับปฐมวัย</title><style>
+        @page{size:A4 portrait;margin:18mm 18mm 17mm}
+        @font-face{font-family:"TH Sarabun New Embedded";src:url("${regularFontUrl}") format("truetype");font-weight:400}
+        @font-face{font-family:"TH Sarabun New Embedded";src:url("${boldFontUrl}") format("truetype");font-weight:700}
+        *{box-sizing:border-box}body{margin:0;color:#000;background:#ddd;font-family:"TH Sarabun New Embedded","TH Sarabun New",sans-serif;font-size:16pt;line-height:1.15}
+        .toolbar{position:sticky;top:0;z-index:3;padding:10px;text-align:center;background:#efefff}.toolbar button{padding:9px 18px;color:#fff;background:#5852e7;border:0;border-radius:8px;font-weight:700;cursor:pointer}
+        .sheet{width:210mm;min-height:297mm;margin:12px auto;padding:18mm;background:#fff;box-shadow:0 2px 12px #888}
+        h1,h2,h3{margin:0 0 7mm;text-align:center}h1{font-size:24pt}h2{font-size:20pt}h3{margin-top:7mm;font-size:18pt;text-align:left}
+        .cover{display:grid;place-items:center;min-height:240mm;text-align:center}.cover p{margin:4mm 0}.meta{width:100%;margin-top:20mm;text-align:left}
+        p{margin:2.5mm 0;text-align:justify;text-indent:12mm}.no-indent{text-indent:0}.notice{padding:4mm;border:1px solid #999;background:#fafafa;font-size:14pt}
+        table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:14pt}th,td{padding:2.5mm;border:1px solid #333;vertical-align:top}th{text-align:center}
+        .signature{margin-top:18mm;text-align:center}.page-break{break-before:page;page-break-before:always}
+        @media print{body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.page-break{break-before:page;page-break-before:always}}
+      </style></head><body>${includePrintButton ? '<div class="toolbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์</button></div>' : ""}
+      <main class="sheet">
+        <section class="cover"><div><h1>แผนการจัดการศึกษาโดยครอบครัว</h1><h2>${planText(values.homeName, "บ้านเรียน")}</h2><p class="no-indent">ผู้เรียน ${planText(values.studentName)}</p><p class="no-indent">ระดับปฐมวัย ${planText(values.educationLevel)}</p><div class="meta"><p class="no-indent">ผู้จัดการศึกษา: ${planText(values.managerName)}</p><p class="no-indent">สำนักงานเขตพื้นที่การศึกษา: ${planText(values.districtName)}</p><p class="no-indent">ปีการศึกษา: ${planText(values.academicYear)}</p></div></div></section>
+        <section class="page-break"><h2>แผนการจัดการศึกษาระดับปฐมวัยโดยครอบครัว</h2><div class="notice"><strong>หมายเหตุ:</strong> แผนฉบับนี้จัดทำจากข้อมูลของครอบครัว ควรปรึกษาเจ้าหน้าที่และปรับให้เหมาะสมกับผู้เรียนก่อนนำไปใช้</div>
+        <h3>1. ข้อมูลพื้นฐานของครอบครัวและผู้เรียน</h3><p>${planText(values.familyBackground)}</p><p>${planText(values.educationHistory)}</p>
+        <table><tr><th>พัฒนาการ</th><th>ข้อมูลผู้เรียน</th></tr><tr><td>ร่างกาย</td><td>${planText(values.developmentPhysical)}</td></tr><tr><td>อารมณ์และจิตใจ</td><td>${planText(values.developmentEmotional)}</td></tr><tr><td>สังคม</td><td>${planText(values.developmentSocial)}</td></tr><tr><td>สติปัญญา</td><td>${planText(values.developmentIntellectual)}</td></tr></table>
+        <h3>2. ระดับ เหตุผล และจุดมุ่งหมาย</h3><p class="no-indent"><strong>ระดับที่จัดการศึกษา:</strong> ${planText(values.educationLevel)}</p><p>${planText(values.reason)}</p><p>${planText(values.goals)}</p>
+        <h3>3. รูปแบบการจัดการศึกษาและแหล่งเรียนรู้</h3><p>${planText(values.educationFormat)}</p></section>
+        <section class="page-break"><h3>4. กลุ่มประสบการณ์และกิจกรรมการเรียนรู้</h3><table><thead><tr><th style="width:20%">กลุ่มประสบการณ์</th><th style="width:38%">คุณลักษณะและประสบการณ์สำคัญ</th><th>กิจกรรมและกระบวนการเรียนรู้</th></tr></thead><tbody>${domainRows}</tbody></table>
+        <h3>5. กระบวนการจัดการเรียนรู้</h3><p>${planText(values.learningProcess)}</p><h3>6. ตารางกิจกรรมโดยสังเขป</h3><p>${planText(values.schedule)}</p>
+        <h3>7. การวัดและประเมินผล</h3><p>${planText(values.evaluation)}</p><p>${planText(values.promotion)}</p>
+        <h3>8. ภาคผนวก</h3><p>${planText(values.appendix)}</p><div class="signature">ลงชื่อ........................................................ผู้จัดการศึกษา<br>(${planText(values.managerName)})</div></section>
+      </main></body></html>`;
+    }
+
+    function openEarlyPlanPdf() {
+      const values = earlyPlanValues();
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        showToast("กรุณาอนุญาต Pop-up เพื่อเปิดเอกสาร PDF");
+        return;
+      }
+      printWindow.document.open();
+      printWindow.document.write(earlyPlanDocument(values, true));
+      printWindow.document.close();
+      printWindow.focus();
+    }
+
+    function downloadEarlyPlanWord() {
+      const values = earlyPlanValues();
+      const wordHtml = earlyPlanDocument(values, false).replace("<html lang=\"th\">", '<html lang="th" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">');
+      const blob = new Blob(["\ufeff", wordHtml], { type: "application/msword;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "แผนการจัดการศึกษาปฐมวัย-" + (values.studentName || "ผู้เรียน") + ".doc";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast("ดาวน์โหลดไฟล์ Word แล้ว");
+    }
+
+    async function choosePlanLevel(level) {
       if (!selectedStudent) return;
       const labels = {
         early_childhood: "แผนระดับอนุบาล (ปฐมวัย)",
@@ -2514,7 +2796,16 @@
       };
       localStorage.setItem("homeschool_plan_level_" + selectedStudent.id, level);
       closePlanChoiceModal();
-      showToast("เลือก" + labels[level] + "แล้ว ขั้นตอนต่อไปจะเป็นแบบฟอร์มเฉพาะระดับ");
+      if (level === "early_childhood") {
+        try {
+          await ensureApplicationContext(true);
+          showEarlyChildhoodPlan();
+        } catch (error) {
+          showToast(error.message);
+        }
+        return;
+      }
+      showToast("เลือก" + labels[level] + "แล้ว แบบฟอร์มระดับประถมศึกษาจะพัฒนาในขั้นตอนถัดไป");
     }
 
     async function createTask(event) {
@@ -2616,6 +2907,10 @@
     $("#planChoiceModal").addEventListener("click", (event) => {
       if (event.target === event.currentTarget) closePlanChoiceModal();
     });
+    $("#backToPlanChoice").addEventListener("click", openPlanChoiceModal);
+    $("#earlyChildhoodPlanForm").addEventListener("submit", saveEarlyChildhoodPlan);
+    $("#downloadEarlyPlanPdf").addEventListener("click", openEarlyPlanPdf);
+    $("#downloadEarlyPlanWord").addEventListener("click", downloadEarlyPlanWord);
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !$("#taskModal").classList.contains("hidden")) closeModal();
       if (event.key === "Escape" && !$("#planChoiceModal").classList.contains("hidden")) closePlanChoiceModal();

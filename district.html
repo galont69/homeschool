@@ -148,10 +148,10 @@
     async function loadDashboard(){
       const districtRows=await api("/rest/v1/education_districts?select=id,code,name&id=eq."+officer.verified_district_id+"&limit=1"),district=districtRows[0];
       $("#districtTitle").textContent=district?district.name:"ภาพรวมเขตพื้นที่";
-      applications=await api("/rest/v1/homeschool_applications?select=id,student_id,status,created_at,request_form_data,student:students(first_name,last_name)&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
+      applications=await api("/rest/v1/homeschool_applications?select=id,student_id,status,created_at,request_form_data,early_childhood_plan_data,student:students(first_name,last_name)&district_id=eq."+officer.verified_district_id+"&order=created_at.desc");
       const documentRecords=applications.length?await api("/rest/v1/official_documents?select=id,application_id,document_type,original_filename,storage_path,created_at&application_id=in.("+applications.map(x=>x.id).join(",")+")"):[];
       officialDocuments=uniqueDocuments(documentRecords);
-      const generatedDocuments=applications.filter(x=>hasRequestForm(x)).length;
+      const generatedDocuments=applications.reduce((count,item)=>count+(hasRequestForm(item)?1:0)+(hasEarlyPlan(item)?1:0),0);
       $("#studentCount").textContent=new Set(applications.map(x=>x.student_id||x.id)).size||applications.length;
       $("#applicationCount").textContent=applications.length;
       $("#documentCount").textContent=officialDocuments.length+generatedDocuments;
@@ -162,9 +162,13 @@
       return application?.request_form_data&&typeof application.request_form_data==="object"&&Object.keys(application.request_form_data).length>0;
     }
 
+    function hasEarlyPlan(application){
+      return application?.early_childhood_plan_data&&typeof application.early_childhood_plan_data==="object"&&Object.keys(application.early_childhood_plan_data).length>0;
+    }
+
     function renderApplications(rows){
       const list=$("#applicationList");if(!rows.length){list.innerHTML='<div class="empty">ยังไม่มีครอบครัวยื่นเอกสารมายังเขตนี้</div>';return}
-      list.innerHTML=rows.map(x=>{const name=[x.student?.first_name,x.student?.last_name].filter(Boolean).join(" ")||"ไม่ระบุชื่อ";const count=officialDocuments.filter(d=>d.application_id===x.id).length+(hasRequestForm(x)?1:0);return`<article class="application"><div><strong>${escapeHtml(name)}</strong><span>สถานะ ${escapeHtml(x.status)} · เอกสาร ${count} รายการ</span></div><button class="view" type="button" data-application="${x.id}">ดูเอกสาร / พิมพ์</button></article>`}).join("")
+      list.innerHTML=rows.map(x=>{const name=[x.student?.first_name,x.student?.last_name].filter(Boolean).join(" ")||"ไม่ระบุชื่อ";const count=officialDocuments.filter(d=>d.application_id===x.id).length+(hasRequestForm(x)?1:0)+(hasEarlyPlan(x)?1:0);return`<article class="application"><div><strong>${escapeHtml(name)}</strong><span>สถานะ ${escapeHtml(x.status)} · เอกสาร ${count} รายการ</span></div><button class="view" type="button" data-application="${x.id}">ดูเอกสาร / พิมพ์</button></article>`}).join("")
     }
 
     const documentLabels={
@@ -276,10 +280,12 @@
       return`<article class="document-row"><div><strong>${escapeHtml(requirement.label)}</strong><span>ไฟล์แนบล่าสุด</span></div><div>${action}</div></article>`;
     }
 
-    function documentGroup(category,items,applicationId,hasGeneratedRequest){
+    function documentGroup(category,items,applicationId,hasGeneratedRequest,hasGeneratedPlan){
       let content="";
       if(category.id==="permission"){
         content=(hasGeneratedRequest?`<article class="document-row"><div><strong>แบบยื่นขออนุญาตจัดการบ้านเรียน</strong><span>แบบคำขอที่ผู้ปกครองกรอกและบันทึกในระบบ</span></div><button class="document-open" type="button" data-request-form="${escapeHtml(applicationId)}">เปิด / พิมพ์</button></article>`:"")+items.map(documentRow).join("");
+      }else if(category.id==="plan"){
+        content=(hasGeneratedPlan?`<article class="document-row"><div><strong>แผนการจัดการศึกษาระดับปฐมวัย</strong><span>แผนที่ผู้ปกครองกรอกและบันทึกในระบบ</span></div><button class="document-open" type="button" data-early-plan="${escapeHtml(applicationId)}">เปิด / พิมพ์</button></article>`:"")+items.map(documentRow).join("");
       }else if(category.id==="supporting"){
         content=requiredSupportingDocuments.map(requirement=>requiredDocumentRow(requirement,items)).join("");
       }else{
@@ -287,7 +293,7 @@
       }
       const count=category.id==="supporting"
         ?requiredSupportingDocuments.filter(requirement=>items.some(item=>item.document_type===requirement.type)).length
-        :items.length+(category.id==="permission"&&hasGeneratedRequest?1:0);
+        :items.length+(category.id==="permission"&&hasGeneratedRequest?1:0)+(category.id==="plan"&&hasGeneratedPlan?1:0);
       return`<section class="document-group"><div class="document-group-head"><h3>${escapeHtml(category.title)}</h3><span>${count} รายการ</span></div><div class="document-group-body">${content||'<div class="document-group-empty">ยังไม่มีเอกสารในหมวดนี้</div>'}</div></section>`;
     }
 
@@ -298,9 +304,10 @@
         const records=await api("/rest/v1/official_documents?select=id,application_id,document_type,original_filename,storage_path,created_at&application_id=eq."+applicationId+"&order=created_at.desc");
         const rows=uniqueDocuments(records);
         const generatedRequest=hasRequestForm(application);
+        const generatedPlan=hasEarlyPlan(application);
         $("#documentList").innerHTML=documentCategories.map(category=>{
           const items=rows.filter(row=>documentCategory(row.document_type)===category.id);
-          return documentGroup(category,items,applicationId,generatedRequest);
+          return documentGroup(category,items,applicationId,generatedRequest,generatedPlan);
         }).join("");
       }catch(error){$("#documentList").innerHTML='<div class="error">'+escapeHtml(error.message)+'</div>'}
     }
@@ -406,6 +413,39 @@
       printWindow.focus();
     }
 
+    function planText(value,fallback="-"){
+      return escapeHtml(String(value||fallback)).replace(/\n/g,"<br>");
+    }
+
+    function printEarlyPlan(applicationId){
+      const application=applications.find(item=>item.id===applicationId);
+      const values=application?.early_childhood_plan_data;
+      if(!values||typeof values!=="object"){alert("ไม่พบข้อมูลแผนการศึกษา");return}
+      const printWindow=window.open("","_blank");
+      if(!printWindow){alert("เบราว์เซอร์บล็อกหน้าต่างเอกสาร กรุณาอนุญาต Pop-up");return}
+      const regularFontUrl=new URL("assets/fonts/THSarabunNew.ttf",window.location.href).href;
+      const boldFontUrl=new URL("assets/fonts/THSarabunNew-Bold.ttf",window.location.href).href;
+      const domainRows=[
+        ["ด้านร่างกาย",values.experiencePhysicalGoals,values.experiencePhysicalActivities],
+        ["ด้านอารมณ์และจิตใจ",values.experienceEmotionalGoals,values.experienceEmotionalActivities],
+        ["ด้านสังคม",values.experienceSocialGoals,values.experienceSocialActivities],
+        ["ด้านสติปัญญา",values.experienceIntellectualGoals,values.experienceIntellectualActivities]
+      ].map(row=>`<tr><td>${row[0]}</td><td>${planText(row[1])}</td><td>${planText(row[2])}</td></tr>`).join("");
+      printWindow.document.open();
+      printWindow.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แผนการจัดการศึกษาระดับปฐมวัย</title><style>
+        @page{size:A4 portrait;margin:18mm 18mm 17mm}@font-face{font-family:"TH Sarabun New Embedded";src:url("${regularFontUrl}") format("truetype");font-weight:400}@font-face{font-family:"TH Sarabun New Embedded";src:url("${boldFontUrl}") format("truetype");font-weight:700}
+        *{box-sizing:border-box}body{margin:0;color:#000;background:#ddd;font-family:"TH Sarabun New Embedded","TH Sarabun New",sans-serif;font-size:16pt;line-height:1.15}.toolbar{position:sticky;top:0;z-index:3;padding:10px;text-align:center;background:#eaf1fc}.toolbar button{padding:9px 18px;color:#fff;background:#3867b7;border:0;border-radius:8px;font-weight:700;cursor:pointer}
+        .sheet{width:210mm;min-height:297mm;margin:12px auto;padding:18mm;background:#fff;box-shadow:0 2px 12px #888}h1,h2,h3{margin:0 0 7mm;text-align:center}h1{font-size:24pt}h2{font-size:20pt}h3{margin-top:7mm;font-size:18pt;text-align:left}.cover{display:grid;place-items:center;min-height:240mm;text-align:center}.cover p{margin:4mm 0}.meta{width:100%;margin-top:20mm;text-align:left}p{margin:2.5mm 0;text-align:justify;text-indent:12mm}.no-indent{text-indent:0}.notice{padding:4mm;border:1px solid #999;background:#fafafa;font-size:14pt}table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:14pt}th,td{padding:2.5mm;border:1px solid #333;vertical-align:top}th{text-align:center}.signature{margin-top:18mm;text-align:center}.page-break{break-before:page;page-break-before:always}
+        @media print{body{background:#fff}.toolbar{display:none}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none}.page-break{break-before:page;page-break-before:always}}
+      </style></head><body><div class="toolbar"><button onclick="document.fonts.ready.then(()=>window.print())">พิมพ์ / บันทึกเป็น PDF</button></div><main class="sheet">
+      <section class="cover"><div><h1>แผนการจัดการศึกษาโดยครอบครัว</h1><h2>${planText(values.homeName,"บ้านเรียน")}</h2><p class="no-indent">ผู้เรียน ${planText(values.studentName)}</p><p class="no-indent">ระดับปฐมวัย ${planText(values.educationLevel)}</p><div class="meta"><p class="no-indent">ผู้จัดการศึกษา: ${planText(values.managerName)}</p><p class="no-indent">สำนักงานเขตพื้นที่การศึกษา: ${planText(values.districtName)}</p><p class="no-indent">ปีการศึกษา: ${planText(values.academicYear)}</p></div></div></section>
+      <section class="page-break"><h2>แผนการจัดการศึกษาระดับปฐมวัยโดยครอบครัว</h2><div class="notice"><strong>หมายเหตุ:</strong> แผนนี้เป็นตัวอย่างที่ครอบครัวจัดทำ ควรตรวจสอบร่วมกับเจ้าหน้าที่ก่อนนำไปใช้</div><h3>1. ข้อมูลพื้นฐานของครอบครัวและผู้เรียน</h3><p>${planText(values.familyBackground)}</p><p>${planText(values.educationHistory)}</p><table><tr><th>พัฒนาการ</th><th>ข้อมูลผู้เรียน</th></tr><tr><td>ร่างกาย</td><td>${planText(values.developmentPhysical)}</td></tr><tr><td>อารมณ์และจิตใจ</td><td>${planText(values.developmentEmotional)}</td></tr><tr><td>สังคม</td><td>${planText(values.developmentSocial)}</td></tr><tr><td>สติปัญญา</td><td>${planText(values.developmentIntellectual)}</td></tr></table><h3>2. ระดับ เหตุผล และจุดมุ่งหมาย</h3><p class="no-indent"><strong>ระดับ:</strong> ${planText(values.educationLevel)}</p><p>${planText(values.reason)}</p><p>${planText(values.goals)}</p><h3>3. รูปแบบและแหล่งเรียนรู้</h3><p>${planText(values.educationFormat)}</p></section>
+      <section class="page-break"><h3>4. กลุ่มประสบการณ์และกิจกรรมการเรียนรู้</h3><table><tr><th>กลุ่มประสบการณ์</th><th>คุณลักษณะและประสบการณ์สำคัญ</th><th>กิจกรรมและกระบวนการเรียนรู้</th></tr>${domainRows}</table><h3>5. กระบวนการจัดการเรียนรู้</h3><p>${planText(values.learningProcess)}</p><h3>6. ตารางกิจกรรมโดยสังเขป</h3><p>${planText(values.schedule)}</p><h3>7. การวัดและประเมินผล</h3><p>${planText(values.evaluation)}</p><p>${planText(values.promotion)}</p><h3>8. ภาคผนวก</h3><p>${planText(values.appendix)}</p><div class="signature">ลงชื่อ........................................................ผู้จัดการศึกษา<br>(${planText(values.managerName)})</div></section>
+      </main></body></html>`);
+      printWindow.document.close();
+      printWindow.focus();
+    }
+
     function absoluteSignedUrl(value){
       if(/^https?:\/\//i.test(value))return value;
       if(value.startsWith("/storage/v1/"))return SUPABASE_URL+value;
@@ -455,7 +495,7 @@
     $("#searchInput").addEventListener("input",event=>{const q=event.target.value.trim().toLowerCase();renderApplications(applications.filter(x=>[x.student?.first_name,x.student?.last_name].join(" ").toLowerCase().includes(q)))});
     $("#closeDocumentModal").addEventListener("click",()=>$("#documentModal").classList.add("hidden"));
     $("#documentModal").addEventListener("click",event=>{if(event.target===event.currentTarget)event.currentTarget.classList.add("hidden")});
-    document.addEventListener("click",event=>{const appButton=event.target.closest("[data-application]");if(appButton)showDocuments(appButton.dataset.application);const requestButton=event.target.closest("[data-request-form]");if(requestButton)printSavedRequest(requestButton.dataset.requestForm);const documentButton=event.target.closest("[data-storage-path]");if(documentButton)openDocument(documentButton.dataset.storagePath,documentButton.dataset.filename,documentButton)});
+    document.addEventListener("click",event=>{const appButton=event.target.closest("[data-application]");if(appButton)showDocuments(appButton.dataset.application);const requestButton=event.target.closest("[data-request-form]");if(requestButton)printSavedRequest(requestButton.dataset.requestForm);const planButton=event.target.closest("[data-early-plan]");if(planButton)printEarlyPlan(planButton.dataset.earlyPlan);const documentButton=event.target.closest("[data-storage-path]");if(documentButton)openDocument(documentButton.dataset.storagePath,documentButton.dataset.filename,documentButton)});
     bootstrap();
   </script>
 </body>
