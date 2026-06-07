@@ -3036,7 +3036,9 @@
       const navButton = event.target.closest("[data-page]");
       if (navButton) {
         $$("[data-page]").forEach((button) => button.classList.toggle("active", button.dataset.page === navButton.dataset.page));
-        if (navButton.dataset.page === "home" || navButton.dataset.page === "portfolio") {
+        if (navButton.dataset.page === "store") {
+          location.href = "marketplace.html";
+        } else if (navButton.dataset.page === "home" || navButton.dataset.page === "portfolio") {
           showPage(navButton.dataset.page);
         } else {
           showToast("ส่วนนี้จะพัฒนาในขั้นตอนถัดไป");
