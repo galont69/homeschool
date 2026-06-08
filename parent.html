@@ -2506,11 +2506,10 @@
         .sheet{position:relative;width:210mm;min-height:297mm;margin:${previewMode ? "12px auto" : "0 auto"};padding:22mm 22mm 16mm 28mm;background:#fff;box-shadow:${previewMode ? "0 2px 12px rgba(0,0,0,.24)" : "none"}}
         h1{margin:0 0 1mm;text-align:center;font-size:16pt;line-height:1;font-weight:700}
         .subtitle{margin:0 0 8mm;text-align:center;font-size:15pt;font-weight:700}
-        .place{width:82mm;margin:0 0 4mm auto;text-align:left;line-height:1.15}
-        .place table{width:100%;border-collapse:collapse}
-        .place td{padding:0;text-align:left;vertical-align:top}
-        .place .label{width:11mm;white-space:nowrap}
-        .place-date{padding-top:2mm!important;text-align:left!important}
+        .place-table{width:100%;border-collapse:collapse;margin:0 0 8mm}
+        .place-spacer{width:58%;padding:0}
+        .place-cell{width:42%;padding:0;text-align:left;vertical-align:top;line-height:1.18}
+        .place-date{display:block;margin-top:2mm;text-align:left}
         .paragraph{margin:1.8mm 0;text-indent:12mm;text-align:justify}
         .no-indent{text-indent:0}
         .line{display:inline;padding:0 2px}
@@ -2529,7 +2528,7 @@
       </style></head><body>${printButton}<main class="sheet">
       <h1>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1>
       <div class="subtitle">ระดับ ${printLine(values.startingEducationLevel || "................................")} ${escapeHTML(districtName)}</div>
-      <div class="place"><table><tr><td class="label">เขียนที่</td><td>${printLine(values.requestPlace)}</td></tr><tr><td colspan="2" class="place-date">วันที่ ${thaiLongDate(values.requestDate)}</td></tr></table></div>
+      <table class="place-table"><tr><td class="place-spacer">&nbsp;</td><td class="place-cell">เขียนที่ ${printLine(values.requestPlace)}<br><span class="place-date">วันที่ ${thaiLongDate(values.requestDate)}</span></td></tr></table>
       <div>เรื่อง&nbsp;&nbsp;ยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวร่วมกับสำนักงานเขตพื้นที่การศึกษา ${escapeHTML(districtName)}</div>
       <div>เรียน&nbsp;&nbsp;ผู้อำนวยการ${printLine(districtName)}</div>
       <p class="paragraph">ด้วย ${printLine(values.requesterPrefix)} ${printLine(values.requesterName)} เลขประจำตัวประชาชน <span class="line">${printLine(values.requesterCitizenId)}</span></p>
