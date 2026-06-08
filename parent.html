@@ -1267,29 +1267,24 @@
         <div class="workflow-panel hidden" id="requestPanel">
           <section class="card template-exchange">
             <div class="template-exchange-head">
-              <h2>แบบคำขอจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h2>
-              <p>ดาวน์โหลดเอกสารจากสำนักงานเขตพื้นที่ แก้ไขข้อมูลให้ครบถ้วน แล้วอัปโหลดฉบับที่ต้องการส่งให้เจ้าหน้าที่ตรวจดู</p>
+              <h2>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษา</h2>
+              <p>กรอกข้อมูลครั้งเดียว ระบบจะสร้างเอกสาร Word จากแม่แบบกลางที่จัดรูปแบบไว้ และบันทึกฉบับล่าสุดให้เจ้าหน้าที่เขตเปิดดูหรือพิมพ์ได้</p>
             </div>
             <div class="template-steps">
-              <div class="template-step"><strong>1. ดาวน์โหลด</strong><span>เลือกเอกสารล่าสุดที่เจ้าหน้าที่เขตเผยแพร่</span></div>
-              <div class="template-step"><strong>2. แก้ไขเอกสาร</strong><span>เปิดด้วย Microsoft Word หรือ Pages และปรึกษาเจ้าหน้าที่</span></div>
-              <div class="template-step"><strong>3. อัปโหลดกลับ</strong><span>รองรับ Word และ PDF ระบบจะเก็บเฉพาะฉบับล่าสุด</span></div>
+              <div class="template-step"><strong>1. กรอกข้อมูล</strong><span>ใช้ข้อมูลผู้ปกครอง ผู้เรียน ผู้จัดการศึกษา และเขตพื้นที่</span></div>
+              <div class="template-step"><strong>2. สร้างเอกสาร</strong><span>ระบบจัดหน้าเป็นไฟล์ Word ให้แก้ไขต่อได้ทันที</span></div>
+              <div class="template-step"><strong>3. บันทึกเข้าระบบ</strong><span>เจ้าหน้าที่เขตจะเห็นเฉพาะฉบับล่าสุดของผู้เรียน</span></div>
             </div>
             <div class="district-template-library">
-              <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>รายการนี้มาจากเขตที่ผู้เรียนสังกัด โปรดเลือกใช้ไฟล์และแนวทางล่าสุดที่เจ้าหน้าที่เผยแพร่</p></div>
+              <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>ถ้าเขตของผู้เรียนมีแม่แบบเฉพาะ จะยังแสดงไว้ให้ดาวน์โหลดเทียบเคียงก่อนสร้างเอกสาร</p></div>
               <div class="district-template-groups" id="requestDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
             </div>
-            <div class="upload-row template-upload-row" data-upload-row="requestDocument">
-              <div class="upload-row-icon" data-icon="fileText"></div>
-              <div class="upload-row-copy"><strong>อัปโหลดแบบคำขอฉบับที่แก้ไขแล้ว</strong><span>ไฟล์ DOC, DOCX หรือ PDF ขนาดไม่เกิน 10 MB</span></div>
-              <button class="select-file-button" type="button" data-upload="requestDocument">อัปโหลดเอกสาร</button>
-            </div>
-            <p class="template-upload-note">เว็บไซต์นี้เป็นเครื่องมือจัดเตรียมและส่งเอกสารให้เจ้าหน้าที่ดูเท่านั้น การยื่นคำขออย่างเป็นทางการต้องดำเนินการตามช่องทางที่สำนักงานเขตพื้นที่แจ้ง</p>
+            <p class="template-upload-note">หมายเหตุ: เว็บไซต์นี้เป็นเครื่องมือจัดเตรียมเอกสารและส่งให้เจ้าหน้าที่ดูเท่านั้น การยื่นคำขออย่างเป็นทางการต้องดำเนินการตามช่องทางที่สำนักงานเขตพื้นที่แจ้ง</p>
           </section>
 
-          <form class="card request-form-card hidden" id="requestForm">
+          <form class="card request-form-card" id="requestForm">
             <div class="request-form-head">
-              <div><h2>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษา</h2><p>ข้อมูลจะถูกบันทึกเฉพาะคำขอของผู้เรียนที่เลือก และนำไปจัดหน้าเอกสารราชการอัตโนมัติ</p></div>
+              <div><h2>กรอกข้อมูลเพื่อสร้างแบบยื่นความประสงค์</h2><p>อ้างอิงรูปแบบเอกสารที่ใช้งานจริง แล้วสร้างเป็นไฟล์ Word สำหรับแก้ไขต่อ หรือพิมพ์เป็น PDF ได้</p></div>
               <span class="security-badge"><span data-icon="shield"></span>บันทึกใน Supabase</span>
             </div>
 
@@ -1302,6 +1297,7 @@
                 <div class="field wide"><label for="requesterName">ชื่อ-นามสกุลผู้ยื่นคำขอ</label><input id="requesterName" name="requesterName" required></div>
                 <div class="field"><label for="requesterCitizenId">เลขประจำตัวประชาชน</label><input id="requesterCitizenId" name="requesterCitizenId" inputmode="numeric" maxlength="13" required></div>
                 <div class="field"><label for="relationship">เกี่ยวข้องกับผู้เรียนในฐานะ</label><select id="relationship" name="relationship" required><option value="">เลือกความสัมพันธ์</option><option>บิดา</option><option>มารดา</option><option>ผู้ปกครอง</option><option>ผู้จัดการศึกษา</option><option>อื่น ๆ</option></select></div>
+                <div class="field wide"><label for="requesterOccupation">อาชีพผู้ยื่นคำขอ</label><input id="requesterOccupation" name="requesterOccupation" placeholder="เช่น เจ้าของกิจการ / รับราชการ / อาชีพอิสระ"></div>
               </div>
             </section>
 
@@ -1318,6 +1314,7 @@
                 <div class="field"><label for="postalCode">รหัสไปรษณีย์</label><input id="postalCode" name="postalCode" inputmode="numeric" maxlength="5" required></div>
                 <div class="field"><label for="requestPhone">โทรศัพท์</label><input id="requestPhone" name="requestPhone" type="tel" required></div>
                 <div class="field"><label for="requestEmail">E-mail</label><input id="requestEmail" name="requestEmail" type="email" required></div>
+                <div class="field wide"><label for="currentResidence">ถิ่นที่พักอาศัยเป็นประจำในปัจจุบัน</label><input id="currentResidence" name="currentResidence" placeholder="ถ้าเหมือนที่อยู่ตามทะเบียนบ้าน สามารถกรอกซ้ำหรือเว้นไว้ได้"></div>
               </div>
             </section>
 
@@ -1330,6 +1327,7 @@
                 <div class="field"><label for="studentCitizenId">เลขประจำตัวประชาชนผู้เรียน</label><input id="studentCitizenId" name="studentCitizenId" inputmode="numeric" maxlength="13"></div>
                 <div class="field"><label for="previousEducation">กำลังศึกษา / จบการศึกษาชั้น</label><input id="previousEducation" name="previousEducation" required></div>
                 <div class="field"><label for="startingEducationLevel">ขอเริ่มจัดการศึกษาในชั้น</label><input id="startingEducationLevel" name="startingEducationLevel" required></div>
+                <div class="field"><label for="educationStartYear">ตั้งแต่ปีการศึกษา</label><input id="educationStartYear" name="educationStartYear" inputmode="numeric" placeholder="เช่น 2569"></div>
                 <div class="field wide">
                   <label for="formDistrictId">สำนักงานเขตพื้นที่การศึกษา</label>
                   <select id="formDistrictId" name="districtId" required disabled>
@@ -1347,6 +1345,7 @@
                 <div class="field"><label for="managerCitizenId">เลขประจำตัวประชาชน</label><input id="managerCitizenId" name="managerCitizenId" inputmode="numeric" maxlength="13" required></div>
                 <div class="field"><label for="managerQualification">วุฒิการศึกษา</label><input id="managerQualification" name="managerQualification" required></div>
                 <div class="field wide"><label for="managerInstitution">สถาบันการศึกษา</label><input id="managerInstitution" name="managerInstitution" required></div>
+                <div class="field wide"><label for="educationLocation">สถานที่จัดการศึกษา</label><input id="educationLocation" name="educationLocation" placeholder="เช่น บ้านเลขที่ 85/16 ม.2 ต.บ้านบึง อ.บ้านบึง จ.ชลบุรี"></div>
               </div>
             </section>
 
@@ -1373,10 +1372,24 @@
             <p class="form-error hidden" id="requestFormError"></p>
             <div class="request-form-actions">
               <span class="save-status" id="requestSaveStatus">ยังไม่ได้บันทึก</span>
-              <button class="secondary-button" id="downloadRequestPdf" type="button">ดาวน์โหลด / พิมพ์ PDF</button>
-              <button class="primary-button" id="saveRequestForm" type="submit">บันทึกแบบคำขอ</button>
+              <button class="secondary-button" id="downloadRequestPdf" type="button">เปิด PDF / พิมพ์</button>
+              <button class="secondary-button" id="downloadRequestWord" type="button">ดาวน์โหลด Word</button>
+              <button class="primary-button" id="saveGeneratedRequestWord" type="button">สร้าง Word และบันทึกในระบบ</button>
+              <button class="secondary-button" id="saveRequestForm" type="submit">บันทึกข้อมูลฟอร์ม</button>
             </div>
           </form>
+
+          <section class="card template-exchange">
+            <div class="template-exchange-head">
+              <h2>อัปโหลดฉบับแก้ไขเอง (ทางเลือกสำรอง)</h2>
+              <p>หากเปิดไฟล์ Word ไปแก้ไขเพิ่มเติมใน Microsoft Word หรือ Pages แล้ว ให้อัปโหลดกลับมาที่นี่ ระบบจะเก็บเฉพาะฉบับล่าสุด</p>
+            </div>
+            <div class="upload-row template-upload-row" data-upload-row="requestDocument">
+              <div class="upload-row-icon" data-icon="fileText"></div>
+              <div class="upload-row-copy"><strong>อัปโหลดแบบคำขอฉบับล่าสุด</strong><span>ไฟล์ DOC, DOCX หรือ PDF ขนาดไม่เกิน 10 MB</span></div>
+              <button class="select-file-button" type="button" data-upload="requestDocument">อัปโหลดเอกสาร</button>
+            </div>
+          </section>
         </div>
 
         <div class="workflow-panel hidden" id="planPanel">
@@ -2388,9 +2401,41 @@
       $("#requestFormError").classList.add("hidden");
     }
 
+    async function persistRequestFormData(values) {
+      if (!applicationContext) await ensureApplicationContext(true);
+      await Promise.all([
+        apiRequest(SUPABASE_URL + "/rest/v1/students?id=eq." + selectedStudent.id + "&owner_user_id=eq." + currentUser.id, {
+          method: "PATCH",
+          requireAuth: true,
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ district_id: values.districtId })
+        }),
+        apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id, {
+          method: "PATCH",
+          requireAuth: true,
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ district_id: values.districtId })
+        })
+      ]);
+      const rows = await apiRequest(
+        SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+        {
+          method: "PATCH",
+          requireAuth: true,
+          headers: { Prefer: "return=representation" },
+          body: JSON.stringify({ request_form_data: values })
+        }
+      );
+      applicationContext = rows[0] || { ...applicationContext, request_form_data: values };
+      applicationContext.district_id = values.districtId;
+      selectedStudent.district_id = values.districtId;
+      selectedStudent.district = { name: values.districtName };
+      $("#requestSaveStatus").textContent = "บันทึกล่าสุด " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+      return values;
+    }
+
     async function saveRequestForm(event) {
       event.preventDefault();
-      if (!applicationContext) await ensureApplicationContext(true);
       const button = $("#saveRequestForm");
       const error = $("#requestFormError");
       button.disabled = true;
@@ -2398,41 +2443,14 @@
       error.classList.add("hidden");
       try {
         const values = requestFormValues();
-        await Promise.all([
-          apiRequest(SUPABASE_URL + "/rest/v1/students?id=eq." + selectedStudent.id + "&owner_user_id=eq." + currentUser.id, {
-            method: "PATCH",
-            requireAuth: true,
-            headers: { Prefer: "return=minimal" },
-            body: JSON.stringify({ district_id: values.districtId })
-          }),
-          apiRequest(SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id, {
-            method: "PATCH",
-            requireAuth: true,
-            headers: { Prefer: "return=minimal" },
-            body: JSON.stringify({ district_id: values.districtId })
-          })
-        ]);
-        const rows = await apiRequest(
-          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
-          {
-            method: "PATCH",
-            requireAuth: true,
-            headers: { Prefer: "return=representation" },
-            body: JSON.stringify({ request_form_data: values })
-          }
-        );
-        applicationContext = rows[0] || { ...applicationContext, request_form_data: values };
-        applicationContext.district_id = values.districtId;
-        selectedStudent.district_id = values.districtId;
-        selectedStudent.district = { name: values.districtName };
-        $("#requestSaveStatus").textContent = "บันทึกล่าสุด " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        await persistRequestFormData(values);
         showToast("บันทึกแบบคำขอเรียบร้อยแล้ว");
       } catch (saveError) {
         error.textContent = saveError.message;
         error.classList.remove("hidden");
       } finally {
         button.disabled = false;
-        button.textContent = "บันทึกแบบคำขอ";
+        button.textContent = "บันทึกข้อมูลฟอร์ม";
       }
     }
 
@@ -2454,19 +2472,29 @@
       return `<div><span class="check">${values.attachments?.includes(key) ? "☑" : "☐"}</span> ${escapeHTML(label)}</div>`;
     }
 
-    function downloadRequestPdf() {
-      if (!$("#requestForm").reportValidity()) return;
-      const values = requestFormValues();
-      const printWindow = window.open("", "_blank");
-      if (!printWindow) {
-        showToast("เบราว์เซอร์บล็อกหน้าต่างเอกสาร กรุณาอนุญาต Pop-up");
-        return;
-      }
+    function requestFullAddress(values) {
+      return [
+        values.houseNumber ? "บ้านเลขที่ " + values.houseNumber : "",
+        values.villageNumber ? "หมู่ที่ " + values.villageNumber : "",
+        values.lane ? "ตรอก/ซอย " + values.lane : "",
+        values.road ? "ถนน " + values.road : "",
+        values.subdistrict ? "ตำบล/แขวง " + values.subdistrict : "",
+        values.addressDistrict ? "อำเภอ/เขต " + values.addressDistrict : "",
+        values.province ? "จังหวัด " + values.province : "",
+        values.postalCode || ""
+      ].filter(Boolean).join(" ");
+    }
+
+    function requestDocumentHtml(values, options = {}) {
       const districtName = values.districtName || selectedStudent?.district?.name || "";
       const studentAgeText = studentAge(values.studentBirthDate).replace(" ขวบ", "");
       const regularFontUrl = new URL("assets/fonts/THSarabunNew.ttf", window.location.href).href;
       const boldFontUrl = new URL("assets/fonts/THSarabunNew-Bold.ttf", window.location.href).href;
-      const html = `<!doctype html><html lang="th"><head><meta charset="utf-8"><title></title><style>
+      const address = requestFullAddress(values);
+      const residence = values.currentResidence || address;
+      const educationLocation = values.educationLocation || residence;
+      const printButton = options.printControls ? '<div class="printbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์เอกสาร</button></div>' : "";
+      return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title></title><style>
         @page{size:A4 portrait;margin:0}
         @font-face{font-family:"TH Sarabun New Embedded";src:url("${regularFontUrl}") format("truetype");font-weight:400;font-style:normal;font-display:block}
         @font-face{font-family:"TH Sarabun New Embedded";src:url("${boldFontUrl}") format("truetype");font-weight:700;font-style:normal;font-display:block}
@@ -2474,7 +2502,8 @@
         html,body{margin:0;padding:0}
         body{color:#000;background:#d7d7d9;font-family:"TH Sarabun New Embedded","TH Sarabun New",sans-serif;font-size:16pt;line-height:1}
         .sheet{position:relative;width:210mm;min-height:297mm;margin:12px auto;padding:11mm 20mm 10mm 29mm;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.24)}
-        h1{margin:8mm 0 3mm;text-align:center;font-size:16pt;line-height:1;font-weight:700}
+        h1{margin:6mm 0 1mm;text-align:center;font-size:16pt;line-height:1;font-weight:700}
+        .subtitle{margin:0 0 5mm;text-align:center;font-size:15pt;font-weight:700}
         .place{width:72mm;margin:0 4mm 3mm auto;text-align:center;line-height:1.2}
         .place-row{display:flex;justify-content:center;gap:4px}
         .place-date{margin-top:6mm}
@@ -2493,32 +2522,77 @@
           .printbar{display:none!important}
           .sheet{width:210mm;height:297mm;min-height:0;margin:0;padding:11mm 20mm 10mm 29mm;overflow:hidden;box-shadow:none}
         }
-      </style></head><body><div class="printbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์เอกสาร</button></div><main class="sheet">
+      </style></head><body>${printButton}<main class="sheet">
       <h1>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1>
+      <div class="subtitle">ระดับ ${printLine(values.startingEducationLevel || "................................")} ${escapeHTML(districtName)}</div>
       <div class="place"><div class="place-row">ที่ ${printLine(values.requestPlace)}</div><div class="place-row place-date">วันที่ ${thaiLongDate(values.requestDate)}</div></div>
+      <div>เรื่อง&nbsp;&nbsp;ยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวร่วมกับสำนักงานเขตพื้นที่การศึกษา ${escapeHTML(districtName)}</div>
       <div>เรียน&nbsp;&nbsp;ผู้อำนวยการ${printLine(districtName)}</div>
       <p class="paragraph">ด้วย ${printLine(values.requesterPrefix)} ${printLine(values.requesterName)} เลขประจำตัวประชาชน <span class="line">${printLine(values.requesterCitizenId)}</span></p>
-      <div class="no-indent">ที่อยู่ตามทะเบียนบ้าน บ้านเลขที่ <span class="line">${printLine(values.houseNumber)}</span> หมู่ที่ <span class="line">${printLine(values.villageNumber,"-")}</span> ตรอก/ซอย <span class="line">${printLine(values.lane,"-")}</span> ถนน <span class="line">${printLine(values.road,"-")}</span></div>
-      <div class="no-indent">ตำบล/แขวง <span class="line">${printLine(values.subdistrict)}</span> อำเภอ/เขต <span class="line">${printLine(values.addressDistrict)}</span> จังหวัด <span class="line">${printLine(values.province)}</span> รหัสไปรษณีย์ <span class="line">${printLine(values.postalCode)}</span></div>
+      <div class="no-indent">อาชีพ <span class="line">${printLine(values.requesterOccupation, "................................")}</span> ที่อยู่ที่ปรากฏตามทะเบียนบ้าน <span class="line">${printLine(address)}</span></div>
       <div class="no-indent">โทรศัพท์ <span class="line">${printLine(values.requestPhone)}</span> E-mail <span class="line">${escapeHTML(values.requestEmail || "........................................................")}</span></div>
-      <p class="paragraph">อาศัยสิทธิตามข้อ ๒ (๗) ของกฎกระทรวงว่าด้วยสิทธิในการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว พ.ศ. ๒๕๔๗ ซึ่งออกตามความในมาตรา ๑๒ แห่งพระราชบัญญัติการศึกษาแห่งชาติ พ.ศ. ๒๕๔๒ ที่บัญญัติให้ครอบครัวมีสิทธิในการจัดการศึกษาขั้นพื้นฐาน</p>
-      <p class="paragraph">จึงมีความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวร่วมกับสำนักงานเขตพื้นที่การศึกษาให้แก่ผู้เรียนชื่อ ${printLine(values.studentPrefix)} ${printLine(values.studentName)} ซึ่งเกี่ยวข้องเป็น ${printLine(values.relationship)} เกิดเมื่อวันที่ ${thaiLongDate(values.studentBirthDate)} อายุ ${printLine(studentAgeText)} ปี เลขประจำตัวประชาชน ${printLine(values.studentCitizenId)}</p>
-      <div>กำลังศึกษาอยู่ชั้น/จบการศึกษาชั้น <span class="line">${printLine(values.previousEducation)}</span> โดยขอเริ่มจัดการศึกษาในชั้น <span class="line">${printLine(values.startingEducationLevel)}</span></div>
+      <div class="no-indent">ถิ่นที่พักอาศัยเป็นประจำอยู่ในปัจจุบัน <span class="line">${printLine(residence)}</span></div>
+      <p class="paragraph">มีความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวให้แก่ ${printLine(values.studentPrefix)} ${printLine(values.studentName)} เลขประจำตัวประชาชน ${printLine(values.studentCitizenId)} เกี่ยวข้องเป็น ${printLine(values.relationship)} ระดับการศึกษาที่จัด ${printLine(values.startingEducationLevel)} ตั้งแต่ปีการศึกษา ${printLine(values.educationStartYear, "........")} เป็นต้นไป</p>
+      <div>ผู้เรียนเกิดเมื่อวันที่ ${thaiLongDate(values.studentBirthDate)} อายุ ${printLine(studentAgeText)} ปี กำลังศึกษาอยู่ชั้น/จบการศึกษาชั้น <span class="line">${printLine(values.previousEducation)}</span></div>
       <p class="paragraph">โดยมี ${printLine(values.managerPrefix)} ${printLine(values.managerName)} เลขประจำตัวประชาชน ${printLine(values.managerCitizenId)} วุฒิการศึกษา ${printLine(values.managerQualification)} สถาบัน ${printLine(values.managerInstitution)} เป็นผู้จัดการศึกษา</p>
-      <div class="attachments-title">พร้อมนี้ได้แนบเอกสารของผู้เรียนมาด้วยแล้ว ดังนี้</div>
+      <div class="no-indent">สถานที่จัดการศึกษา: <span class="line">${printLine(educationLocation)}</span> โทรศัพท์: <span class="line">${printLine(values.requestPhone)}</span> E-mail: <span class="line">${escapeHTML(values.requestEmail || "........................................................")}</span></div>
+      <div class="attachments-title">พร้อมนี้ได้แนบเอกสารประกอบการพิจารณามาด้วยแล้ว ดังนี้</div>
       <div class="attachments">
-        ${attachmentMark(values,"house_registration","สำเนาทะเบียนบ้านของครอบครัว ผู้เรียน และผู้จัดการศึกษา")}
-        ${attachmentMark(values,"national_id","สำเนาบัตรประจำตัวประชาชนของครอบครัว ผู้เรียน และผู้จัดการศึกษา")}
-        ${attachmentMark(values,"birth_certificate","สำเนาสูติบัตรของผู้เรียน")}
-        ${attachmentMark(values,"student_qualification","สำเนาหลักฐานวุฒิการศึกษาสูงสุดของผู้เรียน")}
-        ${attachmentMark(values,"manager_qualification","สำเนาหลักฐานวุฒิการศึกษาของผู้จัดการศึกษา")}
-        ${attachmentMark(values,"location_map","ที่ตั้งและแผนผังสถานที่จัดการศึกษา")}
-        ${attachmentMark(values,"education_plan","แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว")}
+        ${attachmentMark(values,"house_registration","ทะเบียนบ้านของครอบครัว และผู้เรียน")}
+        ${attachmentMark(values,"national_id","บัตรประจำตัวประชาชนของครอบครัว และผู้เรียน")}
+        ${attachmentMark(values,"birth_certificate","สูติบัตรของผู้เรียน")}
+        ${attachmentMark(values,"student_qualification","วุฒิการศึกษาสูงสุดของผู้เรียน")}
+        ${attachmentMark(values,"location_map","ที่ตั้ง และแผนผังสถานที่จัดการศึกษา")}
+        ${attachmentMark(values,"manager_qualification","หลักฐานวุฒิการศึกษาของผู้จัดการศึกษา")}
+        ${attachmentMark(values,"education_plan","แผนการจัดการศึกษา")}
         <div><span class="check">${values.otherAttachment ? "☑" : "☐"}</span> อื่น ๆ ${printLine(values.otherAttachment,"................................................")}</div>
       </div>
-      <p class="paragraph">จึงเรียนมาเพื่อโปรดพิจารณา หากท่านมีผลการพิจารณาเป็นประการใด โปรดแจ้งให้ทราบด้วย จักขอบคุณยิ่ง</p>
-      <div class="signature">ขอแสดงความนับถือ<br><br><br>ลงชื่อ........................................................ผู้ยื่นคำขอ (ครอบครัว)<br>(${printLine(values.signatureName)})</div>
+      <p class="paragraph">จึงเรียนมาเพื่อโปรดพิจารณาอนุญาต</p>
+      <div class="signature">ลงชื่อ........................................................ผู้ยื่นคำขอ<br>(${printLine(values.signatureName)})</div>
       </main></body></html>`;
+    }
+
+    function requestWordFilename(values) {
+      const studentName = (values.studentName || "ผู้เรียน").replace(/[\\/:*?"<>|]/g, "").trim();
+      return "แบบยื่นความประสงค์ขอจัดทำบ้านเรียน-" + studentName + ".doc";
+    }
+
+    function createRequestWordFile(values) {
+      const html = "\ufeff" + requestDocumentHtml(values);
+      const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
+      const filename = requestWordFilename(values);
+      try {
+        return new File([blob], filename, { type: "application/msword" });
+      } catch (error) {
+        blob.name = filename;
+        blob.lastModified = Date.now();
+        return blob;
+      }
+    }
+
+    function downloadRequestWord() {
+      if (!$("#requestForm").reportValidity()) return;
+      const values = requestFormValues();
+      const file = createRequestWordFile(values);
+      const url = URL.createObjectURL(file);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function downloadRequestPdf() {
+      if (!$("#requestForm").reportValidity()) return;
+      const values = requestFormValues();
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) {
+        showToast("เบราว์เซอร์บล็อกหน้าต่างเอกสาร กรุณาอนุญาต Pop-up");
+        return;
+      }
+      const html = requestDocumentHtml(values, { printControls: true });
       printWindow.document.open();
       printWindow.document.write(html);
       printWindow.document.close();
@@ -2657,6 +2731,50 @@
       });
     }
 
+    async function replaceOfficialFile(key, file) {
+      const documentType = DOCUMENT_TYPE_MAP[key];
+      const previousRecords = await apiRequest(
+        SUPABASE_URL + "/rest/v1/official_documents?select=id,storage_path&application_id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id + "&document_type=eq." + documentType,
+        { requireAuth: true }
+      );
+      const uploadedRecord = await uploadOneOfficialFile(key, file);
+      const oldRecords = previousRecords.filter((record) => record.id !== uploadedRecord?.id);
+      const cleanupResults = await Promise.allSettled(oldRecords.map(deleteOfficialDocument));
+      await loadUploadedDocuments();
+      return { uploadedRecord, cleanupResults };
+    }
+
+    async function saveGeneratedRequestWord() {
+      const form = $("#requestForm");
+      if (!form.reportValidity()) return;
+      const button = $("#saveGeneratedRequestWord");
+      const error = $("#requestFormError");
+      button.disabled = true;
+      button.textContent = "กำลังสร้างเอกสาร...";
+      error.classList.add("hidden");
+      try {
+        await refreshSessionIfNeeded();
+        if (!currentUser || !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อนสร้างเอกสาร");
+        if (!applicationContext) {
+          const ready = await ensureApplicationContext(true);
+          if (!ready) throw new Error("กรุณาเลือกหรือเพิ่มนักเรียนก่อนสร้างเอกสาร");
+        }
+        const values = requestFormValues();
+        await persistRequestFormData(values);
+        const file = createRequestWordFile(values);
+        await replaceOfficialFile("requestDocument", file);
+        $("#requestSaveStatus").textContent = "สร้างและบันทึกไฟล์ Word ล่าสุดแล้ว";
+        showToast("สร้างแบบคำขอและบันทึกให้เจ้าหน้าที่เขตดูได้แล้ว");
+      } catch (saveError) {
+        error.textContent = saveError.message;
+        error.classList.remove("hidden");
+        showToast(saveError.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "สร้าง Word และบันทึกในระบบ";
+      }
+    }
+
     async function handleOfficialFiles(files) {
       if (!activeUploadKey || !files.length) return;
       const file = files[files.length - 1];
@@ -2678,15 +2796,7 @@
         if (!allowed.includes(extension)) {
           throw new Error(file.name + " ไม่ใช่ไฟล์ DOC, DOCX, PDF, JPG หรือ PNG");
         }
-        const documentType = DOCUMENT_TYPE_MAP[activeUploadKey];
-        const previousRecords = await apiRequest(
-          SUPABASE_URL + "/rest/v1/official_documents?select=id,storage_path&application_id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id + "&document_type=eq." + documentType,
-          { requireAuth: true }
-        );
-        const uploadedRecord = await uploadOneOfficialFile(activeUploadKey, file);
-        const oldRecords = previousRecords.filter((record) => record.id !== uploadedRecord?.id);
-        const cleanupResults = await Promise.allSettled(oldRecords.map(deleteOfficialDocument));
-        await loadUploadedDocuments();
+        const { cleanupResults } = await replaceOfficialFile(activeUploadKey, file);
         showToast(cleanupResults.some((result) => result.status === "rejected") ? "บันทึกไฟล์ล่าสุดแล้ว และซ่อนไฟล์เดิมเรียบร้อย" : "อัปโหลดไฟล์ล่าสุดและแทนที่ไฟล์เดิมแล้ว");
       } catch (error) {
         showToast(error.message);
@@ -3108,6 +3218,8 @@
     $("#onboardingForm").addEventListener("submit", handleOnboarding);
     $("#requestForm").addEventListener("submit", saveRequestForm);
     $("#downloadRequestPdf").addEventListener("click", downloadRequestPdf);
+    $("#downloadRequestWord").addEventListener("click", downloadRequestWord);
+    $("#saveGeneratedRequestWord").addEventListener("click", saveGeneratedRequestWord);
     $("#addStudentButton").addEventListener("click", openStudentModal);
     $("#closeOnboardingModal").addEventListener("click", closeStudentModal);
     $("#backToStudents").addEventListener("click", showStudentHub);
