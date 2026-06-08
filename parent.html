@@ -1371,11 +1371,11 @@
 
             <p class="form-error hidden" id="requestFormError"></p>
             <div class="request-form-actions">
-              <span class="save-status" id="requestSaveStatus">ยังไม่ได้บันทึก</span>
+              <span class="save-status" id="requestSaveStatus">บันทึกร่างเก็บข้อมูลไว้แก้ต่อภายหลัง โดยยังไม่สร้างเอกสาร</span>
               <button class="secondary-button" id="downloadRequestPdf" type="button">เปิด PDF / พิมพ์</button>
               <button class="secondary-button" id="downloadRequestWord" type="button">ดาวน์โหลด Word</button>
-              <button class="primary-button" id="saveGeneratedRequestWord" type="button">สร้าง Word และบันทึกในระบบ</button>
-              <button class="secondary-button" id="saveRequestForm" type="submit">บันทึกข้อมูลฟอร์ม</button>
+              <button class="primary-button" id="saveGeneratedRequestPdf" type="button">สร้าง PDF และบันทึกในระบบ</button>
+              <button class="secondary-button" id="saveRequestForm" type="submit" title="เก็บข้อมูลที่กรอกไว้เพื่อกลับมาแก้ไขต่อ โดยยังไม่สร้างไฟล์ PDF">บันทึกร่าง</button>
             </div>
           </form>
 
@@ -1658,6 +1658,7 @@
 
   <div class="toast hidden" id="toast" role="status"></div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     /*
       Public Supabase credentials are expected in a browser app.
@@ -2397,7 +2398,7 @@
         return;
       }
       fillRequestForm({ ...requestDefaults(), ...saved, districtId: selectedId });
-      $("#requestSaveStatus").textContent = Object.keys(saved).length ? "โหลดข้อมูลที่บันทึกไว้แล้ว" : "ยังไม่ได้บันทึก";
+      $("#requestSaveStatus").textContent = Object.keys(saved).length ? "โหลดข้อมูลร่างที่บันทึกไว้แล้ว" : "บันทึกร่างเก็บข้อมูลไว้แก้ต่อภายหลัง โดยยังไม่สร้างเอกสาร";
       $("#requestFormError").classList.add("hidden");
     }
 
@@ -2450,7 +2451,7 @@
         error.classList.remove("hidden");
       } finally {
         button.disabled = false;
-        button.textContent = "บันทึกข้อมูลฟอร์ม";
+        button.textContent = "บันทึกร่าง";
       }
     }
 
@@ -2494,19 +2495,22 @@
       const residence = values.currentResidence || address;
       const educationLocation = values.educationLocation || residence;
       const printButton = options.printControls ? '<div class="printbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์เอกสาร</button></div>' : "";
+      const previewMode = options.printControls === true;
       return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title></title><style>
         @page{size:A4 portrait;margin:0}
         @font-face{font-family:"TH Sarabun New Embedded";src:url("${regularFontUrl}") format("truetype");font-weight:400;font-style:normal;font-display:block}
         @font-face{font-family:"TH Sarabun New Embedded";src:url("${boldFontUrl}") format("truetype");font-weight:700;font-style:normal;font-display:block}
         *{box-sizing:border-box}
         html,body{margin:0;padding:0}
-        body{color:#000;background:#d7d7d9;font-family:"TH Sarabun New Embedded","TH Sarabun New",sans-serif;font-size:16pt;line-height:1}
-        .sheet{position:relative;width:210mm;min-height:297mm;margin:12px auto;padding:11mm 20mm 10mm 29mm;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.24)}
+        body{color:#000;background:${previewMode ? "#d7d7d9" : "#fff"};font-family:"TH Sarabun New Embedded","TH Sarabun New",sans-serif;font-size:16pt;line-height:1}
+        .sheet{position:relative;width:210mm;min-height:297mm;margin:${previewMode ? "12px auto" : "0 auto"};padding:11mm 20mm 10mm 29mm;background:#fff;box-shadow:${previewMode ? "0 2px 12px rgba(0,0,0,.24)" : "none"}}
         h1{margin:6mm 0 1mm;text-align:center;font-size:16pt;line-height:1;font-weight:700}
         .subtitle{margin:0 0 5mm;text-align:center;font-size:15pt;font-weight:700}
-        .place{width:72mm;margin:0 4mm 3mm auto;text-align:center;line-height:1.2}
-        .place-row{display:flex;justify-content:center;gap:4px}
-        .place-date{margin-top:6mm}
+        .place{width:78mm;margin:0 4mm 3mm auto;text-align:left;line-height:1.2}
+        .place table{width:100%;border-collapse:collapse}
+        .place td{padding:0;text-align:left;vertical-align:top}
+        .place .label{width:11mm;white-space:nowrap}
+        .place-date{padding-top:5mm!important;text-align:center!important}
         .paragraph{margin:1.2mm 0;text-indent:12mm;text-align:justify}
         .no-indent{text-indent:0}
         .line{display:inline;padding:0 2px}
@@ -2525,7 +2529,7 @@
       </style></head><body>${printButton}<main class="sheet">
       <h1>แบบยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1>
       <div class="subtitle">ระดับ ${printLine(values.startingEducationLevel || "................................")} ${escapeHTML(districtName)}</div>
-      <div class="place"><div class="place-row">ที่ ${printLine(values.requestPlace)}</div><div class="place-row place-date">วันที่ ${thaiLongDate(values.requestDate)}</div></div>
+      <div class="place"><table><tr><td class="label">เขียนที่</td><td>${printLine(values.requestPlace)}</td></tr><tr><td colspan="2" class="place-date">วันที่ ${thaiLongDate(values.requestDate)}</td></tr></table></div>
       <div>เรื่อง&nbsp;&nbsp;ยื่นความประสงค์ขอจัดทำแผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัวร่วมกับสำนักงานเขตพื้นที่การศึกษา ${escapeHTML(districtName)}</div>
       <div>เรียน&nbsp;&nbsp;ผู้อำนวยการ${printLine(districtName)}</div>
       <p class="paragraph">ด้วย ${printLine(values.requesterPrefix)} ${printLine(values.requesterName)} เลขประจำตัวประชาชน <span class="line">${printLine(values.requesterCitizenId)}</span></p>
@@ -2557,6 +2561,11 @@
       return "แบบยื่นความประสงค์ขอจัดทำบ้านเรียน-" + studentName + ".doc";
     }
 
+    function requestPdfFilename(values) {
+      const studentName = (values.studentName || "ผู้เรียน").replace(/[\\/:*?"<>|]/g, "").trim();
+      return "แบบยื่นความประสงค์ขอจัดทำบ้านเรียน-" + studentName + ".pdf";
+    }
+
     function createRequestWordFile(values) {
       const html = "\ufeff" + requestDocumentHtml(values);
       const blob = new Blob([html], { type: "application/msword;charset=utf-8" });
@@ -2567,6 +2576,46 @@
         blob.name = filename;
         blob.lastModified = Date.now();
         return blob;
+      }
+    }
+
+    async function createRequestPdfFile(values) {
+      if (!window.html2pdf) {
+        throw new Error("โหลดตัวสร้าง PDF ไม่สำเร็จ กรุณาเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่");
+      }
+      const filename = requestPdfFilename(values);
+      const iframe = document.createElement("iframe");
+      iframe.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;height:297mm;border:0;opacity:0;pointer-events:none;";
+      document.body.appendChild(iframe);
+      try {
+        const doc = iframe.contentDocument;
+        doc.open();
+        doc.write(requestDocumentHtml(values));
+        doc.close();
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        if (doc.fonts?.ready) await doc.fonts.ready.catch(() => {});
+        const sheet = doc.querySelector(".sheet");
+        if (!sheet) throw new Error("สร้างหน้าเอกสารไม่สำเร็จ");
+        const pdfBlob = await window.html2pdf()
+          .set({
+            margin: 0,
+            filename,
+            image: { type: "jpeg", quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+            jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+            pagebreak: { mode: ["avoid-all"] }
+          })
+          .from(sheet)
+          .outputPdf("blob");
+        try {
+          return new File([pdfBlob], filename, { type: "application/pdf" });
+        } catch (error) {
+          pdfBlob.name = filename;
+          pdfBlob.lastModified = Date.now();
+          return pdfBlob;
+        }
+      } finally {
+        iframe.remove();
       }
     }
 
@@ -2744,34 +2793,34 @@
       return { uploadedRecord, cleanupResults };
     }
 
-    async function saveGeneratedRequestWord() {
+    async function saveGeneratedRequestPdf() {
       const form = $("#requestForm");
       if (!form.reportValidity()) return;
-      const button = $("#saveGeneratedRequestWord");
+      const button = $("#saveGeneratedRequestPdf");
       const error = $("#requestFormError");
       button.disabled = true;
-      button.textContent = "กำลังสร้างเอกสาร...";
+      button.textContent = "กำลังสร้าง PDF...";
       error.classList.add("hidden");
       try {
         await refreshSessionIfNeeded();
-        if (!currentUser || !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อนสร้างเอกสาร");
+        if (!currentUser || !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อนสร้าง PDF");
         if (!applicationContext) {
           const ready = await ensureApplicationContext(true);
-          if (!ready) throw new Error("กรุณาเลือกหรือเพิ่มนักเรียนก่อนสร้างเอกสาร");
+          if (!ready) throw new Error("กรุณาเลือกหรือเพิ่มนักเรียนก่อนสร้าง PDF");
         }
         const values = requestFormValues();
         await persistRequestFormData(values);
-        const file = createRequestWordFile(values);
+        const file = await createRequestPdfFile(values);
         await replaceOfficialFile("requestDocument", file);
-        $("#requestSaveStatus").textContent = "สร้างและบันทึกไฟล์ Word ล่าสุดแล้ว";
-        showToast("สร้างแบบคำขอและบันทึกให้เจ้าหน้าที่เขตดูได้แล้ว");
+        $("#requestSaveStatus").textContent = "สร้างและบันทึกไฟล์ PDF ล่าสุดแล้ว";
+        showToast("สร้าง PDF แบบคำขอและบันทึกให้เจ้าหน้าที่เขตดูได้แล้ว");
       } catch (saveError) {
         error.textContent = saveError.message;
         error.classList.remove("hidden");
         showToast(saveError.message);
       } finally {
         button.disabled = false;
-        button.textContent = "สร้าง Word และบันทึกในระบบ";
+        button.textContent = "สร้าง PDF และบันทึกในระบบ";
       }
     }
 
@@ -3219,7 +3268,7 @@
     $("#requestForm").addEventListener("submit", saveRequestForm);
     $("#downloadRequestPdf").addEventListener("click", downloadRequestPdf);
     $("#downloadRequestWord").addEventListener("click", downloadRequestWord);
-    $("#saveGeneratedRequestWord").addEventListener("click", saveGeneratedRequestWord);
+    $("#saveGeneratedRequestPdf").addEventListener("click", saveGeneratedRequestPdf);
     $("#addStudentButton").addEventListener("click", openStudentModal);
     $("#closeOnboardingModal").addEventListener("click", closeStudentModal);
     $("#backToStudents").addEventListener("click", showStudentHub);
