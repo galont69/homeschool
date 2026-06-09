@@ -551,6 +551,93 @@
     .document-help p { margin: 3px 0 0; color: var(--sub); font-size: 12px; }
 
     .application-page { display: grid; gap: 20px; }
+    .annual-evidence-page { display: grid; gap: 20px; }
+    .evidence-warning {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      padding: 18px 20px;
+      color: #684810;
+      background: #fff8df;
+      border: 1px solid #ecd184;
+      border-radius: 18px;
+    }
+    .evidence-warning-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: #8d6114;
+      background: #ffedb4;
+      border-radius: 14px;
+    }
+    .evidence-warning h3 { margin: 0 0 4px; font-size: 16px; }
+    .evidence-warning p { margin: 0; font-size: 12px; line-height: 1.7; }
+    .evidence-editor { display: grid; gap: 18px; padding: clamp(20px, 3vw, 30px); }
+    .evidence-editor-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .evidence-editor-head p { margin: 5px 0 0; color: var(--sub); font-size: 12px; line-height: 1.65; }
+    .evidence-cover-grid { display: grid; grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr); gap: 18px; }
+    .evidence-cover-photo {
+      display: grid;
+      place-items: center;
+      min-height: 270px;
+      overflow: hidden;
+      background: #f2f1ff;
+      border: 1px dashed #b9b6ee;
+      border-radius: 18px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .evidence-cover-photo img { width: 100%; height: 100%; max-height: 330px; object-fit: cover; }
+    .evidence-cover-placeholder { display: grid; gap: 7px; justify-items: center; padding: 20px; color: var(--sub); }
+    .evidence-cover-placeholder svg { width: 38px; height: 38px; color: var(--brand); }
+    .evidence-cover-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-content: start; }
+    .evidence-cover-fields .wide { grid-column: 1 / -1; }
+    .evidence-topics { display: grid; gap: 16px; }
+    .evidence-topic {
+      padding: 18px;
+      background: #fafafd;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+    .evidence-topic-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+    .evidence-topic-number { color: var(--brand); font-size: 12px; font-weight: 900; }
+    .evidence-topic-remove {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      color: #b2384c;
+      background: #fff0f3;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .evidence-topic-remove svg { width: 19px; height: 19px; }
+    .evidence-topic-fields { display: grid; gap: 12px; margin-top: 12px; }
+    .evidence-photo-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+    .evidence-photo-count { color: var(--sub); font-size: 11px; font-weight: 700; }
+    .evidence-photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+    .evidence-photo-item { overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 15px; }
+    .evidence-photo-item img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #eee; }
+    .evidence-photo-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 10px; }
+    .evidence-photo-copy input { min-width: 0; padding: 9px 10px; font-size: 12px; }
+    .evidence-photo-delete { color: #b2384c; background: transparent; border: 0; cursor: pointer; font-size: 11px; font-weight: 800; }
+    .evidence-add-topic { width: 100%; border-style: dashed; }
+    .evidence-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; padding-top: 4px; }
+    .evidence-actions .save-status { margin-right: auto; }
+    .evidence-upload-final {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding: 17px;
+      background: #fafafd;
+      border: 1px dashed #cfd3e3;
+      border-radius: 18px;
+    }
+    .evidence-upload-final strong, .evidence-upload-final span { display: block; }
+    .evidence-upload-final span { margin-top: 3px; color: var(--sub); font-size: 11px; }
     .application-top {
       display: flex;
       align-items: center;
@@ -954,6 +1041,8 @@
       .application-top { align-items: flex-start; }
       .application-progress { min-width: auto; }
       .workspace-intro { flex-direction: column; }
+      .evidence-cover-grid { grid-template-columns: 1fr; }
+      .evidence-cover-photo { min-height: 220px; }
       .request-form-head { flex-direction:column; }
       .request-form-grid,.checkbox-grid { grid-template-columns:1fr; }
       .plan-form-grid,.plan-domain-grid { grid-template-columns:1fr; }
@@ -976,6 +1065,13 @@
       .template-download a { width: 100%; text-align: center; }
       .district-template-item { grid-template-columns: 1fr; }
       .district-template-item button { width: 100%; }
+      .evidence-editor-head, .evidence-photo-toolbar { align-items: stretch; flex-direction: column; }
+      .evidence-cover-fields, .evidence-photo-grid { grid-template-columns: 1fr; }
+      .evidence-cover-fields .wide { grid-column: auto; }
+      .evidence-actions { display: grid; grid-template-columns: 1fr; }
+      .evidence-actions .save-status { margin: 0; text-align: center; }
+      .evidence-upload-final { grid-template-columns: 1fr; }
+      .evidence-upload-final button { width: 100%; }
       .student-grid { grid-template-columns: 1fr; }
       .student-hub-head { align-items: stretch; flex-direction: column; }
       .student-hub-head .primary-button { width: 100%; }
@@ -1564,6 +1660,79 @@
 
         <input class="file-input" id="officialDocumentInput" type="file" accept=".pdf,.doc,.docx,image/jpeg,image/png,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
       </section>
+
+      <section class="annual-evidence-page hidden" id="annualEvidencePage" aria-labelledby="annual-evidence-title">
+        <div class="application-top">
+          <button class="back-button" id="backFromAnnualEvidence" type="button"><span data-icon="arrowLeft"></span>กลับไปหน้ารายการเอกสาร</button>
+          <div class="application-progress"><strong id="annualEvidenceProgress">0%</strong><span>ความพร้อมของร่องรอย</span></div>
+        </div>
+
+        <div>
+          <p class="eyebrow">เอกสารประกอบการประเมินประจำปี</p>
+          <h2 id="annual-evidence-title">สร้างร่องรอยการเรียนรู้</h2>
+        </div>
+
+        <section class="evidence-warning">
+          <div class="evidence-warning-icon" data-icon="book"></div>
+          <div>
+            <h3>หัวข้อควรสอดคล้องกับแผนการจัดการศึกษาที่ส่งไว้</h3>
+            <p>ระบบมีหัวข้อแนะนำตามระดับชั้น แต่ผู้ปกครองแก้ไข เพิ่ม หรือลบได้ รูปต้นฉบับจะถูกย่อและเก็บไว้ชั่วคราวเฉพาะในหน้านี้ ไม่อัปโหลดขึ้นฐานข้อมูล จนกว่าจะสร้างเป็น PDF ฉบับรวม จึงควรสร้างไฟล์ให้เสร็จก่อนปิดหรือรีเฟรชหน้า</p>
+          </div>
+        </section>
+
+        <section class="card evidence-editor">
+          <div class="evidence-editor-head">
+            <div>
+              <h2>หน้าปกและข้อมูลเอกสาร</h2>
+              <p>ข้อมูลผู้เรียนจะดึงจากฐานข้อมูลเมื่อมี และสามารถแก้ไขเฉพาะเอกสารฉบับนี้ได้</p>
+            </div>
+            <span class="security-badge"><span data-icon="shield"></span>บันทึกเฉพาะ PDF</span>
+          </div>
+
+          <div class="evidence-cover-grid">
+            <button class="evidence-cover-photo" id="chooseAnnualCover" type="button">
+              <span class="evidence-cover-placeholder" id="annualCoverPlaceholder"><span data-icon="camera"></span><strong>เพิ่มรูปหน้าปก</strong><span>JPG หรือ PNG</span></span>
+              <img class="hidden" id="annualCoverPreview" alt="รูปหน้าปกร่องรอยการเรียนรู้">
+            </button>
+            <div class="evidence-cover-fields">
+              <div class="field wide"><label for="annualEvidenceTitle">ชื่อเอกสาร</label><input id="annualEvidenceTitle" value="ร่องรอยการเรียนรู้ประกอบการประเมินประจำปี"></div>
+              <div class="field"><label for="annualEvidenceHome">ชื่อบ้านเรียน</label><input id="annualEvidenceHome"></div>
+              <div class="field"><label for="annualEvidenceStudent">ชื่อผู้เรียน</label><input id="annualEvidenceStudent"></div>
+              <div class="field"><label for="annualEvidenceManager">ผู้จัดการศึกษา</label><input id="annualEvidenceManager"></div>
+              <div class="field"><label for="annualEvidenceLevel">ระดับการศึกษา</label><input id="annualEvidenceLevel"></div>
+              <div class="field wide"><label for="annualEvidenceDistrict">สังกัด</label><input id="annualEvidenceDistrict"></div>
+              <div class="field"><label for="annualEvidenceYear">ปีการศึกษา</label><input id="annualEvidenceYear" inputmode="numeric"></div>
+            </div>
+          </div>
+
+          <div class="evidence-editor-head">
+            <div>
+              <h2>หัวข้อร่องรอยการเรียนรู้</h2>
+              <p>เพิ่มได้สูงสุด 10 หัวข้อ แต่ละหัวข้อแนบรูปได้ 5-10 รูป พร้อมคำอธิบายหัวข้อและคำบรรยายใต้ภาพ</p>
+            </div>
+            <span class="plan-badge" id="annualTopicCount">0 / 10 หัวข้อ</span>
+          </div>
+          <div class="evidence-topics" id="annualEvidenceTopics"></div>
+          <button class="secondary-button evidence-add-topic" id="addAnnualEvidenceTopic" type="button"><span data-icon="plus"></span>เพิ่มหัวข้อร่องรอยการเรียนรู้</button>
+          <p class="form-error hidden" id="annualEvidenceError"></p>
+          <div class="evidence-actions">
+            <span class="save-status" id="annualEvidenceSaveStatus">ยังไม่ได้บันทึกร่าง</span>
+            <button class="secondary-button" id="saveAnnualEvidenceDraft" type="button">บันทึกร่างข้อความ</button>
+            <button class="secondary-button" id="downloadAnnualEvidenceWord" type="button">ดาวน์โหลด Word</button>
+            <button class="secondary-button" id="openAnnualEvidencePdf" type="button">เปิด PDF / พิมพ์</button>
+            <button class="primary-button" id="saveAnnualEvidencePdf" type="button">สร้าง PDF และบันทึกในระบบ</button>
+          </div>
+        </section>
+
+        <section class="card evidence-upload-final">
+          <div class="document-icon" data-icon="upload"></div>
+          <div><strong>อัปโหลด PDF ฉบับที่แก้ไขเพิ่มเติมแล้ว</strong><span>ใช้แทนฉบับเดิมในระบบ เจ้าหน้าที่เขตจะเห็นเฉพาะไฟล์ล่าสุด ขนาดไม่เกิน 10 MB</span></div>
+          <button class="secondary-button" id="chooseEditedAnnualPdf" type="button">เลือก PDF</button>
+        </section>
+        <input class="file-input" id="annualEvidenceCoverInput" type="file" accept="image/jpeg,image/png">
+        <input class="file-input" id="annualEvidencePhotoInput" type="file" accept="image/jpeg,image/png" multiple>
+        <input class="file-input" id="editedAnnualPdfInput" type="file" accept="application/pdf,.pdf">
+      </section>
     </main>
 
     <nav class="bottom-nav" aria-label="เมนูด้านล่าง">
@@ -1745,7 +1914,8 @@
       location: "education_location",
       photo: "student_photo_2inch",
       requestDocument: "request_form_document",
-      educationPlanDocument: "education_plan_document"
+      educationPlanDocument: "education_plan_document",
+      annualEvidencePdf: "annual_evaluation"
     };
 
     const icons = {
@@ -1797,6 +1967,9 @@
     let authSession = null;
     let currentUser = null;
     let applicationContext = null;
+    let annualEvidenceCover = null;
+    let annualEvidenceTopics = [];
+    let activeAnnualEvidenceTopicId = null;
     let parentProfile = null;
     let familyRecord = null;
     let students = [];
@@ -2009,6 +2182,7 @@
       $("#homePage").classList.add("hidden");
       $("#documentsPage").classList.add("hidden");
       $("#applicationPage").classList.add("hidden");
+      $("#annualEvidencePage").classList.add("hidden");
       setThaiDate();
       updateParentIdentity();
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -2026,6 +2200,7 @@
       $("#homePage").classList.remove("hidden");
       $("#documentsPage").classList.add("hidden");
       $("#applicationPage").classList.add("hidden");
+      $("#annualEvidencePage").classList.add("hidden");
       $("#pageEyebrow").textContent = "พื้นที่การเรียนรู้ของ";
       $("#pageTitle").textContent = fullName;
       $("#selectedStudentLabel").textContent = fullName + " (" + [studentAge(student.birth_date), student.current_education_level].filter(Boolean).join(" · ") + ")";
@@ -2296,6 +2471,7 @@
       $("#homePage").classList.toggle("hidden", isDocuments);
       $("#documentsPage").classList.toggle("hidden", !isDocuments);
       $("#applicationPage").classList.add("hidden");
+      $("#annualEvidencePage").classList.add("hidden");
 
       if (isDocuments) {
         $("#pageEyebrow").textContent = "เครื่องมือสำหรับผู้ปกครอง";
@@ -2319,6 +2495,7 @@
       $("#homePage").classList.add("hidden");
       $("#documentsPage").classList.add("hidden");
       $("#applicationPage").classList.remove("hidden");
+      $("#annualEvidencePage").classList.add("hidden");
       $("#pageEyebrow").textContent = "จัดการเอกสารราชการ";
       $("#pageTitle").textContent = "ยื่นขออนุญาตจัดการบ้านเรียน";
       showWorkflow("uploads");
@@ -3686,6 +3863,598 @@
       }
     }
 
+    function annualEvidenceDefaultTopics() {
+      const level = String(selectedStudent?.current_education_level || "");
+      if (/ปฐม|อนุบาล/.test(level)) {
+        return [
+          "พัฒนาการด้านร่างกาย",
+          "พัฒนาการด้านอารมณ์และจิตใจ",
+          "พัฒนาการด้านสังคม",
+          "พัฒนาการด้านสติปัญญา"
+        ];
+      }
+      return [
+        "ภาษาไทยและภาษาต่างประเทศ",
+        "วิทยาศาสตร์และเทคโนโลยี",
+        "คณิตศาสตร์",
+        "ตนเอง สังคม ศาสนา และวัฒนธรรม",
+        "ดนตรี กีฬา และศิลปะ"
+      ];
+    }
+
+    function annualEvidenceDraftValues() {
+      return {
+        documentTitle: $("#annualEvidenceTitle").value.trim(),
+        homeName: $("#annualEvidenceHome").value.trim(),
+        studentName: $("#annualEvidenceStudent").value.trim(),
+        managerName: $("#annualEvidenceManager").value.trim(),
+        educationLevel: $("#annualEvidenceLevel").value.trim(),
+        districtName: $("#annualEvidenceDistrict").value.trim(),
+        academicYear: $("#annualEvidenceYear").value.trim(),
+        topics: annualEvidenceTopics.map((topic) => ({
+          title: topic.title.trim(),
+          description: topic.description.trim(),
+          captions: topic.photos.map((photo) => photo.caption.trim())
+        })),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function annualEvidenceValues() {
+      return {
+        ...annualEvidenceDraftValues(),
+        cover: annualEvidenceCover,
+        topics: annualEvidenceTopics.map((topic) => ({
+          ...topic,
+          title: topic.title.trim(),
+          description: topic.description.trim()
+        }))
+      };
+    }
+
+    function annualEvidenceYear() {
+      return String(new Date().getFullYear() + 543);
+    }
+
+    function initializeAnnualEvidenceForm() {
+      const saved = applicationContext?.annual_evidence_data || {};
+      const studentName = [selectedStudent?.first_name, selectedStudent?.last_name].filter(Boolean).join(" ");
+      $("#annualEvidenceTitle").value = saved.documentTitle || "ร่องรอยการเรียนรู้ประกอบการประเมินประจำปี";
+      $("#annualEvidenceHome").value = saved.homeName || (familyRecord?.family_name ? "บ้านเรียน" + familyRecord.family_name : "");
+      $("#annualEvidenceStudent").value = saved.studentName || studentName;
+      $("#annualEvidenceManager").value = saved.managerName || parentProfile?.full_name || "";
+      $("#annualEvidenceLevel").value = saved.educationLevel || selectedStudent?.current_education_level || "";
+      $("#annualEvidenceDistrict").value = saved.districtName || selectedStudent?.district?.name || "";
+      $("#annualEvidenceYear").value = saved.academicYear || annualEvidenceYear();
+      annualEvidenceCover = null;
+      $("#annualCoverPreview").classList.add("hidden");
+      $("#annualCoverPlaceholder").classList.remove("hidden");
+      const topicDrafts = Array.isArray(saved.topics) && saved.topics.length
+        ? saved.topics
+        : annualEvidenceDefaultTopics().map((title) => ({ title, description: "", captions: [] }));
+      annualEvidenceTopics = topicDrafts.slice(0, 10).map((topic) => ({
+        id: crypto.randomUUID(),
+        title: String(topic.title || ""),
+        description: String(topic.description || ""),
+        photos: []
+      }));
+      renderAnnualEvidenceTopics();
+      $("#annualEvidenceSaveStatus").textContent = saved.updatedAt ? "พบร่างข้อความที่บันทึกไว้" : "ยังไม่ได้บันทึกร่าง";
+    }
+
+    async function loadAnnualEvidenceDraft() {
+      if (!applicationContext) return;
+      try {
+        const rows = await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?select=annual_evidence_data&id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id + "&limit=1",
+          { requireAuth: true }
+        );
+        applicationContext.annual_evidence_data = rows[0]?.annual_evidence_data || {};
+      } catch (error) {
+        applicationContext.annual_evidence_data = {};
+        if (!String(error.message).includes("annual_evidence_data")) throw error;
+      }
+    }
+
+    async function showAnnualEvidencePage() {
+      if (!selectedStudent) {
+        showToast("กรุณาเลือกนักเรียนก่อน");
+        showStudentHub();
+        return;
+      }
+      $("#studentHubPage").classList.add("hidden");
+      $("#studentDetailHead").classList.remove("hidden");
+      $("#homePage").classList.add("hidden");
+      $("#documentsPage").classList.add("hidden");
+      $("#applicationPage").classList.add("hidden");
+      $("#annualEvidencePage").classList.remove("hidden");
+      $("#pageEyebrow").textContent = "เอกสารประเมินประจำปี";
+      $("#pageTitle").textContent = "ร่องรอยการเรียนรู้";
+      try {
+        await ensureApplicationContext(true);
+        await loadAnnualEvidenceDraft();
+        initializeAnnualEvidenceForm();
+      } catch (error) {
+        showToast(error.message);
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderAnnualEvidenceTopics() {
+      const container = $("#annualEvidenceTopics");
+      container.innerHTML = annualEvidenceTopics.map((topic, topicIndex) => `
+        <article class="evidence-topic" data-evidence-topic="${topic.id}">
+          <div class="evidence-topic-head">
+            <div><span class="evidence-topic-number">หัวข้อที่ ${topicIndex + 1}</span></div>
+            <button class="evidence-topic-remove" type="button" data-remove-evidence-topic="${topic.id}" aria-label="ลบหัวข้อ"><span data-icon="x"></span></button>
+          </div>
+          <div class="evidence-topic-fields">
+            <div class="field"><label>ชื่อหัวข้อ</label><input data-evidence-title="${topic.id}" value="${escapeHTML(topic.title)}" placeholder="เช่น พัฒนาการด้านร่างกาย"></div>
+            <div class="field"><label>คำอธิบายและรายละเอียด</label><textarea data-evidence-description="${topic.id}" placeholder="อธิบายสิ่งที่ผู้เรียนได้เรียนรู้ กิจกรรมที่ทำ พัฒนาการ และความเชื่อมโยงกับแผนการศึกษา">${escapeHTML(topic.description)}</textarea></div>
+          </div>
+          <div class="evidence-photo-toolbar">
+            <span class="evidence-photo-count">${topic.photos.length} / 10 รูป ${topic.photos.length < 5 ? "· ควรเพิ่มอย่างน้อย " + (5 - topic.photos.length) + " รูป" : "· พร้อมสร้างเอกสาร"}</span>
+            <button class="secondary-button" type="button" data-add-evidence-photos="${topic.id}" ${topic.photos.length >= 10 ? "disabled" : ""}><span data-icon="plus"></span>เพิ่มรูป</button>
+          </div>
+          <div class="evidence-photo-grid">
+            ${topic.photos.map((photo, photoIndex) => `
+              <div class="evidence-photo-item">
+                <img src="${photo.dataUrl}" alt="ภาพร่องรอยที่ ${photoIndex + 1}">
+                <div class="evidence-photo-copy">
+                  <input data-evidence-caption="${topic.id}:${photo.id}" value="${escapeHTML(photo.caption)}" placeholder="คำบรรยายใต้ภาพ">
+                  <button class="evidence-photo-delete" type="button" data-remove-evidence-photo="${topic.id}:${photo.id}">ลบ</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `).join("");
+      $("#annualTopicCount").textContent = annualEvidenceTopics.length + " / 10 หัวข้อ";
+      $("#addAnnualEvidenceTopic").disabled = annualEvidenceTopics.length >= 10;
+      mountIcons(container);
+      refreshAnnualEvidenceProgress();
+    }
+
+    function refreshAnnualEvidenceProgress() {
+      const totalNeeded = Math.max(1, annualEvidenceTopics.length * 5);
+      const photoCount = annualEvidenceTopics.reduce((sum, topic) => sum + Math.min(topic.photos.length, 5), 0);
+      const titleCount = annualEvidenceTopics.filter((topic) => topic.title.trim()).length;
+      const coverScore = annualEvidenceCover ? 1 : 0;
+      const percent = Math.round(((photoCount / totalNeeded) * 70) + ((titleCount / Math.max(1, annualEvidenceTopics.length)) * 20) + coverScore * 10);
+      $("#annualEvidenceProgress").textContent = Math.min(100, percent) + "%";
+    }
+
+    function addAnnualEvidenceTopic() {
+      if (annualEvidenceTopics.length >= 10) return;
+      annualEvidenceTopics.push({
+        id: crypto.randomUUID(),
+        title: "",
+        description: "",
+        photos: []
+      });
+      renderAnnualEvidenceTopics();
+      const last = annualEvidenceTopics.at(-1);
+      $('[data-evidence-title="' + last.id + '"]')?.focus();
+    }
+
+    function syncAnnualEvidenceFields() {
+      annualEvidenceTopics.forEach((topic) => {
+        const title = $('[data-evidence-title="' + topic.id + '"]');
+        const description = $('[data-evidence-description="' + topic.id + '"]');
+        if (title) topic.title = title.value;
+        if (description) topic.description = description.value;
+        topic.photos.forEach((photo) => {
+          const caption = $('[data-evidence-caption="' + topic.id + ":" + photo.id + '"]');
+          if (caption) photo.caption = caption.value;
+        });
+      });
+    }
+
+    function compressEvidenceImage(file, maxWidth = 900, maxHeight = 900, quality = .65) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        image.onload = () => {
+          const scale = Math.min(1, maxWidth / image.naturalWidth, maxHeight / image.naturalHeight);
+          const width = Math.max(1, Math.round(image.naturalWidth * scale));
+          const height = Math.max(1, Math.round(image.naturalHeight * scale));
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const context = canvas.getContext("2d");
+          context.fillStyle = "#fff";
+          context.fillRect(0, 0, width, height);
+          context.drawImage(image, 0, 0, width, height);
+          URL.revokeObjectURL(objectUrl);
+          resolve({
+            id: crypto.randomUUID(),
+            name: file.name,
+            width,
+            height,
+            caption: "",
+            dataUrl: canvas.toDataURL("image/jpeg", quality)
+          });
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("อ่านรูป " + file.name + " ไม่สำเร็จ"));
+        };
+        image.src = objectUrl;
+      });
+    }
+
+    async function handleAnnualCover(file) {
+      if (!file) return;
+      if (!file.type.startsWith("image/")) return showToast("กรุณาเลือกไฟล์รูปภาพ");
+      annualEvidenceCover = await compressEvidenceImage(file, 1200, 1200, .72);
+      $("#annualCoverPreview").src = annualEvidenceCover.dataUrl;
+      $("#annualCoverPreview").classList.remove("hidden");
+      $("#annualCoverPlaceholder").classList.add("hidden");
+      refreshAnnualEvidenceProgress();
+    }
+
+    async function handleAnnualEvidencePhotos(files) {
+      const topic = annualEvidenceTopics.find((item) => item.id === activeAnnualEvidenceTopicId);
+      if (!topic) return;
+      const remaining = 10 - topic.photos.length;
+      const selected = Array.from(files).filter((file) => file.type.startsWith("image/")).slice(0, remaining);
+      if (!selected.length) return;
+      $("#annualEvidenceSaveStatus").textContent = "กำลังย่อรูป...";
+      try {
+        const compressed = await Promise.all(selected.map((file) => compressEvidenceImage(file)));
+        topic.photos.push(...compressed);
+        renderAnnualEvidenceTopics();
+        $("#annualEvidenceSaveStatus").textContent = "รูปอยู่ชั่วคราวในเบราว์เซอร์ กรุณาสร้าง Word หรือ PDF ก่อนปิดหน้า";
+        if (Array.from(files).length > remaining) showToast("หัวข้อนี้รับได้สูงสุด 10 รูป");
+      } catch (error) {
+        showToast(error.message);
+      }
+    }
+
+    function validateAnnualEvidence(requireCompletePhotos = false) {
+      syncAnnualEvidenceFields();
+      const error = $("#annualEvidenceError");
+      error.classList.add("hidden");
+      if (!annualEvidenceTopics.length) {
+        error.textContent = "กรุณาเพิ่มอย่างน้อย 1 หัวข้อ";
+        error.classList.remove("hidden");
+        return false;
+      }
+      const missingTitle = annualEvidenceTopics.findIndex((topic) => !topic.title.trim());
+      if (missingTitle >= 0) {
+        error.textContent = "กรุณากรอกชื่อหัวข้อที่ " + (missingTitle + 1);
+        error.classList.remove("hidden");
+        return false;
+      }
+      if (requireCompletePhotos) {
+        if (!annualEvidenceCover) {
+          error.textContent = "กรุณาเพิ่มรูปหน้าปกก่อนสร้าง PDF ฉบับบันทึกในระบบ";
+          error.classList.remove("hidden");
+          return false;
+        }
+        const incomplete = annualEvidenceTopics.findIndex((topic) => topic.photos.length < 5);
+        if (incomplete >= 0) {
+          error.textContent = "หัวข้อที่ " + (incomplete + 1) + " ต้องมีรูปอย่างน้อย 5 รูป";
+          error.classList.remove("hidden");
+          return false;
+        }
+      }
+      return true;
+    }
+
+    async function saveAnnualEvidenceDraft() {
+      if (!validateAnnualEvidence(false)) return;
+      const button = $("#saveAnnualEvidenceDraft");
+      button.disabled = true;
+      try {
+        await refreshSessionIfNeeded();
+        if (!applicationContext) await ensureApplicationContext(true);
+        const draft = annualEvidenceDraftValues();
+        const rows = await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ annual_evidence_data: draft })
+          }
+        );
+        applicationContext = rows[0]
+          ? { ...applicationContext, ...rows[0] }
+          : { ...applicationContext, annual_evidence_data: draft };
+        $("#annualEvidenceSaveStatus").textContent = "บันทึกร่างข้อความแล้ว " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        showToast("บันทึกร่างข้อความแล้ว รูปยังคงอยู่เฉพาะในหน้านี้");
+      } catch (error) {
+        $("#annualEvidenceError").textContent = error.message.includes("annual_evidence_data")
+          ? "กรุณารันไฟล์ SQL สำหรับร่องรอยการเรียนรู้ใน Supabase ก่อนบันทึกร่าง"
+          : error.message;
+        $("#annualEvidenceError").classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function annualEvidenceDocumentHtml(values, printControls = false) {
+      const regularFontUrl = new URL("assets/fonts/THSarabunNew.ttf", location.href).href;
+      const boldFontUrl = new URL("assets/fonts/THSarabunNew-Bold.ttf", location.href).href;
+      const previewBackground = printControls ? "#ddd" : "#fff";
+      const sheetMargin = printControls ? "12px auto" : "0 auto";
+      const sheetShadow = printControls ? "0 2px 12px rgba(0,0,0,.2)" : "none";
+      const coverPhoto = values.cover
+        ? `<img class="cover-photo" src="${values.cover.dataUrl}" alt="">`
+        : '<div class="cover-photo empty">ยังไม่ได้เพิ่มรูปหน้าปก</div>';
+      const topicSections = values.topics.flatMap((topic, topicIndex) => {
+        const chunks = [];
+        for (let index = 0; index < Math.max(1, topic.photos.length); index += 6) {
+          chunks.push(topic.photos.slice(index, index + 6));
+        }
+        return chunks.map((photos, chunkIndex) => `
+          <section class="sheet topic-sheet">
+            <div class="topic-kicker">ร่องรอยการเรียนรู้ หัวข้อที่ ${topicIndex + 1}${chunkIndex ? " (ต่อ)" : ""}</div>
+            <h2>${escapeHTML(topic.title)}</h2>
+            ${chunkIndex ? "" : `<div class="topic-description">${escapeHTML(topic.description || "บันทึกกิจกรรมและพัฒนาการของผู้เรียน").replaceAll("\n", "<br>")}</div>`}
+            <div class="photo-grid">
+              ${photos.map((photo, photoIndex) => `
+                <figure>
+                  <img src="${photo.dataUrl}" alt="">
+                  <figcaption>${escapeHTML(photo.caption || "ภาพที่ " + (chunkIndex * 6 + photoIndex + 1))}</figcaption>
+                </figure>
+              `).join("")}
+            </div>
+          </section>
+        `);
+      }).join("");
+      const toolbar = printControls ? '<div class="printbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์เอกสาร</button></div>' : "";
+      return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title>${escapeHTML(values.documentTitle)}</title><style>
+        @page{size:A4 portrait;margin:0}
+        @font-face{font-family:"TH SarabunPSK";src:url("${regularFontUrl}") format("truetype");font-weight:400}
+        @font-face{font-family:"TH SarabunPSK";src:url("${boldFontUrl}") format("truetype");font-weight:700}
+        *{box-sizing:border-box}html,body{margin:0;padding:0;background:${previewBackground};font-family:"TH SarabunPSK","TH Sarabun New",sans-serif;color:#111}
+        .sheet{width:210mm;min-height:297mm;margin:${sheetMargin};padding:20mm 20mm 18mm;background:#fff;box-shadow:${sheetShadow};break-after:page;page-break-after:always}
+        .cover{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:28mm}
+        .cover h1{max-width:160mm;margin:0;font-size:28pt;line-height:1.15}.cover .home{margin-top:8mm;font-size:22pt;font-weight:700}
+        .cover .student{margin-top:10mm;font-size:20pt;font-weight:700}.cover .level{font-size:18pt}
+        .cover-photo{display:block;width:74mm;height:74mm;margin:12mm auto 10mm;object-fit:cover;border-radius:3mm}
+        .cover-photo.empty{display:grid;place-items:center;color:#777;background:#f3f3f3;border:1px dashed #aaa;font-size:16pt}
+        .cover .manager{margin-top:4mm;font-size:18pt}.cover .district{margin-top:auto;padding-bottom:15mm;font-size:18pt;line-height:1.4}
+        .topic-kicker{color:#5b57e8;font-size:16pt;font-weight:700}.topic-sheet h2{margin:2mm 0 3mm;font-size:25pt;line-height:1.15}
+        .topic-description{padding:4mm 5mm;background:#f6f5ff;border-left:1.5mm solid #5b57e8;border-radius:2mm;font-size:17pt;line-height:1.35}
+        .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5mm;margin-top:7mm}
+        figure{margin:0;break-inside:avoid;page-break-inside:avoid}figure img{display:block;width:100%;height:72mm;object-fit:cover;border-radius:2mm}
+        figcaption{padding:2mm 1mm 0;text-align:center;font-size:15pt;line-height:1.2}
+        .printbar{position:sticky;top:0;z-index:5;padding:10px;text-align:center;background:#efefff}.printbar button{padding:9px 18px;border:0;border-radius:8px;color:#fff;background:#5652df;font:700 15px sans-serif}
+        @media print{html,body{background:#fff}.printbar{display:none}.sheet{margin:0;box-shadow:none}}
+      </style></head><body>${toolbar}<section class="sheet cover"><h1>${escapeHTML(values.documentTitle)}</h1><div class="home">${escapeHTML(values.homeName)}</div><div class="student">สำหรับ ${escapeHTML(values.studentName)}</div><div class="level">${escapeHTML(values.educationLevel)}</div>${coverPhoto}<div class="manager">ผู้จัดการศึกษา: ${escapeHTML(values.managerName)}</div><div class="district">สังกัด<br><strong>${escapeHTML(values.districtName)}</strong><br>ปีการศึกษา ${escapeHTML(values.academicYear)}</div></section>${topicSections}</body></html>`;
+    }
+
+    function openAnnualEvidencePdf() {
+      if (!validateAnnualEvidence(false)) return;
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) return showToast("กรุณาอนุญาต Pop-up เพื่อเปิดเอกสาร");
+      printWindow.document.open();
+      printWindow.document.write(annualEvidenceDocumentHtml(annualEvidenceValues(), true));
+      printWindow.document.close();
+      printWindow.focus();
+    }
+
+    function annualEvidencePhotoCell(photo) {
+      const noBorder = { style: docx.BorderStyle.NONE, size: 0, color: "FFFFFF" };
+      if (!photo) {
+        return new docx.TableCell({
+          width: { size: 4560, type: docx.WidthType.DXA },
+          borders: { top: noBorder, right: noBorder, bottom: noBorder, left: noBorder },
+          children: [wordParagraph(" ", { after: 0 })]
+        });
+      }
+      const maxWidth = 285;
+      const maxHeight = 205;
+      const scale = Math.min(maxWidth / photo.width, maxHeight / photo.height);
+      return new docx.TableCell({
+        width: { size: 4560, type: docx.WidthType.DXA },
+        verticalAlign: docx.VerticalAlign.CENTER,
+        margins: { top: 100, right: 100, bottom: 160, left: 100 },
+        borders: { top: noBorder, right: noBorder, bottom: noBorder, left: noBorder },
+        children: [
+          new docx.Paragraph({
+            alignment: docx.AlignmentType.CENTER,
+            spacing: { after: 80 },
+            children: [new docx.ImageRun({
+              data: wordDataUrlBytes(photo.dataUrl),
+              transformation: {
+                width: Math.max(1, Math.round(photo.width * scale)),
+                height: Math.max(1, Math.round(photo.height * scale))
+              },
+              type: "jpg"
+            })]
+          }),
+          wordParagraph(photo.caption || " ", { alignment: docx.AlignmentType.CENTER, size: 28, after: 0 })
+        ]
+      });
+    }
+
+    function annualEvidenceWordChildren(values) {
+      const center = docx.AlignmentType.CENTER;
+      const children = [
+        wordParagraph(values.documentTitle, { alignment: center, bold: true, size: 46, before: 850, after: 420 }),
+        wordParagraph(values.homeName, { alignment: center, bold: true, size: 40, after: 420 }),
+        wordParagraph("สำหรับ " + wordPlainText(values.studentName), { alignment: center, bold: true, size: 36, after: 80 }),
+        wordParagraph(wordPlainText(values.educationLevel), { alignment: center, bold: true, size: 34, after: 300 })
+      ];
+      if (values.cover) {
+        const scale = Math.min(250 / values.cover.width, 250 / values.cover.height);
+        children.push(new docx.Paragraph({
+          alignment: center,
+          spacing: { after: 360 },
+          children: [new docx.ImageRun({
+            data: wordDataUrlBytes(values.cover.dataUrl),
+            transformation: {
+              width: Math.round(values.cover.width * scale),
+              height: Math.round(values.cover.height * scale)
+            },
+            type: "jpg"
+          })]
+        }));
+      }
+      children.push(
+        wordParagraph("ผู้จัดการศึกษา: " + wordPlainText(values.managerName), { alignment: center, bold: true, size: 34, after: 700 }),
+        wordParagraph("สังกัด", { alignment: center, bold: true, size: 34, after: 70 }),
+        wordParagraph(wordPlainText(values.districtName), { alignment: center, bold: true, size: 34, after: 220 }),
+        wordParagraph("ปีการศึกษา " + wordPlainText(values.academicYear), { alignment: center, bold: true, size: 34, after: 0 }),
+        new docx.Paragraph({ children: [new docx.PageBreak()] })
+      );
+      values.topics.forEach((topic, topicIndex) => {
+        const chunks = [];
+        for (let index = 0; index < Math.max(1, topic.photos.length); index += 6) {
+          chunks.push(topic.photos.slice(index, index + 6));
+        }
+        chunks.forEach((photos, chunkIndex) => {
+          if (topicIndex || chunkIndex) children.push(new docx.Paragraph({ children: [new docx.PageBreak()] }));
+          children.push(
+            wordParagraph("ร่องรอยการเรียนรู้ หัวข้อที่ " + (topicIndex + 1) + (chunkIndex ? " (ต่อ)" : ""), { bold: true, size: 30, after: 70 }),
+            wordHeading(topic.title, { size: 42, before: 0, after: 140 })
+          );
+          if (!chunkIndex) {
+            children.push(wordParagraph(topic.description || "บันทึกกิจกรรมและพัฒนาการของผู้เรียน", { size: 32, indent: 720, after: 220 }));
+          }
+          const rows = [];
+          for (let index = 0; index < photos.length; index += 2) {
+            rows.push(new docx.TableRow({
+              cantSplit: true,
+              children: [annualEvidencePhotoCell(photos[index]), annualEvidencePhotoCell(photos[index + 1])]
+            }));
+          }
+          if (rows.length) {
+            children.push(new docx.Table({
+              width: { size: 9120, type: docx.WidthType.DXA },
+              columnWidths: [4560, 4560],
+              rows
+            }));
+          }
+        });
+      });
+      return children;
+    }
+
+    async function downloadAnnualEvidenceWord() {
+      if (!validateAnnualEvidence(false)) return;
+      if (!window.docx?.Document || !window.docx?.Packer) return showToast("โหลดตัวสร้าง Word ไม่สำเร็จ");
+      const button = $("#downloadAnnualEvidenceWord");
+      button.disabled = true;
+      button.textContent = "กำลังสร้าง Word...";
+      try {
+        const values = annualEvidenceValues();
+        const file = new docx.Document({
+          creator: "Homeschool",
+          title: values.documentTitle,
+          styles: { default: { document: { run: { font: "TH SarabunPSK", size: 32 }, paragraph: { spacing: { line: 276, after: 100 } } } } },
+          sections: [{
+            properties: {
+              page: {
+                size: { width: 11906, height: 16838, orientation: docx.PageOrientation.PORTRAIT },
+                margin: { top: 1134, right: 1134, bottom: 1134, left: 1134 }
+              }
+            },
+            children: annualEvidenceWordChildren(values)
+          }]
+        });
+        const blob = await docx.Packer.toBlob(file);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ร่องรอยการเรียนรู้-" + (values.studentName || "ผู้เรียน") + ".docx";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast("ดาวน์โหลดไฟล์ Word แล้ว");
+      } catch (error) {
+        console.error(error);
+        showToast("สร้าง Word ไม่สำเร็จ: " + error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "ดาวน์โหลด Word";
+      }
+    }
+
+    async function createAnnualEvidencePdfFile(values) {
+      if (!window.html2pdf) throw new Error("โหลดตัวสร้าง PDF ไม่สำเร็จ");
+      const wrapper = document.createElement("div");
+      wrapper.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;";
+      const iframe = document.createElement("iframe");
+      iframe.style.cssText = "width:210mm;height:2970mm;border:0;";
+      wrapper.appendChild(iframe);
+      document.body.appendChild(wrapper);
+      try {
+        const doc = iframe.contentDocument;
+        doc.open();
+        doc.write(annualEvidenceDocumentHtml(values, false));
+        doc.close();
+        if (doc.fonts?.ready) await doc.fonts.ready.catch(() => {});
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const blob = await html2pdf().set({
+          margin: 0,
+          image: { type: "jpeg", quality: .84 },
+          html2canvas: { scale: 1.5, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] }
+        }).from(doc.body).outputPdf("blob");
+        return new File([blob], "ร่องรอยการเรียนรู้-" + (values.studentName || "ผู้เรียน") + ".pdf", { type: "application/pdf" });
+      } finally {
+        wrapper.remove();
+      }
+    }
+
+    async function saveAnnualEvidencePdf() {
+      if (!validateAnnualEvidence(true)) return;
+      const button = $("#saveAnnualEvidencePdf");
+      button.disabled = true;
+      button.textContent = "กำลังสร้าง PDF...";
+      try {
+        await refreshSessionIfNeeded();
+        if (!applicationContext) await ensureApplicationContext(true);
+        const draft = annualEvidenceDraftValues();
+        await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=minimal" },
+            body: JSON.stringify({ annual_evidence_data: draft })
+          }
+        );
+        const file = await createAnnualEvidencePdfFile(annualEvidenceValues());
+        await replaceOfficialFile("annualEvidencePdf", file);
+        $("#annualEvidenceSaveStatus").textContent = "สร้างและบันทึก PDF ล่าสุดแล้ว";
+        showToast("บันทึก PDF ร่องรอยการเรียนรู้ให้เจ้าหน้าที่เขตดูได้แล้ว");
+      } catch (error) {
+        $("#annualEvidenceError").textContent = error.message;
+        $("#annualEvidenceError").classList.remove("hidden");
+        showToast(error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "สร้าง PDF และบันทึกในระบบ";
+      }
+    }
+
+    async function uploadEditedAnnualPdf(file) {
+      if (!file) return;
+      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) return showToast("กรุณาเลือกไฟล์ PDF");
+      if (file.size > 10 * 1024 * 1024) return showToast("ไฟล์ PDF ต้องมีขนาดไม่เกิน 10 MB");
+      const button = $("#chooseEditedAnnualPdf");
+      button.disabled = true;
+      button.textContent = "กำลังอัปโหลด...";
+      try {
+        await refreshSessionIfNeeded();
+        if (!applicationContext) await ensureApplicationContext(true);
+        await replaceOfficialFile("annualEvidencePdf", file);
+        $("#annualEvidenceSaveStatus").textContent = "อัปโหลด PDF ฉบับแก้ไขล่าสุดแล้ว";
+        showToast("อัปโหลด PDF ฉบับแก้ไขแล้ว เจ้าหน้าที่เขตจะเห็นไฟล์นี้");
+      } catch (error) {
+        showToast(error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "เลือก PDF";
+      }
+    }
+
     async function choosePlanLevel(level) {
       if (!selectedStudent) return;
       const labels = {
@@ -3774,8 +4543,32 @@
         if (documentAction.dataset.document === "permission") {
           showApplicationPage();
         } else {
-          showToast("แบบประเมินประจำปีจะพัฒนาในขั้นตอนถัดไป");
+          showAnnualEvidencePage();
         }
+      }
+
+      const addEvidencePhotos = event.target.closest("[data-add-evidence-photos]");
+      if (addEvidencePhotos) {
+        syncAnnualEvidenceFields();
+        activeAnnualEvidenceTopicId = addEvidencePhotos.dataset.addEvidencePhotos;
+        $("#annualEvidencePhotoInput").value = "";
+        $("#annualEvidencePhotoInput").click();
+      }
+
+      const removeEvidenceTopic = event.target.closest("[data-remove-evidence-topic]");
+      if (removeEvidenceTopic) {
+        syncAnnualEvidenceFields();
+        annualEvidenceTopics = annualEvidenceTopics.filter((topic) => topic.id !== removeEvidenceTopic.dataset.removeEvidenceTopic);
+        renderAnnualEvidenceTopics();
+      }
+
+      const removeEvidencePhoto = event.target.closest("[data-remove-evidence-photo]");
+      if (removeEvidencePhoto) {
+        syncAnnualEvidenceFields();
+        const [topicId, photoId] = removeEvidencePhoto.dataset.removeEvidencePhoto.split(":");
+        const topic = annualEvidenceTopics.find((item) => item.id === topicId);
+        if (topic) topic.photos = topic.photos.filter((photo) => photo.id !== photoId);
+        renderAnnualEvidenceTopics();
       }
 
       const uploadButton = event.target.closest("[data-upload]");
@@ -3827,6 +4620,23 @@
     $("#findFriends").addEventListener("click", () => showToast("แผนที่จะเปิดเมื่อผู้ใช้ยินยอมแชร์พื้นที่โดยประมาณ"));
     $("#documentGuide").addEventListener("click", () => showToast("คู่มือเตรียมเอกสารจะพัฒนาในขั้นตอนถัดไป"));
     $("#backToDocuments").addEventListener("click", () => showPage("portfolio"));
+    $("#backFromAnnualEvidence").addEventListener("click", () => showPage("portfolio"));
+    $("#addAnnualEvidenceTopic").addEventListener("click", addAnnualEvidenceTopic);
+    $("#chooseAnnualCover").addEventListener("click", () => {
+      $("#annualEvidenceCoverInput").value = "";
+      $("#annualEvidenceCoverInput").click();
+    });
+    $("#annualEvidenceCoverInput").addEventListener("change", (event) => handleAnnualCover(event.target.files[0]).catch((error) => showToast(error.message)));
+    $("#annualEvidencePhotoInput").addEventListener("change", (event) => handleAnnualEvidencePhotos(event.target.files));
+    $("#saveAnnualEvidenceDraft").addEventListener("click", saveAnnualEvidenceDraft);
+    $("#downloadAnnualEvidenceWord").addEventListener("click", downloadAnnualEvidenceWord);
+    $("#openAnnualEvidencePdf").addEventListener("click", openAnnualEvidencePdf);
+    $("#saveAnnualEvidencePdf").addEventListener("click", saveAnnualEvidencePdf);
+    $("#chooseEditedAnnualPdf").addEventListener("click", () => {
+      $("#editedAnnualPdfInput").value = "";
+      $("#editedAnnualPdfInput").click();
+    });
+    $("#editedAnnualPdfInput").addEventListener("change", (event) => uploadEditedAnnualPdf(event.target.files[0]));
     $("#officialDocumentInput").addEventListener("change", (event) => handleOfficialFiles(event.target.files));
     $("#authButton").addEventListener("click", () => currentUser ? signOut() : openAuthModal());
     $("#closeAuthModal").addEventListener("click", closeAuthModal);
