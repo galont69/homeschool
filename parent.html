@@ -807,6 +807,24 @@
     .plan-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
     .plan-form-grid .wide { grid-column: 1 / -1; }
     .plan-form-grid textarea { min-height: 112px; }
+    .plan-photo-field { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 18px; }
+    .plan-photo-preview {
+      display: grid;
+      place-items: center;
+      width: 150px;
+      aspect-ratio: 1;
+      overflow: hidden;
+      color: var(--sub);
+      background: #fafafd;
+      border: 1px dashed #b9b7d7;
+      border-radius: 18px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .plan-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .plan-photo-control { display: grid; gap: 8px; }
+    .plan-photo-control input[type="file"] { padding: 12px; }
+    .plan-photo-control small { color: var(--sub); line-height: 1.6; }
     .plan-domain-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
     .plan-domain {
       display: grid;
@@ -942,6 +960,8 @@
       .template-steps { grid-template-columns:1fr; }
       .request-form-grid .wide { grid-column:auto; }
       .plan-form-grid .wide { grid-column:auto; }
+      .plan-photo-field { grid-template-columns: 1fr; justify-items: center; }
+      .plan-photo-control { width: 100%; }
       .request-form-actions { display:grid; grid-template-columns:1fr; }
       .request-form-actions .save-status { margin:0; text-align:center; }
       .upload-row { grid-template-columns: 41px minmax(0, 1fr); }
@@ -1459,6 +1479,14 @@
                 <div class="field"><label for="planLevel">ระดับที่จัดการศึกษา</label><select id="planLevel" name="educationLevel"><option>อนุบาล 1</option><option>อนุบาล 2</option><option>อนุบาล 3</option></select></div>
                 <div class="field"><label for="planDistrictName">สำนักงานเขตพื้นที่การศึกษา</label><input id="planDistrictName" name="districtName"></div>
                 <div class="field wide"><label for="planManagerName">ชื่อ-นามสกุลผู้จัดการศึกษา</label><input id="planManagerName" name="managerName" required></div>
+                <div class="field wide plan-photo-field">
+                  <div class="plan-photo-preview" id="planStudentPhotoPreview">ยังไม่ได้เลือกรูปผู้เรียน</div>
+                  <div class="plan-photo-control">
+                    <label for="planStudentPhoto">รูปผู้เรียนสำหรับหน้าปก</label>
+                    <input id="planStudentPhoto" type="file" accept="image/png,image/jpeg,image/webp">
+                    <small>แนะนำรูปสี่เหลี่ยมจัตุรัส ระบบจะครอบภาพให้อยู่กึ่งกลางและย่อขนาดก่อนบันทึกในแผน</small>
+                  </div>
+                </div>
               </div>
             </section>
 
@@ -1774,6 +1802,7 @@
     let selectedStudent = null;
     let educationDistricts = [];
     let districtTemplates = [];
+    let earlyPlanPhotoDataUrl = "";
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -3049,7 +3078,9 @@
     }
 
     function earlyPlanValues() {
-      return Object.fromEntries(new FormData($("#earlyChildhoodPlanForm")).entries());
+      const values = Object.fromEntries(new FormData($("#earlyChildhoodPlanForm")).entries());
+      values.studentPhotoDataUrl = earlyPlanPhotoDataUrl || applicationContext?.early_childhood_plan_data?.studentPhotoDataUrl || "";
+      return values;
     }
 
     function fillEarlyPlanForm(values = {}) {
@@ -3060,6 +3091,60 @@
       });
     }
 
+    function renderEarlyPlanPhotoPreview() {
+      const preview = $("#planStudentPhotoPreview");
+      preview.innerHTML = earlyPlanPhotoDataUrl
+        ? `<img src="${earlyPlanPhotoDataUrl}" alt="รูปผู้เรียนสำหรับหน้าปก">`
+        : "ยังไม่ได้เลือกรูปผู้เรียน";
+    }
+
+    function imageFileToSquareDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        if (!file?.type?.startsWith("image/")) {
+          reject(new Error("กรุณาเลือกไฟล์รูปภาพ PNG, JPG หรือ WEBP"));
+          return;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+          reject(new Error("รูปผู้เรียนต้องมีขนาดไม่เกิน 8 MB"));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("อ่านไฟล์รูปผู้เรียนไม่สำเร็จ"));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("ไฟล์รูปผู้เรียนไม่ถูกต้อง"));
+          image.onload = () => {
+            const side = Math.min(image.naturalWidth, image.naturalHeight);
+            const sourceX = Math.max(0, (image.naturalWidth - side) / 2);
+            const sourceY = Math.max(0, (image.naturalHeight - side) / 2);
+            const canvas = document.createElement("canvas");
+            canvas.width = 640;
+            canvas.height = 640;
+            const context = canvas.getContext("2d");
+            context.fillStyle = "#fff";
+            context.fillRect(0, 0, 640, 640);
+            context.drawImage(image, sourceX, sourceY, side, side, 0, 0, 640, 640);
+            resolve(canvas.toDataURL("image/jpeg", 0.84));
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleEarlyPlanPhoto(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        earlyPlanPhotoDataUrl = await imageFileToSquareDataUrl(file);
+        renderEarlyPlanPhotoPreview();
+        $("#earlyPlanSaveStatus").textContent = "มีการแก้ไขที่ยังไม่ได้บันทึก";
+      } catch (error) {
+        event.target.value = "";
+        showToast(error.message);
+      }
+    }
+
     function showEarlyChildhoodPlan() {
       $$(".workflow-tab").forEach((button) => button.classList.toggle("active", button.dataset.workflow === "plan"));
       $("#uploadsPanel").classList.add("hidden");
@@ -3067,7 +3152,9 @@
       $("#planPanel").classList.add("hidden");
       $("#earlyChildhoodPlanPanel").classList.remove("hidden");
       const saved = applicationContext?.early_childhood_plan_data || {};
+      earlyPlanPhotoDataUrl = saved.studentPhotoDataUrl || "";
       fillEarlyPlanForm({ ...earlyPlanDefaults(), ...saved });
+      renderEarlyPlanPhotoPreview();
       $("#earlyPlanSaveStatus").textContent = Object.keys(saved).length ? "โหลดแผนที่บันทึกไว้แล้ว" : "ยังไม่ได้บันทึก";
       $("#earlyPlanError").classList.add("hidden");
       loadDistrictTemplates().catch((error) => showToast(error.message));
@@ -3145,6 +3232,10 @@
         ["ด้านสังคม", values.experienceSocialGoals, values.experienceSocialActivities],
         ["ด้านสติปัญญา", values.experienceIntellectualGoals, values.experienceIntellectualActivities]
       ].map(row => `<tr><td>${row[0]}</td><td>${planText(row[1])}</td><td>${planText(row[2])}</td></tr>`).join("");
+      const homeName = planText(values.homeName, "บ้านเรียน").replace(/^["“”']+|["“”']+$/g, "");
+      const studentPhoto = values.studentPhotoDataUrl
+        ? `<img src="${values.studentPhotoDataUrl}" width="208" height="208" alt="รูปผู้เรียน" style="display:block;width:55mm;height:55mm;object-fit:cover;border:0;">`
+        : '<span style="color:#777;">รูปผู้เรียน<br>ขนาดประมาณ 5.5 × 5.5 ซม.</span>';
       return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แผนการจัดการศึกษาระดับปฐมวัย</title><style>
         @page{size:A4 portrait;margin:0}
         @font-face{font-family:"TH SarabunPSK";src:url("${regularFontUrl}") format("truetype");font-weight:400;font-style:normal;font-display:block}
@@ -3153,7 +3244,7 @@
         .toolbar{position:sticky;top:0;z-index:3;padding:10px;text-align:center;background:#efefff}.toolbar button{padding:9px 18px;color:#fff;background:#5852e7;border:0;border-radius:8px;font-weight:700;cursor:pointer}
         .sheet{width:210mm;min-height:297mm;margin:${previewMode ? "12px auto" : "0 auto"};padding:20mm 22mm 18mm;background:#fff;box-shadow:${previewMode ? "0 2px 12px #888" : "none"}}
         h1,h2,h3{margin:0 0 5mm;text-align:center;line-height:1.08;font-weight:700}h1{font-size:22pt}h2{font-size:18pt}h3{margin-top:5mm;font-size:17pt;text-align:left}
-        .cover{min-height:250mm;text-align:center}.cover>div{padding-top:28mm}.cover p{margin:4mm 0}.cover-photo-table{width:40mm!important;height:50mm!important;margin:9mm auto!important;border-collapse:collapse!important;table-layout:fixed!important;background:#fff}.cover-photo-table td{width:40mm!important;height:50mm!important;padding:0!important;border:1pt solid #888!important;text-align:center!important;vertical-align:middle!important;color:#777!important}.meta{width:100%;margin-top:18mm;text-align:center}
+        .cover{min-height:250mm;text-align:center}.cover-layout{width:100%!important;height:250mm!important;margin:0!important;border:0!important;border-collapse:collapse!important;table-layout:fixed!important}.cover-layout td{padding:0!important;border:0!important;text-align:center!important;vertical-align:middle!important}.cover-title-cell{height:46mm!important;vertical-align:bottom!important}.cover-title-cell h1{margin-bottom:12mm}.cover-title-cell h2{margin-bottom:0}.cover-student-cell{height:40mm!important}.cover-student-cell p{margin:3mm 0!important;text-align:center!important;text-indent:0!important;font-weight:700}.cover-photo-cell{height:62mm!important}.cover-photo-frame{width:55mm!important;height:55mm!important;margin:0 auto!important;border-collapse:collapse!important;table-layout:fixed!important;background:#fff}.cover-photo-frame td{width:55mm!important;height:55mm!important;padding:0!important;border:1pt solid #888!important;text-align:center!important;vertical-align:middle!important;color:#777!important}.cover-manager-cell{height:30mm!important;vertical-align:top!important}.cover-manager-cell p,.cover-district-cell p{margin:0!important;text-align:center!important;text-indent:0!important}.cover-district-cell{height:72mm!important;vertical-align:bottom!important}.cover-district-cell .district-label{margin-bottom:2mm!important}.cover-district-cell .district-name{font-weight:700}.cover-district-cell .academic-year{margin-top:13mm!important;font-weight:700}
         p{margin:2.4mm 0;text-align:justify;text-indent:12mm}.no-indent{text-indent:0}.notice{margin:0 0 5mm;padding:4mm;border:1px solid #999;background:#fafafa;font-size:14pt}
         .profile-box{padding:2mm 0}.section-note{margin-top:1mm;color:#333;font-size:14pt;text-indent:0}
         table{width:100%;border-collapse:collapse;margin:4mm 0;font-size:14pt;line-height:1.18}th,td{padding:2mm;border:1px solid #333;vertical-align:top}th{text-align:center;font-weight:700}
@@ -3162,7 +3253,13 @@
         @media print{body{background:#fff}.toolbar{display:none}.sheet{width:210mm;min-height:297mm;margin:0;padding:20mm 22mm 18mm;box-shadow:none}.page-break{break-before:page;page-break-before:always}}
       </style></head><body>${includePrintButton ? '<div class="toolbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์</button></div>' : ""}
       <main class="sheet">
-        <section class="cover"><div><h1>แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1><h2>${planText(values.homeName, "บ้านเรียน")}</h2><p class="no-indent">สำหรับ ${planText(values.studentName)}</p><p class="no-indent">ระดับปฐมวัย (${planText(values.educationLevel)} - อนุบาล 3)</p><table class="cover-photo-table" role="presentation"><tr><td>รูปผู้เรียน<br>ขนาดประมาณ 4 × 5 ซม.</td></tr></table><div class="meta"><p class="no-indent">ผู้จัดการศึกษา: ${planText(values.managerName)}</p><p class="no-indent">สังกัด ${planText(values.districtName)}</p><p class="no-indent">ปีการศึกษา ${planText(values.academicYear)}</p></div></div></section>
+        <section class="cover"><table class="cover-layout" width="100%" height="945" cellspacing="0" cellpadding="0" border="0" role="presentation">
+          <tr><td class="cover-title-cell" height="174"><h1>แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1><h2>&quot;${homeName}&quot;</h2></td></tr>
+          <tr><td class="cover-student-cell" height="151"><p>สำหรับ ${planText(values.studentName)}</p><p>ระดับปฐมวัย (ชั้นอนุบาล ปีที่ 1 - 3)</p></td></tr>
+          <tr><td class="cover-photo-cell" height="234"><table class="cover-photo-frame" align="center" width="208" height="208" cellspacing="0" cellpadding="0" border="0" role="presentation"><tr><td width="208" height="208">${studentPhoto}</td></tr></table></td></tr>
+          <tr><td class="cover-manager-cell" height="113"><p>ผู้จัดการศึกษา : ${planText(values.managerName)}</p></td></tr>
+          <tr><td class="cover-district-cell" height="272"><p class="district-label">สังกัด</p><p class="district-name">${planText(values.districtName)}</p><p class="academic-year">ปีการศึกษา ${planText(values.academicYear)}</p></td></tr>
+        </table></section>
         <section class="page-break"><h2>แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h2><div class="notice"><strong>หมายเหตุ:</strong> แผนฉบับนี้เป็นเอกสารที่ระบบช่วยจัดทำจากข้อมูลของครอบครัว ควรปรึกษาเจ้าหน้าที่กลุ่มส่งเสริมการจัดการศึกษาและปรับรายละเอียดให้เหมาะสมกับผู้เรียนก่อนนำไปใช้</div>
         <h3>1. ข้อมูลพื้นฐานของครอบครัว</h3><div class="profile-box"><strong>บิดา</strong><br>${planText(values.fatherProfile)}</div><div class="profile-box"><strong>มารดา</strong><br>${planText(values.motherProfile)}</div><div class="profile-box"><strong>ผู้จัดการศึกษา</strong><br>${planText(values.managerName)}<br>${planText(values.familyBackground)}</div>
         <h3>2. ข้อมูลพื้นฐานของผู้เรียน</h3><p class="no-indent"><strong>ชื่อ-สกุล:</strong> ${planText(values.studentName)} <strong>วันเกิด:</strong> ${planText(values.studentBirthDate)} <strong>น้ำหนัก:</strong> ${planText(values.studentWeight)} กก. <strong>ส่วนสูง:</strong> ${planText(values.studentHeight)} ซม.</p><p class="no-indent"><strong>ประวัติการศึกษา:</strong> ${planText(values.educationHistory)}</p><p class="no-indent"><strong>ความสนใจ:</strong> ${planText(values.studentInterests)}</p>
@@ -3406,6 +3503,7 @@
     });
     $("#backToPlanChoice").addEventListener("click", openPlanChoiceModal);
     $("#earlyChildhoodPlanForm").addEventListener("submit", saveEarlyChildhoodPlan);
+    $("#planStudentPhoto").addEventListener("change", handleEarlyPlanPhoto);
     $("#downloadEarlyPlanPdf").addEventListener("click", openEarlyPlanPdf);
     $("#downloadEarlyPlanWord").addEventListener("click", downloadEarlyPlanWord);
     $("#saveGeneratedEarlyPlanPdf").addEventListener("click", saveGeneratedEarlyPlanPdf);
