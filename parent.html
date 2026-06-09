@@ -1523,8 +1523,8 @@
               <button class="primary-button" type="button" data-plan-level="early_childhood">เริ่มกรอกแผนในเว็บ</button>
             </div>
             <div class="template-download">
-              <div><strong>กรอกแผนระดับประถมศึกษา</strong><span>จะเปิดใช้งานเมื่อแบบฟอร์มและแม่แบบเอกสารผ่านการตรวจรูปแบบและเนื้อหาแล้ว</span></div>
-              <button class="secondary-button" type="button" disabled>กำลังจัดเตรียม</button>
+              <div><strong>กรอกแผนระดับประถมศึกษา</strong><span>ข้อมูลส่วนตัวจะเติมให้อัตโนมัติ พร้อมข้อความตัวอย่างสำหรับโครงสร้างเวลาเรียน 5 กลุ่มความรู้ กิจกรรม และการประเมินผล</span></div>
+              <button class="primary-button" type="button" data-plan-level="primary">เริ่มกรอกแผนในเว็บ</button>
             </div>
           </section>
 
@@ -1654,6 +1654,132 @@
             <div class="district-template-library">
               <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>เปิดดูเพื่อเปรียบเทียบและปรับข้อความในแบบฟอร์มด้านบนให้สอดคล้องกับแนวทางของเขตที่ผู้เรียนสังกัด</p></div>
               <div class="district-template-groups" id="earlyPlanDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="workflow-panel hidden" id="primaryPlanPanel">
+          <form class="card request-form-card plan-editor" id="primaryPlanForm">
+            <div class="plan-editor-head">
+              <div>
+                <p class="eyebrow">แผนการจัดการศึกษาโดยครอบครัว</p>
+                <h2>แบบฟอร์มแผนระดับประถมศึกษา</h2>
+                <p>ระดับประถมศึกษาปีที่ 1-6 อ้างอิงโครงสร้างจากแผนที่ใช้งานจริงและปรับข้อความได้ทุกส่วน</p>
+              </div>
+              <button class="secondary-button" id="backToPlanChoicePrimary" type="button">เปลี่ยนระดับแผน</button>
+            </div>
+
+            <div class="plan-warning">
+              <strong>แผนนี้เป็นเพียงตัวอย่าง</strong>
+              ควรปรึกษาเจ้าหน้าที่กลุ่มส่งเสริมการจัดการศึกษา และปรับจุดมุ่งหมาย โครงสร้างเวลาเรียน กิจกรรม วิธีวัดผล และรายละเอียดอื่นให้เหมาะสมกับผู้เรียนและแนวทางของสำนักงานเขตพื้นที่ก่อนนำไปใช้
+            </div>
+
+            <section class="plan-form-section">
+              <h3>1. ข้อมูลหน้าปกและข้อมูลทั่วไป</h3>
+              <p>ระบบเติมข้อมูลผู้เรียน ผู้จัดการศึกษา และเขตพื้นที่จากฐานข้อมูลเท่าที่มี โดยแก้ไขเฉพาะเอกสารฉบับนี้ได้</p>
+              <div class="plan-form-grid">
+                <div class="field"><label for="primaryHomeName">ชื่อบ้านเรียน</label><input id="primaryHomeName" name="homeName" placeholder="เช่น บ้านเรียนใจดี"></div>
+                <div class="field"><label for="primaryAcademicYear">ปีการศึกษา</label><input id="primaryAcademicYear" name="academicYear" inputmode="numeric"></div>
+                <div class="field"><label for="primaryStudentName">ชื่อ-นามสกุลผู้เรียน</label><input id="primaryStudentName" name="studentName" required></div>
+                <div class="field"><label for="primaryStudentNickname">ชื่อเล่น</label><input id="primaryStudentNickname" name="studentNickname"></div>
+                <div class="field"><label for="primaryStudentBirthDate">วันเกิดผู้เรียน</label><input id="primaryStudentBirthDate" name="studentBirthDate" type="date"></div>
+                <div class="field"><label for="primaryLevel">ชั้นที่เริ่มจัดการศึกษา</label><select id="primaryLevel" name="educationLevel"><option>ประถมศึกษาปีที่ 1</option><option>ประถมศึกษาปีที่ 2</option><option>ประถมศึกษาปีที่ 3</option><option>ประถมศึกษาปีที่ 4</option><option>ประถมศึกษาปีที่ 5</option><option>ประถมศึกษาปีที่ 6</option></select></div>
+                <div class="field"><label for="primaryDistrictName">สำนักงานเขตพื้นที่การศึกษา</label><input id="primaryDistrictName" name="districtName"></div>
+                <div class="field"><label for="primaryManagerName">ชื่อ-นามสกุลผู้จัดการศึกษา</label><input id="primaryManagerName" name="managerName" required></div>
+                <div class="field wide plan-photo-field">
+                  <div class="plan-photo-preview" id="primaryStudentPhotoPreview">ยังไม่ได้เลือกรูปผู้เรียน</div>
+                  <div class="plan-photo-control">
+                    <label for="primaryStudentPhoto">รูปผู้เรียนสำหรับหน้าปก</label>
+                    <input id="primaryStudentPhoto" type="file" accept="image/png,image/jpeg,image/webp">
+                    <small>แนะนำรูปแนวตั้งหรือสี่เหลี่ยม ระบบจะครอบให้อยู่กึ่งกลางและย่อขนาดก่อนบันทึก</small>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>2. ข้อมูลพื้นฐานของครอบครัวและผู้เรียน</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="primaryFatherProfile">ข้อมูลบิดา</label><textarea id="primaryFatherProfile" name="fatherProfile" placeholder="ชื่อ-สกุล วุฒิการศึกษา ประสบการณ์ อายุ อาชีพ ที่อยู่ โทรศัพท์ และอีเมล"></textarea></div>
+                <div class="field wide"><label for="primaryMotherProfile">ข้อมูลมารดา</label><textarea id="primaryMotherProfile" name="motherProfile" placeholder="ชื่อ-สกุล วุฒิการศึกษา ประสบการณ์ อายุ อาชีพ ที่อยู่ โทรศัพท์ และอีเมล"></textarea></div>
+                <div class="field wide"><label for="primaryStudentBackground">ข้อมูลพื้นฐานของผู้เรียน</label><textarea id="primaryStudentBackground" name="studentBackground"></textarea></div>
+                <div class="field wide"><label for="primaryEducationHistory">ประวัติการศึกษา</label><textarea id="primaryEducationHistory" name="educationHistory"></textarea></div>
+                <div class="field"><label for="primaryStudentWeight">น้ำหนัก (กก.)</label><input id="primaryStudentWeight" name="studentWeight" inputmode="decimal"></div>
+                <div class="field"><label for="primaryStudentHeight">ส่วนสูง (ซม.)</label><input id="primaryStudentHeight" name="studentHeight" inputmode="decimal"></div>
+                <div class="field wide"><label for="primaryDevelopment">พัฒนาการตามวัยและความสามารถพิเศษ</label><textarea id="primaryDevelopment" name="development"></textarea></div>
+                <div class="field wide"><label for="primarySpecialNeeds">ความสนใจ ความถนัด หรือความต้องการส่งเสริมเป็นพิเศษ</label><textarea id="primarySpecialNeeds" name="specialNeeds"></textarea></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>3. ระดับ เหตุผล และจุดมุ่งหมาย</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="primaryReason">เหตุผลในการจัดการศึกษาโดยครอบครัว</label><textarea id="primaryReason" name="reason"></textarea></div>
+                <div class="field wide"><label for="primaryGoals">จุดมุ่งหมายของการจัดการศึกษา</label><textarea id="primaryGoals" name="goals"></textarea></div>
+                <div class="field wide"><label for="primaryFormat">รูปแบบการจัดการศึกษาและแหล่งเรียนรู้</label><textarea id="primaryFormat" name="educationFormat"></textarea></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>4. โครงสร้างเวลาเรียน</h3>
+              <p>กรอกจำนวนชั่วโมงต่อปี ระบบจะสร้างตาราง ป.1-6 โดยใช้ค่าที่กำหนดในแต่ละกลุ่ม</p>
+              <div class="plan-form-grid">
+                <div class="field"><label for="primaryHoursLanguage">ภาษาไทยและภาษาต่างประเทศ</label><input id="primaryHoursLanguage" name="hoursLanguage" inputmode="numeric"></div>
+                <div class="field"><label for="primaryHoursScience">วิทยาศาสตร์และเทคโนโลยี</label><input id="primaryHoursScience" name="hoursScience" inputmode="numeric"></div>
+                <div class="field"><label for="primaryHoursMath">คณิตศาสตร์</label><input id="primaryHoursMath" name="hoursMath" inputmode="numeric"></div>
+                <div class="field"><label for="primaryHoursLife">ทักษะชีวิต สังคม ศาสนา และวัฒนธรรม</label><input id="primaryHoursLife" name="hoursLife" inputmode="numeric"></div>
+                <div class="field"><label for="primaryHoursArts">ดนตรี กีฬา และศิลปะ</label><input id="primaryHoursArts" name="hoursArts" inputmode="numeric"></div>
+                <div class="field"><label for="primaryHoursActivities">กิจกรรมพัฒนาผู้เรียน</label><input id="primaryHoursActivities" name="hoursActivities" inputmode="numeric"></div>
+                <div class="field wide"><label for="primaryHoursNote">หมายเหตุโครงสร้างเวลาเรียน</label><textarea id="primaryHoursNote" name="hoursNote"></textarea></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>5. กลุ่มความรู้ เป้าหมายคุณภาพผู้เรียน และกิจกรรม</h3>
+              <p>ข้อความตั้งต้นอ้างอิงตัวอย่างจริง สามารถแก้ไขให้สอดคล้องกับความสนใจและแผนรายบุคคลได้</p>
+              <div class="plan-domain-grid">
+                <label class="plan-domain"><strong>ภาษาไทยและภาษาต่างประเทศ</strong><textarea name="languageGoals" placeholder="เป้าหมายคุณภาพผู้เรียน"></textarea><textarea name="languageActivities" placeholder="กิจกรรมการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>วิทยาศาสตร์และเทคโนโลยี</strong><textarea name="scienceGoals" placeholder="เป้าหมายคุณภาพผู้เรียน"></textarea><textarea name="scienceActivities" placeholder="กิจกรรมการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>คณิตศาสตร์</strong><textarea name="mathGoals" placeholder="เป้าหมายคุณภาพผู้เรียน"></textarea><textarea name="mathActivities" placeholder="กิจกรรมการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>ทักษะชีวิต สังคม ศาสนา และวัฒนธรรม</strong><textarea name="lifeGoals" placeholder="เป้าหมายคุณภาพผู้เรียน"></textarea><textarea name="lifeActivities" placeholder="กิจกรรมการเรียนรู้"></textarea></label>
+                <label class="plan-domain"><strong>ดนตรี กีฬา และศิลปะ</strong><textarea name="artsGoals" placeholder="เป้าหมายคุณภาพผู้เรียน"></textarea><textarea name="artsActivities" placeholder="กิจกรรมการเรียนรู้"></textarea></label>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>6. ตารางกิจกรรม กระบวนการเรียนรู้ และกิจกรรมพัฒนาผู้เรียน</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="primarySchedule">ตารางกิจกรรมโดยสังเขป</label><textarea id="primarySchedule" name="schedule" placeholder="หนึ่งช่วงต่อหนึ่งบรรทัด เช่น ช่วงเช้า | ภาษาไทย คณิตศาสตร์ ภาษาอังกฤษ วิทยาศาสตร์"></textarea></div>
+                <div class="field wide"><label for="primaryLearnerActivities">กิจกรรมพัฒนาผู้เรียน</label><textarea id="primaryLearnerActivities" name="learnerActivities"></textarea></div>
+                <div class="field wide"><label for="primaryLearningProcess">การจัดกระบวนการเรียนรู้</label><textarea id="primaryLearningProcess" name="learningProcess"></textarea></div>
+              </div>
+            </section>
+
+            <section class="plan-form-section">
+              <h3>7. การวัดและประเมินผล</h3>
+              <div class="plan-form-grid">
+                <div class="field wide"><label for="primaryEvaluation">แนวทางและวิธีการวัดประเมินผล</label><textarea id="primaryEvaluation" name="evaluation"></textarea></div>
+                <div class="field wide"><label for="primaryDecision">เกณฑ์การตัดสินผลการเรียน</label><textarea id="primaryDecision" name="decisionCriteria"></textarea></div>
+                <div class="field wide"><label for="primaryGradeScale">ระดับผลการเรียนแบบ 8 ระดับ</label><textarea id="primaryGradeScale" name="gradeScale"></textarea></div>
+                <div class="field wide"><label for="primaryCompletion">เกณฑ์การจบการศึกษา</label><textarea id="primaryCompletion" name="completion"></textarea></div>
+                <div class="field wide"><label for="primaryOther">อื่น ๆ</label><textarea id="primaryOther" name="other"></textarea></div>
+              </div>
+            </section>
+
+            <p class="form-error hidden" id="primaryPlanError"></p>
+            <div class="plan-editor-actions">
+              <span class="save-status" id="primaryPlanSaveStatus">ยังไม่ได้บันทึก</span>
+              <button class="secondary-button" id="downloadPrimaryPlanWord" type="button">ดาวน์โหลด Word</button>
+              <button class="secondary-button" id="downloadPrimaryPlanPdf" type="button">เปิด PDF / พิมพ์</button>
+              <button class="primary-button" id="saveGeneratedPrimaryPlanPdf" type="button">สร้าง PDF และบันทึกในระบบ</button>
+              <button class="secondary-button" id="savePrimaryPlan" type="submit">บันทึกร่าง</button>
+            </div>
+          </form>
+
+          <section class="card template-exchange">
+            <div class="district-template-library">
+              <div class="district-template-library-head"><h3>เอกสารตัวอย่างจากสำนักงานเขตพื้นที่</h3><p>เปิดดูเอกสารของเขตเพื่อเปรียบเทียบ และปรับข้อความในแบบฟอร์มด้านบนก่อนจัดทำฉบับสุดท้าย</p></div>
+              <div class="district-template-groups" id="primaryPlanDistrictTemplates"><div class="template-upload-note">กำลังโหลดเอกสารจากเขต...</div></div>
             </div>
           </section>
         </div>
@@ -1977,6 +2103,7 @@
     let educationDistricts = [];
     let districtTemplates = [];
     let earlyPlanPhotoDataUrl = "";
+    let primaryPlanPhotoDataUrl = "";
 
     const $ = (selector, root = document) => root.querySelector(selector);
     const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
@@ -2335,7 +2462,7 @@
     async function ensureApplicationContext(createIfMissing = false) {
       if (!currentUser || !selectedStudent) return false;
       const applications = await apiRequest(
-        SUPABASE_URL + "/rest/v1/homeschool_applications?select=id,family_id,student_id,district_id,status,request_form_data&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
+        SUPABASE_URL + "/rest/v1/homeschool_applications?select=*&application_type=eq.permission_request&owner_user_id=eq." + currentUser.id + "&student_id=eq." + selectedStudent.id + "&order=created_at.desc&limit=1",
         { requireAuth: true }
       );
       if (applications?.length) {
@@ -2510,6 +2637,7 @@
       $("#requestPanel").classList.toggle("hidden", name !== "request");
       $("#planPanel").classList.toggle("hidden", name !== "plan");
       $("#earlyChildhoodPlanPanel").classList.add("hidden");
+      $("#primaryPlanPanel").classList.add("hidden");
       if (name === "request") {
         ensureApplicationContext(true)
           .then(() => Promise.all([loadRequestForm(), loadDistrictTemplates()]))
@@ -2527,7 +2655,7 @@
     };
 
     async function loadDistrictTemplates() {
-      const targets = [$("#requestDistrictTemplates"), $("#planDistrictTemplates"), $("#earlyPlanDistrictTemplates")].filter(Boolean);
+      const targets = [$("#requestDistrictTemplates"), $("#planDistrictTemplates"), $("#earlyPlanDistrictTemplates"), $("#primaryPlanDistrictTemplates")].filter(Boolean);
       if (!selectedStudent?.district_id) {
         targets.forEach((target) => target.innerHTML = '<div class="template-upload-note">ยังไม่ได้กำหนดสำนักงานเขตพื้นที่ของผู้เรียน</div>');
         return;
@@ -3863,6 +3991,424 @@
       }
     }
 
+    function primaryPlanDefaults() {
+      const request = applicationContext?.request_form_data || {};
+      const studentName = [selectedStudent?.first_name, selectedStudent?.last_name].filter(Boolean).join(" ");
+      const address = [
+        request.houseNumber ? "บ้านเลขที่ " + request.houseNumber : "",
+        request.villageNumber ? "หมู่ที่ " + request.villageNumber : "",
+        request.subdistrict ? "ต." + request.subdistrict : "",
+        request.addressDistrict ? "อ." + request.addressDistrict : "",
+        request.province ? "จ." + request.province : "",
+        request.postalCode || ""
+      ].filter(Boolean).join(" ");
+      const contact = [
+        address,
+        request.requestPhone ? "โทร: " + request.requestPhone : "",
+        request.requestEmail ? "E-mail: " + request.requestEmail : ""
+      ].filter(Boolean).join("\n");
+      const currentLevel = String(selectedStudent?.current_education_level || "");
+      return {
+        homeName: familyRecord?.family_name ? "บ้านเรียน" + familyRecord.family_name : "",
+        academicYear: String(new Date().getFullYear() + 543),
+        studentName,
+        studentNickname: "",
+        studentBirthDate: selectedStudent?.birth_date || "",
+        educationLevel: /ประถมศึกษาปีที่ [1-6]/.test(currentLevel) ? currentLevel.match(/ประถมศึกษาปีที่ [1-6]/)[0] : "ประถมศึกษาปีที่ 1",
+        districtName: selectedStudent?.district?.name || request.districtName || "",
+        managerName: request.managerName || parentProfile?.full_name || "",
+        fatherProfile: "ชื่อ-สกุล:\nวุฒิการศึกษา:\nประสบการณ์:\nอายุ:\nอาชีพ:\n" + contact,
+        motherProfile: "ชื่อ-สกุล:\nวุฒิการศึกษา:\nประสบการณ์:\nอายุ:\nอาชีพ:\n" + contact,
+        studentBackground: "ผู้เรียนมีสุขภาพร่างกายแข็งแรง มีพัฒนาการตามวัย ร่าเริง สนใจสิ่งรอบตัว ชอบเรียนรู้จากการลงมือปฏิบัติจริง การอ่าน การทดลอง การใช้เทคโนโลยี กีฬา ดนตรี ศิลปะ และกิจกรรมที่สอดคล้องกับความสนใจ",
+        educationHistory: "ผู้เรียนได้รับการส่งเสริมพัฒนาการและการเรียนรู้อย่างต่อเนื่องจากครอบครัว มีประสบการณ์ด้านการอ่าน การเขียน การคิดคำนวณ การสื่อสาร การเล่น กีฬา ศิลปะ และการเรียนรู้จากชีวิตประจำวันตามวัย",
+        studentWeight: "",
+        studentHeight: "",
+        development: "ด้านร่างกาย: มีสุขภาพแข็งแรงและสามารถทำกิจกรรมตามวัย\nด้านอารมณ์: ร่าเริง สามารถสื่อสารความรู้สึกและควบคุมอารมณ์ได้ดีขึ้น\nด้านสังคม: อยู่ร่วมกับผู้อื่นได้ มีน้ำใจ รับผิดชอบ และปฏิบัติตามข้อตกลง\nด้านสติปัญญา: ช่างสังเกต ตั้งคำถาม คิดแก้ปัญหา และเรียนรู้สิ่งใหม่ได้ดี",
+        specialNeeds: "ส่งเสริมความสนใจด้านภาษา วิทยาศาสตร์ เทคโนโลยี คณิตศาสตร์ กีฬา ดนตรี หรือศิลปะตามศักยภาพของผู้เรียน พร้อมเปิดโอกาสให้ค้นพบความถนัดและต่อยอดเป็นทักษะในอนาคต",
+        reason: "ครอบครัวเลือกจัดการศึกษาโดยครอบครัวเพื่อส่งเสริมศักยภาพ ความถนัด ความชอบ และความสนใจของผู้เรียนได้อย่างเฉพาะบุคคล จัดการเรียนรู้ได้ยืดหยุ่นตามธรรมชาติ เน้นการลงมือปฏิบัติจริง เชื่อมโยงกับชีวิตประจำวัน และเปิดโอกาสให้ผู้เรียนพัฒนาตนเองอย่างต่อเนื่อง",
+        goals: "1. มีคุณธรรม จริยธรรม วินัย เห็นคุณค่าของตนเอง และดำเนินชีวิตตามหลักปรัชญาของเศรษฐกิจพอเพียง\n2. มีความรู้และความสามารถในการสื่อสาร การคิด การแก้ปัญหา การใช้เทคโนโลยี และทักษะชีวิต\n3. มีสุขภาพกายและสุขภาพจิตที่ดี มีสุขนิสัยและรักการออกกำลังกาย\n4. มีจิตสำนึกในความเป็นพลเมืองไทยและพลเมืองโลก เคารพสิทธิ หน้าที่ และการอยู่ร่วมกัน\n5. รักวัฒนธรรม ภูมิปัญญาไทย ธรรมชาติและสิ่งแวดล้อม มีจิตสาธารณะ และเรียนรู้ได้ด้วยตนเอง",
+        educationFormat: "จัดการศึกษาแบบครอบครัวเดี่ยว เชื่อมโยงการเรียนรู้กับวิถีชีวิต ครอบครัว ชุมชน อาชีพ แหล่งเรียนรู้ บุคคล สถานที่ สื่อ และเครือข่ายบ้านเรียนตามความเหมาะสม เน้นทักษะการเรียนรู้ตลอดชีวิตและการนำความรู้ไปใช้จริง",
+        hoursLanguage: "240",
+        hoursScience: "120",
+        hoursMath: "120",
+        hoursLife: "200",
+        hoursArts: "120",
+        hoursActivities: "200",
+        hoursNote: "ผู้เรียนใช้หนังสือเรียน แบบฝึกหัด สื่อออนไลน์ และแหล่งเรียนรู้จริงประกอบการเรียน กิจกรรมและเวลาเรียนสามารถปรับเปลี่ยนให้ยืดหยุ่นตามสถานการณ์ ความพร้อม และความเหมาะสมกับผู้เรียน",
+        languageGoals: "1. อ่าน เขียน ฟัง พูด และสื่อสารภาษาไทยได้เหมาะสมตามวัย\n2. ใช้ภาษาต่างประเทศเพื่อสื่อสารและค้นคว้าได้ตามระดับความสามารถ\n3. มีนิสัยรักการอ่านและใช้ภาษาอย่างสร้างสรรค์",
+        languageActivities: "อ่านหนังสือและนิทาน เขียนบันทึก เล่าเรื่อง สนทนา ฝึกคำศัพท์ เรียนภาษาอังกฤษหรือภาษาอื่นจากครู สื่อ และสถานการณ์จริง",
+        scienceGoals: "1. สังเกต ตั้งคำถาม ทดลอง และอธิบายปรากฏการณ์รอบตัว\n2. ใช้กระบวนการทางวิทยาศาสตร์และเทคโนโลยีแก้ปัญหา\n3. ใช้ดิจิทัลและเทคโนโลยีอย่างรู้เท่าทัน ปลอดภัย และสร้างสรรค์",
+        scienceActivities: "ทดลองวิทยาศาสตร์ สำรวจธรรมชาติ ปลูกพืช เลี้ยงสัตว์ ศึกษาท้องฟ้าและสิ่งแวดล้อม ฝึกโค้ดดิ้ง หุ่นยนต์ สืบค้นข้อมูล และสร้างชิ้นงาน",
+        mathGoals: "1. เข้าใจจำนวน การคำนวณ รูปร่าง การวัด ข้อมูล และความสัมพันธ์\n2. ใช้เหตุผลและกระบวนการแก้ปัญหาทางคณิตศาสตร์\n3. นำคณิตศาสตร์ไปใช้ในชีวิตประจำวัน",
+        mathActivities: "ใช้แบบเรียน เกมคณิตศาสตร์ การซื้อขาย การทำอาหาร การวัดพื้นที่ เวลา ระยะทาง และการวิเคราะห์ข้อมูลจากกิจกรรมจริง",
+        lifeGoals: "1. ดูแลตนเอง มีทักษะชีวิต และรับผิดชอบหน้าที่\n2. เข้าใจสิทธิ หน้าที่ สังคม ศาสนา วัฒนธรรม ประวัติศาสตร์ และประชาธิปไตย\n3. อยู่ร่วมกับผู้อื่นอย่างสันติ มีคุณธรรม และรักษาสิ่งแวดล้อม",
+        lifeActivities: "ปฏิบัติกิจวัตร ช่วยงานครอบครัว วางแผนการเงิน เยี่ยมญาติ ทำกิจกรรมชุมชน ท่องเที่ยวเชิงประวัติศาสตร์และอนุรักษ์ ศึกษาศาสนา วัฒนธรรม และเหตุการณ์ปัจจุบัน",
+        artsGoals: "1. สร้างสรรค์และชื่นชมงานศิลปะ ดนตรี และการแสดง\n2. ออกกำลังกาย พัฒนาทักษะร่างกาย มีสุขภาพแข็งแรงและน้ำใจนักกีฬา\n3. ใช้เวลาว่างอย่างมีคุณค่าและพัฒนาความถนัดเฉพาะด้าน",
+        artsActivities: "วาดภาพ งานประดิษฐ์ ดนตรี ร้องเพลง การแสดง กีฬา ว่ายน้ำ ปั่นจักรยาน ศิลปะการต่อสู้ และกิจกรรมกลางแจ้งตามความสนใจ",
+        schedule: "07.00-09.00 | ตื่นนอน ทำภารกิจส่วนตัว และรับประทานอาหาร\nช่วงเช้า | ภาษาไทย คณิตศาสตร์ ภาษาอังกฤษ วิทยาศาสตร์ และเทคโนโลยี\n12.00-13.00 | พักและรับประทานอาหารกลางวัน\nช่วงบ่าย | ศิลปะ ดนตรี โครงงาน การเรียนรู้จากแหล่งเรียนรู้ และกิจกรรมตามความสนใจ\nช่วงเย็น | กีฬา ช่วยงานครอบครัว กิจกรรมชุมชน และออกกำลังกาย\nก่อนนอน | อ่านหนังสือ สนทนา ทบทวน และพักผ่อน",
+        learnerActivities: "กำหนดกิจกรรมพัฒนาผู้เรียนรวม 200 ชั่วโมงต่อปี ประกอบด้วยกิจกรรมหรือค่ายทักษะการใช้ชีวิต กิจกรรมแนะแนว และกิจกรรมเพื่อสังคมและสาธารณประโยชน์ โดยบูรณาการกับกลุ่มความรู้และวิถีชีวิตตามโอกาสที่เหมาะสม",
+        learningProcess: "จัดการเรียนรู้ตามวิถีชีวิตของครอบครัว ผสมผสานการเรียนรู้จากผู้จัดการศึกษา ผู้เชี่ยวชาญ เครือข่ายบ้านเรียน สถาบัน และแหล่งเรียนรู้จริง ใช้การอ่าน การสนทนา การทดลอง โครงงาน การท่องเที่ยว งานสร้างสรรค์ เทคโนโลยี และกิจวัตรประจำวัน เพื่อให้ผู้เรียนสร้างความรู้และนำไปใช้ได้จริง",
+        evaluation: "ประเมินตามสภาพจริงรายปี โดยครอบครัวร่วมกับสำนักงานเขตพื้นที่ ใช้วิธีที่หลากหลาย ได้แก่ การสัมภาษณ์และถามตอบ การสังเกตและบันทึก ภาพถ่ายหรือวิดีโอ แฟ้มสะสมผลงาน แบบฝึกหัด ชิ้นงาน ประกาศนียบัตร ความเห็นจากครูหรือผู้จัดกิจกรรม และวิธีอื่นตามที่ครอบครัวกับเขตพื้นที่เห็นสมควร",
+        decisionCriteria: "1. มีเวลาเรียนรวมไม่น้อยกว่าร้อยละ 80 ของเวลาเรียนทั้งหมด\n2. ผลการประเมินทุกกลุ่มความรู้อยู่ในระดับผ่าน\n3. ผลการประเมินการอ่าน คิดวิเคราะห์ และเขียนอยู่ในระดับผ่าน\n4. ผลการประเมินคุณลักษณะอันพึงประสงค์อยู่ในระดับผ่าน\n5. ผลการประเมินกิจกรรมพัฒนาผู้เรียนอยู่ในระดับผ่าน",
+        gradeScale: "80-100 | 4 | ดีเยี่ยม\n75-79 | 3.5 | ดี\n70-74 | 3 | ดี\n65-69 | 2.5 | ผ่าน\n60-64 | 2 | ผ่าน\n55-59 | 1.5 | ผ่าน\n50-54 | 1 | ผ่าน\n0-49 | 0 | ไม่ผ่าน",
+        completion: "1. เรียนรู้ตามกลุ่มประสบการณ์หรือสาระการเรียนรู้และมีผลการเรียนระดับผ่านขึ้นไป\n2. ผลการประเมินการอ่าน คิดวิเคราะห์ และเขียนอยู่ในระดับผ่านขึ้นไป\n3. ผลการประเมินคุณลักษณะอันพึงประสงค์อยู่ในระดับผ่านขึ้นไป\n4. เข้าร่วมกิจกรรมพัฒนาผู้เรียนและมีผลการประเมินระดับผ่าน",
+        other: "ผู้จัดการศึกษาให้ความสำคัญกับสาระการเรียนรู้และกิจกรรมที่สอดคล้องกับความต้องการของผู้เรียน เพื่อกระตุ้นความสนใจ ความกระตือรือร้น และความสามารถในการเรียนรู้ด้วยตนเอง โดยสามารถปรับแผนตามพัฒนาการและบริบทที่เปลี่ยนแปลง"
+      };
+    }
+
+    function primaryPlanValues() {
+      const values = Object.fromEntries(new FormData($("#primaryPlanForm")).entries());
+      values.studentPhotoDataUrl = primaryPlanPhotoDataUrl || applicationContext?.primary_education_plan_data?.studentPhotoDataUrl || "";
+      return values;
+    }
+
+    function fillPrimaryPlanForm(values = {}) {
+      const form = $("#primaryPlanForm");
+      Object.entries(values).forEach(([name, value]) => {
+        const field = form.elements.namedItem(name);
+        if (field && value !== null && value !== undefined) field.value = value;
+      });
+    }
+
+    function renderPrimaryPlanPhotoPreview() {
+      const preview = $("#primaryStudentPhotoPreview");
+      preview.innerHTML = primaryPlanPhotoDataUrl
+        ? `<img src="${primaryPlanPhotoDataUrl}" alt="รูปผู้เรียนสำหรับหน้าปก">`
+        : "ยังไม่ได้เลือกรูปผู้เรียน";
+    }
+
+    async function handlePrimaryPlanPhoto(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        primaryPlanPhotoDataUrl = await imageFileToSquareDataUrl(file);
+        renderPrimaryPlanPhotoPreview();
+        $("#primaryPlanSaveStatus").textContent = "มีการแก้ไขที่ยังไม่ได้บันทึก";
+      } catch (error) {
+        event.target.value = "";
+        showToast(error.message);
+      }
+    }
+
+    function showPrimaryPlan() {
+      $$(".workflow-tab").forEach((button) => button.classList.toggle("active", button.dataset.workflow === "plan"));
+      $("#uploadsPanel").classList.add("hidden");
+      $("#requestPanel").classList.add("hidden");
+      $("#planPanel").classList.add("hidden");
+      $("#earlyChildhoodPlanPanel").classList.add("hidden");
+      $("#primaryPlanPanel").classList.remove("hidden");
+      const saved = applicationContext?.primary_education_plan_data || {};
+      primaryPlanPhotoDataUrl = saved.studentPhotoDataUrl || "";
+      fillPrimaryPlanForm({ ...primaryPlanDefaults(), ...saved });
+      renderPrimaryPlanPhotoPreview();
+      $("#primaryPlanSaveStatus").textContent = Object.keys(saved).length ? "โหลดแผนที่บันทึกไว้แล้ว" : "ยังไม่ได้บันทึก";
+      $("#primaryPlanError").classList.add("hidden");
+      loadDistrictTemplates().catch((error) => showToast(error.message));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function savePrimaryPlan(event) {
+      event.preventDefault();
+      if (!applicationContext) await ensureApplicationContext(true);
+      const button = $("#savePrimaryPlan");
+      const errorBox = $("#primaryPlanError");
+      button.disabled = true;
+      button.textContent = "กำลังบันทึก...";
+      errorBox.classList.add("hidden");
+      try {
+        const values = primaryPlanValues();
+        values.planType = "primary";
+        values.updatedAt = new Date().toISOString();
+        const rows = await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ primary_education_plan_data: values })
+          }
+        );
+        applicationContext = rows[0] || { ...applicationContext, primary_education_plan_data: values };
+        $("#primaryPlanSaveStatus").textContent = "บันทึกล่าสุด " + new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" });
+        showToast("บันทึกร่างแผนประถมศึกษาแล้ว");
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove("hidden");
+      } finally {
+        button.disabled = false;
+        button.textContent = "บันทึกร่าง";
+      }
+    }
+
+    function primaryKnowledgeRows(values) {
+      return [
+        ["ภาษาไทยและภาษาต่างประเทศ", values.languageGoals, values.languageActivities],
+        ["วิทยาศาสตร์และเทคโนโลยี", values.scienceGoals, values.scienceActivities],
+        ["คณิตศาสตร์", values.mathGoals, values.mathActivities],
+        ["ทักษะชีวิต สังคม ศาสนา และวัฒนธรรม", values.lifeGoals, values.lifeActivities],
+        ["ดนตรี กีฬา และศิลปะ", values.artsGoals, values.artsActivities]
+      ];
+    }
+
+    function primaryHoursRows(values) {
+      const rows = [
+        ["ภาษาไทยและภาษาต่างประเทศ", values.hoursLanguage],
+        ["วิทยาศาสตร์และเทคโนโลยี", values.hoursScience],
+        ["คณิตศาสตร์", values.hoursMath],
+        ["ทักษะชีวิต สังคม ศาสนา และวัฒนธรรม", values.hoursLife],
+        ["ดนตรี กีฬา และศิลปะ", values.hoursArts]
+      ];
+      const subjectTotal = rows.reduce((sum, row) => sum + (Number(row[1]) || 0), 0);
+      const activityHours = Number(values.hoursActivities) || 0;
+      return {
+        rows,
+        subjectTotal,
+        activityHours,
+        total: subjectTotal + activityHours
+      };
+    }
+
+    function primaryPlanDocument(values, includePrintButton = true) {
+      const regularFontUrl = new URL("assets/fonts/THSarabunNew.ttf", window.location.href).href;
+      const boldFontUrl = new URL("assets/fonts/THSarabunNew-Bold.ttf", window.location.href).href;
+      const previewMode = includePrintButton === true;
+      const homeName = planText(values.homeName, "บ้านเรียน").replace(/^["“”']+|["“”']+$/g, "");
+      const photo = values.studentPhotoDataUrl
+        ? `<img src="${values.studentPhotoDataUrl}" alt="รูปผู้เรียน">`
+        : '<span class="photo-empty">รูปผู้เรียน<br>ประมาณ 5.5 × 5.5 ซม.</span>';
+      const hours = primaryHoursRows(values);
+      const hourRows = hours.rows.map(([label, value]) => `<tr><td>${escapeHTML(label)}</td>${Array(6).fill(`<td>${escapeHTML(value || "-")}</td>`).join("")}</tr>`).join("");
+      const knowledgeRows = primaryKnowledgeRows(values).map(([label, goals, activities]) => `<tr><td>${escapeHTML(label)}</td><td>${planText(goals)}</td><td>${planText(activities)}</td></tr>`).join("");
+      const scheduleRows = planLines(values.schedule).map((line) => {
+        const parts = line.split("|").map((part) => part.trim());
+        return `<tr><td>${escapeHTML(parts.shift() || "-")}</td><td>${escapeHTML(parts.join(" | ") || "-")}</td></tr>`;
+      }).join("") || "<tr><td>-</td><td>-</td></tr>";
+      const gradeRows = planLines(values.gradeScale).map((line) => {
+        const parts = line.split("|").map((part) => part.trim());
+        return `<tr><td>${escapeHTML(parts[0] || "-")}</td><td>${escapeHTML(parts[1] || "-")}</td><td>${escapeHTML(parts[2] || "-")}</td></tr>`;
+      }).join("");
+      return `<!doctype html><html lang="th"><head><meta charset="utf-8"><title>แผนการศึกษาระดับประถมศึกษา</title><style>
+        @page{size:A4 portrait;margin:0}@font-face{font-family:"TH SarabunPSK";src:url("${regularFontUrl}") format("truetype");font-weight:400}@font-face{font-family:"TH SarabunPSK";src:url("${boldFontUrl}") format("truetype");font-weight:700}
+        *{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff}body{color:#000;background:${previewMode ? "#ddd" : "#fff"};font-family:"TH SarabunPSK","TH Sarabun New",sans-serif;font-size:16pt;line-height:1.18}.toolbar{position:sticky;top:0;z-index:3;padding:10px;text-align:center;background:#efefff}.toolbar button{padding:9px 18px;color:#fff;background:#5852e7;border:0;border-radius:8px;font-weight:700}
+        .sheet{width:210mm;min-height:297mm;margin:${previewMode ? "12px auto" : "0 auto"};padding:18mm 20mm;background:#fff;box-shadow:${previewMode ? "0 2px 12px #888" : "none"}}.cover{min-height:261mm;display:flex;flex-direction:column;align-items:center;text-align:center}.cover h1{margin:24mm 0 8mm;font-size:23pt}.cover h2{margin:0 0 14mm;font-size:20pt}.cover .student{font-size:18pt;font-weight:700}.photo{display:grid;place-items:center;width:55mm;height:55mm;margin:10mm auto;border:1px solid #777;overflow:hidden}.photo img{width:100%;height:100%;object-fit:cover}.photo-empty{color:#777}.cover .manager{margin-top:5mm;font-weight:700}.cover .affiliation{margin-top:auto;font-weight:700}.cover .year{margin:12mm 0 8mm;font-weight:700}
+        h2{margin:0 0 5mm;text-align:center;font-size:20pt}h3{margin:5mm 0 2mm;font-size:17pt}p{margin:2mm 0;text-align:justify;text-indent:12mm}.no-indent{text-indent:0}.notice{padding:3mm;border:1px solid #999;background:#fafafa;font-size:14pt}table{width:100%;margin:4mm 0;border-collapse:collapse;font-size:13pt;line-height:1.15;break-inside:auto}tr{break-inside:avoid}th,td{padding:1.7mm;border:1px solid #333;vertical-align:top}th{text-align:center}.signature{margin-top:18mm;text-align:center}.page-break{break-before:page;page-break-before:always}ul{margin:2mm 0 2mm 8mm}
+        @media print{body{background:#fff}.toolbar{display:none}.sheet{margin:0;box-shadow:none}}
+      </style></head><body>${includePrintButton ? '<div class="toolbar"><button onclick="document.fonts.ready.then(()=>window.print())">บันทึกเป็น PDF / พิมพ์</button></div>' : ""}
+      <main class="sheet"><section class="cover"><h1>แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h1><h2>&quot;${homeName}&quot;</h2><div class="student">สำหรับ ${planText(values.studentName)}<br>ระดับประถมศึกษา (ปีที่ 1 - 6)</div><div class="photo">${photo}</div><div class="manager">ผู้จัดการศึกษา : ${planText(values.managerName)}</div><div class="affiliation">สังกัด<br>${planText(values.districtName)}</div><div class="year">ปีการศึกษา ${planText(values.academicYear)}</div></section>
+      <section class="page-break"><h2>แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว</h2><div class="notice"><strong>หมายเหตุ:</strong> แผนฉบับนี้เป็นตัวอย่าง ควรปรึกษาเจ้าหน้าที่และปรับให้เหมาะสมกับผู้เรียนก่อนนำไปใช้</div><h3>1. ข้อมูลพื้นฐานของครอบครัว</h3><p class="no-indent"><strong>บิดา</strong><br>${planText(values.fatherProfile)}</p><p class="no-indent"><strong>มารดา</strong><br>${planText(values.motherProfile)}</p><p class="no-indent"><strong>ผู้จัดการศึกษา:</strong> ${planText(values.managerName)}</p><h3>2. ข้อมูลพื้นฐานของผู้เรียน</h3><p>${planText(values.studentBackground)}</p><p class="no-indent"><strong>ชื่อ-สกุล:</strong> ${planText(values.studentName)} (${planText(values.studentNickname, "-")}) <strong>วันเกิด:</strong> ${planText(values.studentBirthDate)} <strong>น้ำหนัก:</strong> ${planText(values.studentWeight)} กก. <strong>ส่วนสูง:</strong> ${planText(values.studentHeight)} ซม.</p><p class="no-indent"><strong>ประวัติการศึกษา:</strong> ${planText(values.educationHistory)}</p><p class="no-indent"><strong>พัฒนาการ:</strong><br>${planText(values.development)}</p><p class="no-indent"><strong>ความสนใจหรือความต้องการส่งเสริม:</strong><br>${planText(values.specialNeeds)}</p></section>
+      <section class="page-break"><h3>3. ระดับการศึกษาที่จัด</h3><p class="no-indent">ระดับประถมศึกษา (ปีที่ 1-6) เริ่มจัดการศึกษาในชั้น ${planText(values.educationLevel)}</p><h3>4. เหตุผลในการจัดการศึกษาของครอบครัว</h3><p>${planText(values.reason)}</p><h3>5. จุดมุ่งหมายของการจัดการศึกษา</h3>${planBulletList(values.goals)}<h3>6. รูปแบบการจัดการศึกษา</h3><p>${planText(values.educationFormat)}</p></section>
+      <section class="page-break"><h3>7. โครงสร้างเวลาเรียน</h3><table><thead><tr><th>กลุ่มความรู้</th><th>ป.1</th><th>ป.2</th><th>ป.3</th><th>ป.4</th><th>ป.5</th><th>ป.6</th></tr></thead><tbody>${hourRows}<tr><th>รวมกลุ่มความรู้</th>${Array(6).fill(`<th>${hours.subjectTotal}</th>`).join("")}</tr><tr><td>กิจกรรมพัฒนาผู้เรียน</td>${Array(6).fill(`<td>${hours.activityHours}</td>`).join("")}</tr><tr><th>รวมเวลาเรียนทั้งหมด</th>${Array(6).fill(`<th>${hours.total}</th>`).join("")}</tr></tbody></table><p class="no-indent">${planText(values.hoursNote)}</p><h3>8. การจัดกลุ่มสาระการเรียนรู้ / กลุ่มประสบการณ์</h3><p>ครอบครัวจัดกระบวนการเรียนรู้ในรูปแบบกลุ่มประสบการณ์ให้ครอบคลุมสาระสำคัญตามพระราชบัญญัติการศึกษาแห่งชาติและเทียบเคียงคุณภาพผู้เรียนตามหลักสูตรแกนกลาง โดยเน้นศักยภาพ ความสนใจ และการเรียนรู้แบบองค์รวมของผู้เรียน</p></section>
+      <section class="page-break"><h3>8.1 เป้าหมายคุณภาพผู้เรียนและกิจกรรม</h3><table><thead><tr><th style="width:20%">กลุ่มความรู้</th><th style="width:38%">เป้าหมายคุณภาพผู้เรียน</th><th>กิจกรรมการเรียนรู้</th></tr></thead><tbody>${knowledgeRows}</tbody></table></section>
+      <section class="page-break"><h3>8.2 ตารางกิจกรรมโดยสังเขป</h3><table><thead><tr><th style="width:25%">วัน/เวลา</th><th>กิจกรรม</th></tr></thead><tbody>${scheduleRows}</tbody></table><h3>9. กิจกรรมพัฒนาผู้เรียน</h3><p>${planText(values.learnerActivities)}</p><h3>10. การจัดกระบวนการเรียนรู้</h3><p>${planText(values.learningProcess)}</p></section>
+      <section class="page-break"><h3>11. การวัดและประเมินผลการเรียนรู้</h3><p>${planText(values.evaluation)}</p><h3>11.1 การตัดสินผลการเรียน</h3>${planBulletList(values.decisionCriteria)}<h3>11.2 ระดับผลการเรียน</h3><table><thead><tr><th>ช่วงคะแนน</th><th>ระดับผลการเรียน</th><th>ความหมาย</th></tr></thead><tbody>${gradeRows}</tbody></table><h3>11.3 เกณฑ์การจบการศึกษา</h3>${planBulletList(values.completion)}<h3>12. อื่น ๆ</h3><p>${planText(values.other)}</p><div class="signature">ลงชื่อ........................................................ผู้จัดการศึกษา<br>(${planText(values.managerName)})</div></section></main></body></html>`;
+    }
+
+    function openPrimaryPlanPdf() {
+      const printWindow = window.open("", "_blank");
+      if (!printWindow) return showToast("กรุณาอนุญาต Pop-up เพื่อเปิดเอกสาร PDF");
+      printWindow.document.open();
+      printWindow.document.write(primaryPlanDocument(primaryPlanValues(), true));
+      printWindow.document.close();
+      printWindow.focus();
+    }
+
+    function primaryPlanWordChildren(values) {
+      const center = docx.AlignmentType.CENTER;
+      const homeName = wordPlainText(values.homeName, "บ้านเรียน").replace(/^["“”']+|["“”']+$/g, "");
+      const cover = [
+        wordParagraph("แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว", { alignment: center, bold: true, size: 44, before: 900, after: 400 }),
+        wordParagraph('"' + homeName + '"', { alignment: center, bold: true, size: 40, after: 520 }),
+        wordParagraph("สำหรับ " + wordPlainText(values.studentName), { alignment: center, bold: true, size: 36, after: 80 }),
+        wordParagraph("ระดับประถมศึกษา (ปีที่ 1 - 6)", { alignment: center, bold: true, size: 36, after: 360 })
+      ];
+      if (values.studentPhotoDataUrl) {
+        cover.push(new docx.Paragraph({
+          alignment: center,
+          spacing: { after: 460 },
+          children: [new docx.ImageRun({
+            data: wordDataUrlBytes(values.studentPhotoDataUrl),
+            transformation: { width: 208, height: 208 },
+            type: "jpg",
+            altText: { title: "รูปผู้เรียน", description: "รูปผู้เรียนสำหรับหน้าปก", name: "primary-student-photo" }
+          })]
+        }));
+      } else {
+        cover.push(wordParagraph("[ยังไม่ได้เพิ่มรูปผู้เรียน]", { alignment: center, size: 28, after: 520 }));
+      }
+      cover.push(
+        wordParagraph("ผู้จัดการศึกษา : " + wordPlainText(values.managerName), { alignment: center, bold: true, size: 34, after: 920 }),
+        wordParagraph("สังกัด", { alignment: center, bold: true, size: 34, after: 60 }),
+        wordParagraph(wordPlainText(values.districtName), { alignment: center, bold: true, size: 34, after: 320 }),
+        wordParagraph("ปีการศึกษา " + wordPlainText(values.academicYear), { alignment: center, bold: true, size: 34, after: 0 }),
+        new docx.Paragraph({ children: [new docx.PageBreak()] })
+      );
+      const hours = primaryHoursRows(values);
+      const hourRows = [["กลุ่มความรู้", "ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6"]];
+      hours.rows.forEach(([label, value]) => hourRows.push([label, value, value, value, value, value, value]));
+      hourRows.push(["รวมกลุ่มความรู้", ...Array(6).fill(String(hours.subjectTotal))]);
+      hourRows.push(["กิจกรรมพัฒนาผู้เรียน", ...Array(6).fill(String(hours.activityHours))]);
+      hourRows.push(["รวมทั้งหมด", ...Array(6).fill(String(hours.total))]);
+      const knowledgeRows = [["กลุ่มความรู้", "เป้าหมายคุณภาพผู้เรียน", "กิจกรรมการเรียนรู้"], ...primaryKnowledgeRows(values)];
+      const scheduleRows = [["วัน/เวลา", "กิจกรรม"]];
+      planLines(values.schedule).forEach((line) => {
+        const parts = line.split("|").map((part) => part.trim());
+        scheduleRows.push([parts.shift() || "-", parts.join(" | ") || "-"]);
+      });
+      const gradeRows = [["ช่วงคะแนน", "ระดับผลการเรียน", "ความหมาย"]];
+      planLines(values.gradeScale).forEach((line) => gradeRows.push(line.split("|").map((part) => part.trim())));
+      return cover.concat([
+        wordHeading("แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว", { alignment: center, size: 40, before: 0 }),
+        wordParagraph("หมายเหตุ: แผนฉบับนี้เป็นตัวอย่าง ควรปรึกษาเจ้าหน้าที่และปรับให้เหมาะสมกับผู้เรียนก่อนนำไปใช้", { size: 28 }),
+        wordHeading("1. ข้อมูลพื้นฐานของครอบครัว"),
+        wordParagraph("บิดา\n" + wordPlainText(values.fatherProfile)),
+        wordParagraph("มารดา\n" + wordPlainText(values.motherProfile)),
+        wordParagraph("ผู้จัดการศึกษา: " + wordPlainText(values.managerName)),
+        wordHeading("2. ข้อมูลพื้นฐานของผู้เรียน"),
+        wordParagraph(wordPlainText(values.studentBackground), { indent: 720 }),
+        wordParagraph("ชื่อ-สกุล: " + wordPlainText(values.studentName) + " (" + wordPlainText(values.studentNickname) + ")\nวันเกิด: " + wordPlainText(values.studentBirthDate) + " น้ำหนัก: " + wordPlainText(values.studentWeight) + " กก. ส่วนสูง: " + wordPlainText(values.studentHeight) + " ซม."),
+        wordParagraph("ประวัติการศึกษา: " + wordPlainText(values.educationHistory)),
+        wordParagraph("พัฒนาการ: " + wordPlainText(values.development)),
+        wordParagraph("ความสนใจหรือความต้องการส่งเสริม: " + wordPlainText(values.specialNeeds)),
+        wordHeading("3. ระดับการศึกษาที่จัด", { pageBreakBefore: true }),
+        wordParagraph("ระดับประถมศึกษา (ปีที่ 1-6) เริ่มจัดการศึกษาในชั้น " + wordPlainText(values.educationLevel)),
+        wordHeading("4. เหตุผลในการจัดการศึกษาของครอบครัว"),
+        wordParagraph(wordPlainText(values.reason), { indent: 720 }),
+        wordHeading("5. จุดมุ่งหมายของการจัดการศึกษา"),
+        ...wordBulletParagraphs(values.goals),
+        wordHeading("6. รูปแบบการจัดการศึกษา"),
+        wordParagraph(wordPlainText(values.educationFormat), { indent: 720 }),
+        wordHeading("7. โครงสร้างเวลาเรียน", { pageBreakBefore: true }),
+        wordTable(hourRows, [2200, 1202, 1202, 1202, 1202, 1202, 1202]),
+        wordParagraph(wordPlainText(values.hoursNote), { size: 28 }),
+        wordHeading("8. การจัดกลุ่มสาระการเรียนรู้ / กลุ่มประสบการณ์"),
+        wordParagraph("ครอบครัวจัดกระบวนการเรียนรู้ในรูปแบบกลุ่มประสบการณ์ ให้ครอบคลุมสาระสำคัญตามกฎหมายและเทียบเคียงคุณภาพผู้เรียนตามหลักสูตรแกนกลาง โดยเน้นศักยภาพและความสนใจของผู้เรียน", { indent: 720 }),
+        wordHeading("8.1 เป้าหมายคุณภาพผู้เรียนและกิจกรรม", { pageBreakBefore: true }),
+        wordTable(knowledgeRows, [1800, 3600, 4012]),
+        wordHeading("8.2 ตารางกิจกรรมโดยสังเขป", { pageBreakBefore: true }),
+        wordTable(scheduleRows, [2200, 7212]),
+        wordHeading("9. กิจกรรมพัฒนาผู้เรียน"),
+        wordParagraph(wordPlainText(values.learnerActivities), { indent: 720 }),
+        wordHeading("10. การจัดกระบวนการเรียนรู้"),
+        wordParagraph(wordPlainText(values.learningProcess), { indent: 720 }),
+        wordHeading("11. การวัดและประเมินผลการเรียนรู้", { pageBreakBefore: true }),
+        wordParagraph(wordPlainText(values.evaluation), { indent: 720 }),
+        wordHeading("11.1 การตัดสินผลการเรียน"),
+        ...wordBulletParagraphs(values.decisionCriteria),
+        wordHeading("11.2 ระดับผลการเรียน"),
+        wordTable(gradeRows, [2600, 2600, 4212]),
+        wordHeading("11.3 เกณฑ์การจบการศึกษา"),
+        ...wordBulletParagraphs(values.completion),
+        wordHeading("12. อื่น ๆ"),
+        wordParagraph(wordPlainText(values.other), { indent: 720 }),
+        wordParagraph("ลงชื่อ........................................................ผู้จัดการศึกษา\n(" + wordPlainText(values.managerName) + ")", { alignment: center, before: 800, after: 0 })
+      ]);
+    }
+
+    async function downloadPrimaryPlanWord() {
+      if (!window.docx?.Document || !window.docx?.Packer) return showToast("โหลดตัวสร้าง Word ไม่สำเร็จ กรุณารีเฟรชแล้วลองใหม่");
+      const button = $("#downloadPrimaryPlanWord");
+      const originalText = button.textContent;
+      button.disabled = true;
+      button.textContent = "กำลังสร้าง Word...";
+      try {
+        const values = primaryPlanValues();
+        const documentFile = new docx.Document({
+          creator: "Homeschool",
+          title: "แผนการศึกษาระดับประถมศึกษา - " + wordPlainText(values.studentName, "ผู้เรียน"),
+          description: "แผนการจัดการศึกษาขั้นพื้นฐานโดยครอบครัว ระดับประถมศึกษา",
+          styles: { default: { document: { run: { font: "TH SarabunPSK", size: 32, color: "000000" }, paragraph: { spacing: { line: 276, after: 100 } } } } },
+          sections: [{
+            properties: { page: { size: { width: 11906, height: 16838, orientation: docx.PageOrientation.PORTRAIT }, margin: { top: 1134, right: 1247, bottom: 1134, left: 1247 } } },
+            children: primaryPlanWordChildren(values)
+          }]
+        });
+        const blob = await docx.Packer.toBlob(documentFile);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "แผนการศึกษาระดับประถมศึกษา-" + (values.studentName || "ผู้เรียน").replace(/[\\/:*?"<>|]/g, "") + ".docx";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast("ดาวน์โหลดไฟล์ Word แผนประถมศึกษาแล้ว");
+      } catch (error) {
+        console.error(error);
+        showToast("สร้างไฟล์ Word ไม่สำเร็จ: " + (error.message || "กรุณาลองใหม่"));
+      } finally {
+        button.disabled = false;
+        button.textContent = originalText;
+      }
+    }
+
+    async function createPrimaryPlanPdfFile(values) {
+      if (!window.html2pdf) throw new Error("โหลดตัวสร้าง PDF ไม่สำเร็จ กรุณาเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่");
+      const wrapper = document.createElement("div");
+      wrapper.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm";
+      const iframe = document.createElement("iframe");
+      iframe.style.cssText = "width:210mm;height:3564mm;border:0";
+      wrapper.appendChild(iframe);
+      document.body.appendChild(wrapper);
+      try {
+        const doc = iframe.contentDocument;
+        doc.open();
+        doc.write(primaryPlanDocument(values, false));
+        doc.close();
+        await doc.fonts.ready;
+        const pdfBlob = await html2pdf().set({
+          margin: 0,
+          filename: "แผนการศึกษาระดับประถมศึกษา.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+          pagebreak: { mode: ["css", "legacy"] }
+        }).from(doc.querySelector(".sheet")).outputPdf("blob");
+        const studentName = (values.studentName || "ผู้เรียน").replace(/[\\/:*?"<>|]/g, "").trim();
+        return new File([pdfBlob], "แผนการศึกษาระดับประถมศึกษา-" + studentName + ".pdf", { type: "application/pdf" });
+      } finally {
+        wrapper.remove();
+      }
+    }
+
+    async function saveGeneratedPrimaryPlanPdf() {
+      const form = $("#primaryPlanForm");
+      if (!form.reportValidity()) return;
+      const button = $("#saveGeneratedPrimaryPlanPdf");
+      const errorBox = $("#primaryPlanError");
+      button.disabled = true;
+      button.textContent = "กำลังสร้าง PDF...";
+      errorBox.classList.add("hidden");
+      try {
+        await refreshSessionIfNeeded();
+        if (!currentUser || !authSession?.access_token) throw new Error("กรุณาเข้าสู่ระบบก่อนสร้าง PDF");
+        if (!applicationContext) await ensureApplicationContext(true);
+        const values = primaryPlanValues();
+        values.planType = "primary";
+        values.updatedAt = new Date().toISOString();
+        await apiRequest(
+          SUPABASE_URL + "/rest/v1/homeschool_applications?id=eq." + applicationContext.id + "&owner_user_id=eq." + currentUser.id,
+          {
+            method: "PATCH",
+            requireAuth: true,
+            headers: { Prefer: "return=representation" },
+            body: JSON.stringify({ primary_education_plan_data: values })
+          }
+        );
+        applicationContext = { ...applicationContext, primary_education_plan_data: values };
+        const file = await createPrimaryPlanPdfFile(values);
+        await replaceOfficialFile("educationPlanDocument", file);
+        $("#primaryPlanSaveStatus").textContent = "สร้างและบันทึกไฟล์ PDF ล่าสุดแล้ว";
+        showToast("สร้าง PDF แผนประถมศึกษาและบันทึกให้เจ้าหน้าที่เขตดูได้แล้ว");
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.classList.remove("hidden");
+        showToast(error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = "สร้าง PDF และบันทึกในระบบ";
+      }
+    }
+
     function annualEvidenceDefaultTopics() {
       const level = String(selectedStudent?.current_education_level || "");
       if (/ปฐม|อนุบาล/.test(level)) {
@@ -4472,7 +5018,16 @@
         }
         return;
       }
-      showToast("เลือก" + labels[level] + "แล้ว แบบฟอร์มระดับประถมศึกษาจะพัฒนาในขั้นตอนถัดไป");
+      if (level === "primary") {
+        try {
+          await ensureApplicationContext(true);
+          showPrimaryPlan();
+        } catch (error) {
+          showToast(error.message);
+        }
+        return;
+      }
+      showToast("ไม่พบแบบฟอร์มสำหรับ" + (labels[level] || "ระดับที่เลือก"));
     }
 
     async function createTask(event) {
@@ -4609,6 +5164,12 @@
     $("#downloadEarlyPlanPdf").addEventListener("click", openEarlyPlanPdf);
     $("#downloadEarlyPlanWord").addEventListener("click", downloadEarlyPlanWord);
     $("#saveGeneratedEarlyPlanPdf").addEventListener("click", saveGeneratedEarlyPlanPdf);
+    $("#backToPlanChoicePrimary").addEventListener("click", openPlanChoiceModal);
+    $("#primaryPlanForm").addEventListener("submit", savePrimaryPlan);
+    $("#primaryStudentPhoto").addEventListener("change", handlePrimaryPlanPhoto);
+    $("#downloadPrimaryPlanPdf").addEventListener("click", openPrimaryPlanPdf);
+    $("#downloadPrimaryPlanWord").addEventListener("click", downloadPrimaryPlanWord);
+    $("#saveGeneratedPrimaryPlanPdf").addEventListener("click", saveGeneratedPrimaryPlanPdf);
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && !$("#taskModal").classList.contains("hidden")) closeModal();
       if (event.key === "Escape" && !$("#planChoiceModal").classList.contains("hidden")) closePlanChoiceModal();
